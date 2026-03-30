@@ -138,14 +138,6 @@ header{background:var(--dark);padding:16px 28px;display:flex;align-items:center;
         <label>領隊手機</label>
         <input type="text" id="leaderPhone">
       </div>
-      <div class="field">
-        <label>GitHub 帳號</label>
-        <input type="text" id="githubUser" placeholder="lefuntravel">
-      </div>
-      <div class="field field-full">
-        <label>GitHub Repo 名稱</label>
-        <input type="text" id="githubRepo" value="lefun-ebook">
-      </div>
     </div>
   </div>
 
@@ -198,6 +190,8 @@ header{background:var(--dark);padding:16px 28px;display:flex;align-items:center;
 
 <script>
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+const GITHUB_USER = 'YinoeDigital';
+const GITHUB_REPO = 'lefun-ebook';
 let pdfFile = null;
 
 const zone = document.getElementById('uploadZone');
@@ -221,7 +215,7 @@ function checkReady() {
   const ok = pdfFile && document.getElementById('ebookId').value && document.getElementById('tourName').value;
   document.getElementById('genBtn').disabled = !ok;
 }
-['ebookId','tourName','destination','leaderName','leaderPhone','githubUser','githubRepo'].forEach(id => {
+['ebookId','tourName','destination','leaderName','leaderPhone'].forEach(id => {
   document.getElementById(id).addEventListener('input', checkReady);
 });
 
@@ -259,8 +253,8 @@ async function generate() {
   if (!anthropicKey) { openSettings(); return; }
 
   const ebookId    = document.getElementById('ebookId').value.trim();
-  const githubUser = document.getElementById('githubUser').value.trim();
-  const githubRepo = document.getElementById('githubRepo').value.trim();
+  const githubUser = GITHUB_USER;
+  const githubRepo = GITHUB_REPO;
   const tourName   = document.getElementById('tourName').value.trim();
   const destination= document.getElementById('destination').value.trim();
   const departDate = document.getElementById('departDate').value;
@@ -402,6 +396,10 @@ function updateDots() {
 }
 updateDots();
 document.getElementById('departDate').value = new Date().toISOString().slice(0,10);
+// 首次使用：若 API Keys 尚未設定，自動彈出設定視窗
+if (!localStorage.getItem('lf_anthropic_key') || !localStorage.getItem('lf_github_token')) {
+  openSettings();
+}
 </script>
 </body>
 </html>

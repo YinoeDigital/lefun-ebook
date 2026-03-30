@@ -110,7 +110,7 @@ async function load(){
   if(!id){err('找不到電子書 ID，請確認連結。');return;}
   const base=location.pathname.replace(/\/[^\/]*$/,'');
   try{
-    const r=await fetch(base+'/../data/'+id+'.json');
+    const r=await fetch(base+'/data/'+id+'.json');
     if(!r.ok)throw new Error('HTTP '+r.status);
     render(await r.json());
   }catch(e){err('無法載入行前說明（'+e.message+'）');}

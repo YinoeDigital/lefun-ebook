@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>樂放旅遊 ✦ 電子書產生器</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<style>
+:root{--green:#81F8B9;--green-d:#1a5c3a;--green-pale:#eafaf3;--pink:#ECD1D5;--tomato:#EE6543;--dark:#1a1a1a;--mid:#555;--soft:#888;--border:#e8e8e8;--bg:#f5f6f4;--card:#fff;--r:14px;--shadow:0 2px 16px rgba(0,0,0,.07)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Helvetica Neue',Arial,sans-serif;background:var(--bg);color:var(--dark);font-size:15px;line-height:1.6}
+header{background:var(--dark);padding:16px 28px;display:flex;align-items:center;justify-content:space-between}
+.logo-badge{background:var(--green);color:var(--dark);font-weight:800;font-size:12px;padding:4px 12px;border-radius:20px;letter-spacing:.08em}
+.hdr-right{display:flex;align-items:center;gap:12px}
+.hdr-title{color:rgba(255,255,255,.5);font-size:13px}
+.btn-settings{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.8);padding:6px 14px;border-radius:20px;cursor:pointer;font-size:12px;font-family:inherit}
+.btn-settings:hover{background:rgba(255,255,255,.15)}
+.main{max-width:720px;margin:0 auto;padding:28px 20px 80px}
+.s-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:22px;box-shadow:var(--shadow);margin-bottom:18px}
+.s-title{font-size:11px;font-weight:800;letter-spacing:.1em;color:var(--soft);text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.s-num{width:20px;height:20px;border-radius:50%;background:var(--green);color:var(--dark);font-weight:800;font-size:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.upload-zone{border:2px dashed var(--border);border-radius:12px;padding:32px 20px;text-align:center;cursor:pointer;transition:all .2s;position:relative}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--green);background:var(--green-pale)}
+.upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.up-icon{font-size:32px;margin-bottom:10px}
+.up-main{font-size:15px;font-weight:700;margin-bottom:4px}
+.up-sub{font-size:12px;color:var(--soft)}
+.file-info{display:none;align-items:center;gap:10px;background:var(--green-pale);border:1px solid var(--green);border-radius:10px;padding:12px 16px;margin-top:12px}
+.file-info.show{display:flex}
+.fi-icon{font-size:22px}
+.fi-name{font-weight:700;font-size:13px}
+.fi-size{font-size:11px;color:var(--soft)}
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.field-full{grid-column:1/-1}
+.field label{display:block;font-size:11px;font-weight:800;color:var(--soft);margin-bottom:5px;letter-spacing:.06em;text-transform:uppercase}
+.field input,.field select{width:100%;border:1.5px solid var(--border);border-radius:9px;padding:9px 13px;font-size:14px;font-family:inherit;color:var(--dark);background:#fff;transition:border-color .2s}
+.field input:focus,.field select:focus{outline:none;border-color:var(--green)}
+.btn{padding:10px 20px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .15s}
+.btn-dark{background:var(--dark);color:#fff}
+.btn-ghost{background:var(--border);color:var(--mid)}
+.btn-ghost:hover{background:#ddd}
+.btn-generate{width:100%;padding:15px;font-size:16px;border-radius:13px;background:var(--dark);color:#fff;border:none;cursor:pointer;font-weight:800;font-family:inherit;letter-spacing:.02em;transition:all .2s}
+.btn-generate:hover:not(:disabled){background:#111;transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,0,0,.2)}
+.btn-generate:disabled{opacity:.4;cursor:not-allowed}
+.progress-wrap{display:none;margin:18px 0}
+.progress-wrap.show{display:block}
+.prog-bar{height:5px;background:var(--border);border-radius:3px;overflow:hidden;margin:12px 0}
+.prog-fill{height:100%;background:var(--green);border-radius:3px;width:0%;transition:width .5s ease}
+.prog-steps{display:flex;flex-direction:column;gap:7px}
+.pstep{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--soft);opacity:.35;transition:opacity .3s}
+.pstep.active{opacity:1;color:var(--dark);font-weight:600}
+.pstep.done{opacity:.55;color:var(--green-d)}
+.pdot{width:7px;height:7px;border-radius:50%;background:var(--border);flex-shrink:0;transition:background .3s}
+.pstep.active .pdot{background:var(--green);animation:pdot .9s ease-in-out infinite}
+.pstep.done .pdot{background:var(--green)}
+@keyframes pdot{0%,100%{transform:scale(1)}50%{transform:scale(1.5)}}
+.result-panel{display:none;background:var(--dark);border-radius:var(--r);padding:24px;margin-top:18px}
+.result-panel.show{display:block}
+.res-title{color:var(--green);font-size:15px;font-weight:800;margin-bottom:6px}
+.res-sub{color:rgba(255,255,255,.5);font-size:12px;margin-bottom:20px}
+.res-url{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:13px 16px;font-family:monospace;font-size:13px;color:#fff;word-break:break-all;margin-bottom:16px}
+.res-actions{display:flex;gap:10px;flex-wrap:wrap}
+.btn-copy{background:var(--green);color:var(--dark);padding:10px 18px;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;border:none;font-family:inherit}
+.btn-copy:hover{opacity:.85}
+.btn-preview{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;padding:10px 18px;border-radius:10px;font-weight:600;font-size:13px;cursor:pointer;font-family:inherit;text-decoration:none;display:inline-block}
+.btn-preview:hover{background:rgba(255,255,255,.18)}
+.error-box{background:#fff1f0;border:1px solid #ffccc7;border-radius:10px;padding:14px 16px;margin-top:12px;display:none;font-size:13px;color:#a8071a}
+.error-box.show{display:block}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;align-items:center;justify-content:center;padding:20px}
+.modal-bg.open{display:flex}
+.modal{background:#fff;border-radius:20px;padding:28px;width:min(480px,100%)}
+.modal h3{font-size:17px;font-weight:800;margin-bottom:6px}
+.modal-desc{font-size:13px;color:var(--soft);margin-bottom:22px;line-height:1.6}
+.modal .field{margin-bottom:14px}
+.modal-hint{font-size:11px;color:var(--soft);margin-top:5px}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:22px}
+.status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px}
+.dot-ok{background:#52c41a}.dot-no{background:#ff4d4f}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-badge">LE FUN</div>
+  <div class="hdr-right">
+    <span class="hdr-title">電子書產生器</span>
+    <button class="btn-settings" onclick="openSettings()">⚙ 設定 API Keys</button>
+  </div>
+</header>
+
+<div class="main">
+
+  <div class="s-card">
+    <div class="s-title"><div class="s-num">1</div>上傳行前說明 PDF</div>
+    <div class="upload-zone" id="uploadZone">
+      <input type="file" accept=".pdf" id="pdfInput" onchange="handleFile(this.files[0])">
+      <div class="up-icon">📄</div>
+      <div class="up-main">點擊或拖曳 PDF 到此處</div>
+      <div class="up-sub">支援行前說明書 PDF 格式</div>
+    </div>
+    <div class="file-info" id="fileInfo">
+      <div class="fi-icon">✅</div>
+      <div>
+        <div class="fi-name" id="fileName">—</div>
+        <div class="fi-size" id="fileSize">—</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="s-card">
+    <div class="s-title"><div class="s-num">2</div>填寫基本資訊</div>
+    <div class="field-grid">
+      <div class="field">
+        <label>電子書 ID（英數字）</label>
+        <input type="text" id="ebookId" placeholder="20260509-jeju" maxlength="40">
+      </div>
+      <div class="field">
+        <label>目的地</label>
+        <input type="text" id="destination" placeholder="濟州">
+      </div>
+      <div class="field">
+        <label>團名</label>
+        <input type="text" id="tourName" placeholder="八婆出巡">
+      </div>
+      <div class="field">
+        <label>出發日期</label>
+        <input type="date" id="departDate">
+      </div>
+      <div class="field">
+        <label>回程日期</label>
+        <input type="date" id="returnDate">
+      </div>
+      <div class="field">
+        <label>領隊姓名</label>
+        <input type="text" id="leaderName">
+      </div>
+      <div class="field">
+        <label>領隊手機</label>
+        <input type="text" id="leaderPhone">
+      </div>
+      <div class="field">
+        <label>GitHub 帳號</label>
+        <input type="text" id="githubUser" placeholder="lefuntravel">
+      </div>
+      <div class="field field-full">
+        <label>GitHub Repo 名稱</label>
+        <input type="text" id="githubRepo" value="lefun-ebook">
+      </div>
+    </div>
+  </div>
+
+  <div class="s-card">
+    <div class="s-title"><div class="s-num">3</div>AI 解析並發佈</div>
+    <div class="progress-wrap" id="progressWrap">
+      <div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
+      <div class="prog-steps">
+        <div class="pstep" id="ps1"><div class="pdot"></div>解析 PDF 文字內容</div>
+        <div class="pstep" id="ps2"><div class="pdot"></div>Claude AI 重組 13 個章節</div>
+        <div class="pstep" id="ps3"><div class="pdot"></div>推送資料到 GitHub Pages</div>
+        <div class="pstep" id="ps4"><div class="pdot"></div>產生分享連結</div>
+      </div>
+    </div>
+    <div class="error-box" id="errorBox"></div>
+    <div class="result-panel" id="resultPanel">
+      <div class="res-title">🎉 電子書發佈成功！</div>
+      <div class="res-sub">複製連結分享給遊客</div>
+      <div class="res-url" id="resultUrl">—</div>
+      <div class="res-actions">
+        <button class="btn-copy" onclick="copyLink()">複製連結</button>
+        <a class="btn-preview" id="previewLink" target="_blank">在新分頁預覽 →</a>
+      </div>
+    </div>
+    <button class="btn-generate" id="genBtn" onclick="generate()" disabled>✦ 一鍵產生電子書</button>
+  </div>
+
+</div>
+
+<div class="modal-bg" id="settingsModal">
+  <div class="modal">
+    <h3>⚙ API Keys 設定</h3>
+    <p class="modal-desc">Keys 存於瀏覽器 localStorage，不會上傳至任何伺服器。一次設定，之後免輸入。</p>
+    <div class="field">
+      <label>Anthropic API Key <span class="status-dot" id="dotAnthropic"></span></label>
+      <input type="password" id="inputAnthropic" placeholder="sk-ant-...">
+      <div class="modal-hint">取得：console.anthropic.com → API Keys</div>
+    </div>
+    <div class="field">
+      <label>GitHub Personal Access Token <span class="status-dot" id="dotGithub"></span></label>
+      <input type="password" id="inputGithub" placeholder="ghp_...">
+      <div class="modal-hint">需要 repo 讀寫權限：github.com/settings/tokens</div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeSettings()">取消</button>
+      <button class="btn btn-dark" onclick="saveSettings()">儲存</button>
+    </div>
+  </div>
+</div>
+
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+let pdfFile = null;
+
+const zone = document.getElementById('uploadZone');
+zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag'); });
+zone.addEventListener('dragleave', () => zone.classList.remove('drag'));
+zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('drag'); handleFile(e.dataTransfer.files[0]); });
+
+function handleFile(file) {
+  if (!file || file.type !== 'application/pdf') return;
+  pdfFile = file;
+  document.getElementById('fileName').textContent = file.name;
+  document.getElementById('fileSize').textContent = (file.size/1024).toFixed(1) + ' KB';
+  document.getElementById('fileInfo').classList.add('show');
+  const d = new Date();
+  const ds = d.getFullYear() + String(d.getMonth()+1).padStart(2,'0') + String(d.getDate()).padStart(2,'0');
+  if (!document.getElementById('ebookId').value) document.getElementById('ebookId').value = ds;
+  checkReady();
+}
+
+function checkReady() {
+  const ok = pdfFile && document.getElementById('ebookId').value && document.getElementById('tourName').value;
+  document.getElementById('genBtn').disabled = !ok;
+}
+['ebookId','tourName','destination','leaderName','leaderPhone','githubUser','githubRepo'].forEach(id => {
+  document.getElementById(id).addEventListener('input', checkReady);
+});
+
+async function extractPdfText(file) {
+  const buf = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+  let text = '';
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const page = await pdf.getPage(i);
+    const content = await page.getTextContent();
+    text += content.items.map(it => it.str).join(' ') + '\n';
+  }
+  return text;
+}
+
+function setStep(n) {
+  for (let i = 1; i <= 4; i++) {
+    const el = document.getElementById('ps'+i);
+    el.classList.remove('active','done');
+    if (i < n) el.classList.add('done');
+    if (i === n) el.classList.add('active');
+  }
+  document.getElementById('progFill').style.width = ((n-1)/4*100)+'%';
+}
+
+function showError(msg) {
+  const el = document.getElementById('errorBox');
+  el.textContent = '⚠️ ' + msg;
+  el.classList.add('show');
+}
+
+async function generate() {
+  const anthropicKey = localStorage.getItem('lf_anthropic_key');
+  const githubToken  = localStorage.getItem('lf_github_token');
+  if (!anthropicKey) { openSettings(); return; }
+
+  const ebookId    = document.getElementById('ebookId').value.trim();
+  const githubUser = document.getElementById('githubUser').value.trim();
+  const githubRepo = document.getElementById('githubRepo').value.trim();
+  const tourName   = document.getElementById('tourName').value.trim();
+  const destination= document.getElementById('destination').value.trim();
+  const departDate = document.getElementById('departDate').value;
+  const returnDate = document.getElementById('returnDate').value;
+  const leaderName = document.getElementById('leaderName').value.trim();
+  const leaderPhone= document.getElementById('leaderPhone').value.trim();
+
+  document.getElementById('genBtn').disabled = true;
+  document.getElementById('errorBox').classList.remove('show');
+  document.getElementById('resultPanel').classList.remove('show');
+  document.getElementById('progressWrap').classList.add('show');
+
+  try {
+    setStep(1);
+    const pdfText = await extractPdfText(pdfFile);
+    if (!pdfText || pdfText.length < 100) throw new Error('PDF 文字擷取失敗，請確認 PDF 非掃描圖檔。');
+
+    setStep(2);
+    const systemPrompt = `你是樂放旅遊的旅遊達人助手。請將行前說明文件以輕鬆友善口語化的繁體中文整理成 JSON。只回傳 JSON，不要任何說明文字或 markdown。
+
+格式：
+{
+  "meta": {
+    "tourName":"","destination":"","departDate":"","returnDate":"",
+    "leaderName":"","leaderPhone":"","hotel":"","hotelPhone":"",
+    "flightOut":"","flightReturn":"","assemblyTime":"","assemblyPlace":""
+  },
+  "days": [
+    {"day":1,"date":"","title":"","spots":[{"name":"","desc":""}],
+     "breakfast":"","lunch":"","dinner":"","hotel":""}
+  ],
+  "tips": {"weather":"","currency":"","voltage":"","timezone":"","drinking":"","toiletries":""},
+  "immigration": {"visa":"","qcode":"","steps":[]},
+  "taxRefund": {"threshold":"","steps":[]},
+  "checklist": {"beforeDepart":[],"carry":[],"forbidden":""},
+  "departure": {"assemblyTime":"","rules":[]},
+  "emergency": {"international":"","overseas":"","insurance":"","contacts":[{"label":"","value":""}]}
+}`;
+
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': anthropicKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 4000,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: '請解析以下行前說明文件：\n\n' + pdfText.slice(0, 12000) }]
+      })
+    });
+
+    if (!resp.ok) { const e = await resp.json(); throw new Error('Claude API 錯誤：' + (e.error?.message || resp.status)); }
+    const data = await resp.json();
+    const raw = data.content[0].text.trim();
+    const js = raw.slice(raw.indexOf('{'), raw.lastIndexOf('}')+1);
+    const ebookData = JSON.parse(js);
+
+    if (tourName)    ebookData.meta.tourName    = tourName;
+    if (destination) ebookData.meta.destination = destination;
+    if (departDate)  ebookData.meta.departDate  = departDate;
+    if (returnDate)  ebookData.meta.returnDate  = returnDate;
+    if (leaderName)  ebookData.meta.leaderName  = leaderName;
+    if (leaderPhone) ebookData.meta.leaderPhone = leaderPhone;
+    ebookData.id = ebookId;
+    ebookData.generatedAt = new Date().toISOString();
+
+    setStep(3);
+
+    if (!githubToken || !githubUser || !githubRepo) {
+      const blob = new Blob([JSON.stringify(ebookData,null,2)], {type:'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href=url; a.download=ebookId+'.json'; a.click();
+      URL.revokeObjectURL(url);
+      const eb = document.getElementById('errorBox');
+      eb.style.background='#fffbe6'; eb.style.borderColor='#ffe58f'; eb.style.color='#614700';
+      eb.textContent = '⚠️ 未設定 GitHub Token，JSON 已下載。請手動上傳到 repo 的 data/ 資料夾，再用 viewer.html?id=' + ebookId + ' 開啟。';
+      eb.classList.add('show');
+      document.getElementById('genBtn').disabled = false;
+      return;
+    }
+
+    const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(ebookData,null,2))));
+    const apiUrl = `https://api.github.com/repos/${githubUser}/${githubRepo}/contents/data/${ebookId}.json`;
+    let sha = '';
+    try {
+      const chk = await fetch(apiUrl, {headers:{'Authorization':'token '+githubToken}});
+      if (chk.ok) sha = (await chk.json()).sha;
+    } catch(e) {}
+
+    const body = {message:`ebook: add ${ebookId}`, content:encoded, branch:'main'};
+    if (sha) body.sha = sha;
+    const push = await fetch(apiUrl, {method:'PUT', headers:{'Authorization':'token '+githubToken,'Content-Type':'application/json'}, body:JSON.stringify(body)});
+    if (!push.ok) { const pe = await push.json(); throw new Error('GitHub 推送失敗：' + (pe.message || push.status)); }
+
+    setStep(4);
+    await new Promise(r => setTimeout(r, 700));
+    document.getElementById('progFill').style.width = '100%';
+    const shareUrl = `https://${githubUser}.github.io/${githubRepo}/viewer.html?id=${ebookId}`;
+    document.getElementById('resultUrl').textContent = shareUrl;
+    document.getElementById('previewLink').href = shareUrl;
+    document.getElementById('resultPanel').classList.add('show');
+
+  } catch(e) {
+    showError(e.message);
+    document.getElementById('genBtn').disabled = false;
+  }
+}
+
+async function copyLink() {
+  await navigator.clipboard.writeText(document.getElementById('resultUrl').textContent);
+  const btn = document.querySelector('.btn-copy');
+  btn.textContent = '✓ 已複製！';
+  setTimeout(()=>btn.textContent='複製連結', 2000);
+}
+
+function openSettings() {
+  document.getElementById('inputAnthropic').value = localStorage.getItem('lf_anthropic_key') || '';
+  document.getElementById('inputGithub').value = localStorage.getItem('lf_github_token') || '';
+  updateDots();
+  document.getElementById('settingsModal').classList.add('open');
+}
+function closeSettings() { document.getElementById('settingsModal').classList.remove('open'); }
+function saveSettings() {
+  const ak = document.getElementById('inputAnthropic').value.trim();
+  const gk = document.getElementById('inputGithub').value.trim();
+  if (ak) localStorage.setItem('lf_anthropic_key', ak);
+  if (gk) localStorage.setItem('lf_github_token', gk);
+  updateDots(); closeSettings();
+}
+function updateDots() {
+  const ak = localStorage.getItem('lf_anthropic_key');
+  const gk = localStorage.getItem('lf_github_token');
+  document.getElementById('dotAnthropic').className = 'status-dot ' + (ak ? 'dot-ok' : 'dot-no');
+  document.getElementById('dotGithub').className = 'status-dot ' + (gk ? 'dot-ok' : 'dot-no');
+}
+updateDots();
+document.getElementById('departDate').value = new Date().toISOString().slice(0,10);
+</script>
+</body>
+</html>

@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>樂放旅遊 ✦ 行前電子書系統</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --g:#81F8B9;--gd:#1a5c3a;--gp:#eafaf3;
+  --pk:#ECD1D5;--tm:#EE6543;--bl:#99EBF7;--yw:#E3FF85;
+  --dk:#1a1a1a;--md:#555;--sf:#888;
+  --bg:#f5f6f4;--card:#fff;--bd:#e8e8e8;
+  --r:18px;--sh:0 4px 24px rgba(0,0,0,.07)
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--dk);line-height:1.6;font-size:15px}
+
+/* NAV */
+nav{
+  position:sticky;top:0;z-index:100;
+  background:rgba(26,26,26,.92);backdrop-filter:blur(14px);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 32px;height:60px
+}
+.nav-logo{display:flex;align-items:center;gap:10px}
+.nav-badge{background:var(--g);color:var(--dk);font-weight:900;font-size:11px;padding:4px 12px;border-radius:20px;letter-spacing:.1em}
+.nav-title{color:rgba(255,255,255,.45);font-size:12px}
+.nav-btn{
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);
+  color:rgba(255,255,255,.8);padding:7px 18px;border-radius:20px;
+  cursor:pointer;font-size:12px;font-family:inherit;font-weight:700;
+  text-decoration:none;transition:all .2s
+}
+.nav-btn:hover{background:rgba(255,255,255,.16);color:#fff}
+.nav-btn.primary{background:var(--g);color:var(--dk);border-color:var(--g)}
+.nav-btn.primary:hover{background:#6df0a8}
+
+/* HERO */
+.hero{
+  min-height:90vh;background:var(--dk);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:80px 24px 60px;position:relative;overflow:hidden
+}
+.hero::before{
+  content:"";position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 55% 45% at 15% 85%,rgba(129,248,185,.18) 0%,transparent 60%),
+    radial-gradient(ellipse 45% 35% at 85% 15%,rgba(236,209,213,.15) 0%,transparent 55%),
+    radial-gradient(ellipse 40% 30% at 50% 50%,rgba(153,235,247,.08) 0%,transparent 50%)
+}
+.hero-tag{
+  background:rgba(129,248,185,.15);border:1px solid rgba(129,248,185,.3);
+  color:var(--g);font-size:11px;font-weight:700;letter-spacing:.14em;
+  padding:5px 16px;border-radius:20px;margin-bottom:24px;
+  position:relative;z-index:1;display:inline-block
+}
+.hero h1{
+  font-size:clamp(36px,8vw,72px);font-weight:900;color:#fff;
+  line-height:1.1;margin-bottom:12px;position:relative;z-index:1;letter-spacing:-.02em
+}
+.hero h1 em{color:var(--g);font-style:normal}
+.hero-sub{
+  font-size:16px;color:rgba(255,255,255,.5);
+  margin-bottom:44px;position:relative;z-index:1;max-width:480px;line-height:1.8
+}
+.hero-cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;position:relative;z-index:1}
+.cta-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:14px 28px;border-radius:14px;font-size:15px;font-weight:700;
+  cursor:pointer;text-decoration:none;border:none;font-family:inherit;transition:all .2s
+}
+.cta-primary{background:var(--g);color:var(--dk)}
+.cta-primary:hover{background:#6df0a8;transform:translateY(-2px);box-shadow:0 8px 28px rgba(129,248,185,.35)}
+.cta-ghost{background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.2);color:#fff}
+.cta-ghost:hover{background:rgba(255,255,255,.15);transform:translateY(-2px)}
+.hero-stats{
+  display:flex;gap:40px;justify-content:center;flex-wrap:wrap;
+  margin-top:56px;padding-top:40px;border-top:1px solid rgba(255,255,255,.08);
+  position:relative;z-index:1;width:100%;max-width:600px
+}
+.stat-item{text-align:center}
+.stat-num{font-size:28px;font-weight:900;color:var(--g);line-height:1}
+.stat-label{font-size:11px;color:rgba(255,255,255,.35);margin-top:4px;letter-spacing:.06em}
+
+/* SECTION */
+.section{padding:72px 24px;max-width:1040px;margin:0 auto}
+.sec-label{text-align:center;margin-bottom:48px}
+.sec-tag{
+  display:inline-block;background:var(--gp);color:var(--gd);
+  font-size:11px;font-weight:800;letter-spacing:.1em;
+  padding:4px 14px;border-radius:20px;margin-bottom:14px
+}
+.sec-label h2{font-size:30px;font-weight:900;margin-bottom:8px;letter-spacing:-.02em}
+.sec-label p{font-size:14px;color:var(--sf);max-width:400px;margin:0 auto;line-height:1.8}
+
+/* FLOW CARDS */
+.flow-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px}
+.flow-card{
+  background:var(--card);border:1px solid var(--bd);
+  border-radius:var(--r);padding:28px;box-shadow:var(--sh);
+  position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s
+}
+.flow-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.12)}
+.flow-card::before{
+  content:"";position:absolute;top:0;left:0;right:0;height:4px
+}
+.flow-card:nth-child(1)::before{background:var(--g)}
+.flow-card:nth-child(2)::before{background:var(--bl)}
+.flow-card:nth-child(3)::before{background:var(--pk)}
+.flow-card:nth-child(4)::before{background:var(--yw)}
+.flow-num{
+  width:36px;height:36px;border-radius:50%;
+  background:var(--dk);color:var(--g);
+  font-weight:900;font-size:14px;
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:16px;flex-shrink:0
+}
+.flow-icon{font-size:28px;margin-bottom:12px}
+.flow-card h3{font-size:16px;font-weight:800;margin-bottom:8px}
+.flow-card p{font-size:13px;color:var(--sf);line-height:1.7}
+
+/* FEATURE CARDS */
+.feature-split{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+@media(max-width:680px){.feature-split{grid-template-columns:1fr}}
+.feat-card{
+  background:var(--dk);border-radius:var(--r);padding:36px;
+  position:relative;overflow:hidden
+}
+.feat-card.light{background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh)}
+.feat-card .fc-tag{
+  display:inline-block;font-size:10px;font-weight:800;letter-spacing:.12em;
+  padding:3px 10px;border-radius:20px;margin-bottom:18px
+}
+.feat-card.dark .fc-tag{background:rgba(129,248,185,.15);color:var(--g)}
+.feat-card.light .fc-tag{background:var(--gp);color:var(--gd)}
+.feat-card h3{font-size:22px;font-weight:900;margin-bottom:10px;letter-spacing:-.01em}
+.feat-card.dark h3{color:#fff}
+.feat-card p{font-size:13px;line-height:1.8;margin-bottom:20px}
+.feat-card.dark p{color:rgba(255,255,255,.5)}
+.feat-card.light p{color:var(--sf)}
+.feat-link{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:10px 20px;border-radius:11px;font-size:13px;font-weight:700;
+  text-decoration:none;font-family:inherit;cursor:pointer;border:none;transition:all .2s
+}
+.feat-card.dark .feat-link{background:var(--g);color:var(--dk)}
+.feat-card.dark .feat-link:hover{background:#6df0a8}
+.feat-card.light .feat-link{background:var(--dk);color:#fff}
+.feat-card.light .feat-link:hover{background:#333}
+.feat-deco{
+  position:absolute;bottom:-20px;right:-20px;
+  font-size:100px;opacity:.06;line-height:1;pointer-events:none
+}
+
+/* HOW IT WORKS */
+.how-grid{display:grid;grid-template-columns:1fr;gap:0}
+.how-row{
+  display:flex;gap:24px;padding:28px 0;
+  border-bottom:1px solid var(--bd);align-items:flex-start
+}
+.how-row:last-child{border-bottom:none}
+.how-num{
+  width:44px;height:44px;border-radius:14px;
+  background:var(--g);color:var(--dk);
+  font-weight:900;font-size:18px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0
+}
+.how-body h4{font-size:15px;font-weight:800;margin-bottom:5px}
+.how-body p{font-size:13px;color:var(--sf);line-height:1.7}
+.how-body .tag{
+  display:inline-block;background:var(--gp);color:var(--gd);
+  font-size:10px;font-weight:700;padding:2px 8px;border-radius:8px;margin-top:6px
+}
+.how-wrap{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);padding:24px 32px;box-shadow:var(--sh)}
+
+/* CHAPTERS */
+.chapters-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+.ch-card{
+  background:var(--card);border:1px solid var(--bd);
+  border-radius:14px;padding:18px;box-shadow:var(--sh);
+  display:flex;align-items:center;gap:12px;
+  transition:transform .15s,border-color .15s
+}
+.ch-card:hover{transform:translateY(-2px);border-color:var(--g)}
+.ch-icon{font-size:24px;flex-shrink:0}
+.ch-name{font-size:13px;font-weight:700}
+.ch-desc{font-size:11px;color:var(--sf);margin-top:2px}
+
+/* SETUP */
+.setup-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+@media(max-width:680px){.setup-grid{grid-template-columns:1fr}}
+.setup-card{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);padding:28px;box-shadow:var(--sh)}
+.setup-card h4{font-size:15px;font-weight:800;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.setup-step{display:flex;gap:10px;margin-bottom:12px;font-size:13px;color:var(--md);line-height:1.6}
+.setup-step-num{
+  width:22px;height:22px;border-radius:50%;
+  background:var(--dk);color:var(--g);
+  font-weight:800;font-size:10px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px
+}
+.code-block{
+  background:#f3f4f2;border-radius:8px;padding:10px 14px;
+  font-family:monospace;font-size:12px;color:var(--dk);
+  margin-top:10px;word-break:break-all
+}
+
+/* BRAND */
+.brand-section{background:var(--dk);padding:72px 24px}
+.brand-inner{max-width:1040px;margin:0 auto}
+.brand-section .sec-label{text-align:left;margin-bottom:36px}
+.brand-section .sec-label h2{color:#fff}
+.brand-section .sec-label p{color:rgba(255,255,255,.45);text-align:left}
+.brand-section .sec-tag{background:rgba(129,248,185,.12);color:var(--g)}
+.colors-grid{display:flex;gap:14px;flex-wrap:wrap}
+.color-swatch{border-radius:14px;padding:20px 18px;min-width:130px}
+.swatch-name{font-size:12px;font-weight:700;margin-bottom:4px}
+.swatch-hex{font-size:11px;opacity:.7;font-family:monospace}
+
+/* FOOTER */
+footer{
+  background:#111;color:rgba(255,255,255,.3);
+  text-align:center;padding:36px 24px;font-size:12px;line-height:2
+}
+footer .brand{color:var(--g);font-weight:800;font-size:14px;margin-bottom:6px}
+
+/* DIVIDER */
+.divider{height:1px;background:var(--bd);max-width:1040px;margin:0 auto}
+
+/* RESP */
+@media(max-width:768px){
+  nav{padding:0 18px}
+  .hero h1{font-size:clamp(30px,10vw,52px)}
+  .hero-stats{gap:24px}
+  .section{padding:52px 18px}
+  .feat-card{padding:24px}
+  .setup-card{padding:20px}
+  .how-wrap{padding:16px 20px}
+}
+
+/* FADE */
+.fade-up{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease}
+.fade-up.visible{opacity:1;transform:translateY(0)}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <div class="nav-badge">LE FUN</div>
+    <span class="nav-title">行前電子書系統</span>
+  </div>
+  <div style="display:flex;gap:10px">
+    <a class="nav-btn" href="tool.html">產生電子書</a>
+    <a class="nav-btn primary" href="#setup">快速設定</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-tag">樂放旅遊 Le Fun Travel</div>
+  <h1>行前說明<br><em>電子書系統</em></h1>
+  <p class="hero-sub">上傳 PDF，Claude AI 自動解析 · 一鍵推送 GitHub Pages · 遊客手機直開，無需安裝任何 App</p>
+  <div class="hero-cta">
+    <a class="cta-btn cta-primary" href="tool.html">✦ 開始產生電子書</a>
+    <a class="cta-btn cta-ghost" href="#how">了解流程 →</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat-item">
+      <div class="stat-num">1–2</div>
+      <div class="stat-label">分鐘完成製作</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">8</div>
+      <div class="stat-label">大章節自動整理</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">0</div>
+      <div class="stat-label">安裝需求</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">100%</div>
+      <div class="stat-label">手機相容</div>
+    </div>
+  </div>
+</section>
+
+<!-- FLOW -->
+<div class="section fade-up">
+  <div class="sec-label">
+    <div class="sec-tag">WORKFLOW</div>
+    <h2>四步驟完成電子書</h2>
+    <p>從上傳 PDF 到分享連結，全程在瀏覽器完成</p>
+  </div>
+  <div class="flow-grid">
+    <div class="flow-card">
+      <div class="flow-num">1</div>
+      <div class="flow-icon">📄</div>
+      <h3>上傳行前說明 PDF</h3>
+      <p>支援一般可選取文字的 PDF，拖曳或點擊上傳即可。</p>
+    </div>
+    <div class="flow-card">
+      <div class="flow-num">2</div>
+      <div class="flow-icon">✍️</div>
+      <h3>填寫基本資訊</h3>
+      <p>輸入團名、日期、目的地、領隊資訊，系統自動補入電子書。</p>
+    </div>
+    <div class="flow-card">
+      <div class="flow-num">3</div>
+      <div class="flow-icon">🤖</div>
+      <h3>Claude AI 自動解析</h3>
+      <p>AI 解讀 PDF 全文，整理成 8 大章節的結構化 JSON 資料。</p>
+    </div>
+    <div class="flow-card">
+      <div class="flow-num">4</div>
+      <div class="flow-icon">🔗</div>
+      <h3>一鍵發佈 &amp; 分享</h3>
+      <p>自動推送到 GitHub Pages，複製連結傳給遊客，即刻可覽。</p>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- FEATURE -->
+<div class="section fade-up">
+  <div class="feature-split">
+    <div class="feat-card dark">
+      <div class="fc-tag">EMPLOYEE TOOL</div>
+      <h3>電子書<br>產生器</h3>
+      <p>員工操作端。上傳 PDF、填寫資訊、一鍵發佈。API Keys 存在瀏覽器本地，安全便利。</p>
+      <a class="feat-link" href="tool.html">開啟產生器 →</a>
+      <div class="feat-deco">⚙️</div>
+    </div>
+    <div class="feat-card light">
+      <div class="fc-tag">TOURIST VIEWER</div>
+      <h3>遊客<br>閱覽端</h3>
+      <p>遊客收到連結後直接用手機瀏覽器開啟。自動渲染行程、景點、清單、緊急聯絡等全部資訊。</p>
+      <a class="feat-link" href="viewer.html?id=example">預覽閱覽頁 →</a>
+      <div class="feat-deco">📱</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- CHAPTERS -->
+<div class="section fade-up" id="chapters">
+  <div class="sec-label">
+    <div class="sec-tag">CONTENT</div>
+    <h2>8 大章節自動生成</h2>
+    <p>Claude AI 從 PDF 自動提取並重組所有旅遊資訊</p>
+  </div>
+  <div class="chapters-grid">
+    <div class="ch-card">
+      <div class="ch-icon">✈️</div>
+      <div><div class="ch-name">集合與航班</div><div class="ch-desc">時間、地點、航班資訊</div></div>
+    </div>
+    <div class="ch-card">
+      <div class="ch-icon">🗺️</div>
+      <div><div class="ch-name">行程總覽</div><div class="ch-desc">全程路線摘要</div></div>
+    </div>
+    <div class="ch-card">
+      <div class="ch-icon">📅</div>
+      <div><div class="ch-name">每日詳細行程</div><div class="ch-desc">景點、餐食、住宿</div></div>
+    </div>
+    <div class="ch-card">
+      <div class="ch-icon">💡</div>
+      <div><div class="ch-name">旅遊注意事項</div><div class="ch-desc">天氣、貨幣、電壓</div></div>
+    </div>
+    <div class="ch-card">
+      <div class="ch-icon">🛂</div>
+      <div><div class="ch-name">入境手續</div><div class="ch-desc">簽證、QR Code 說明</div></div>
+    </div>
+    <div class="ch-card">
+      <div class="ch-icon">🧾</div>
+      <div><div class="ch-name">退稅說明</div><div class="ch-desc">門檻與步驟</div></div>
+    </div>
+    <div class="ch-card">
+      <div class="ch-icon">🎒</div>
+      <div><div class="ch-name">行李清單</div><div class="ch-desc">必備、隨身、禁攜</div></div>
+    </div>
+    <div class="ch-card">
+      <div class="ch-icon">📞</div>
+      <div><div class="ch-name">緊急聯絡</div><div class="ch-desc">領隊、保險、救援</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- HOW IT WORKS -->
+<div class="section fade-up" id="how">
+  <div class="sec-label">
+    <div class="sec-tag">HOW IT WORKS</div>
+    <h2>完整使用流程</h2>
+    <p>首次部署約需 5 分鐘，之後每次出團只需 1–2 分鐘</p>
+  </div>
+  <div class="how-wrap">
+    <div class="how-grid">
+      <div class="how-row">
+        <div class="how-num">1</div>
+        <div class="how-body">
+          <h4>部署到 GitHub Pages（一次性）</h4>
+          <p>在 GitHub 建立 public repo，命名 <code>lefun-ebook</code>，上傳所有檔案後至 Settings → Pages 啟用。</p>
+          <span class="tag">僅需一次</span>
+        </div>
+      </div>
+      <div class="how-row">
+        <div class="how-num">2</div>
+        <div class="how-body">
+          <h4>設定 API Keys（首次使用）</h4>
+          <p>在 <code>tool.html</code> 右上角點「⚙ 設定 API Keys」，輸入 Anthropic API Key 及 GitHub Token。Keys 存於本機 localStorage，不上傳任何伺服器。</p>
+          <span class="tag">存入瀏覽器後免重設</span>
+        </div>
+      </div>
+      <div class="how-row">
+        <div class="how-num">3</div>
+        <div class="how-body">
+          <h4>上傳 PDF 填寫資訊</h4>
+          <p>每次出團：開啟 <code>tool.html</code>，上傳行前說明 PDF，填寫電子書 ID（如 <code>20260509-jeju</code>）、團名、日期、領隊等基本資訊。</p>
+        </div>
+      </div>
+      <div class="how-row">
+        <div class="how-num">4</div>
+        <div class="how-body">
+          <h4>一鍵產生 &amp; 分享</h4>
+          <p>按下「一鍵產生電子書」，AI 解析完畢後自動發佈，複製分享連結傳給遊客即可。連結格式：</p>
+          <div class="code-block">https://[帳號].github.io/lefun-ebook/viewer.html?id=[電子書ID]</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SETUP -->
+<div class="section fade-up" id="setup">
+  <div class="sec-label">
+    <div class="sec-tag">SETUP</div>
+    <h2>取得 API Keys</h2>
+    <p>只需兩個 Key，設定一次即可長期使用</p>
+  </div>
+  <div class="setup-grid">
+    <div class="setup-card">
+      <h4>🤖 Anthropic API Key</h4>
+      <div class="setup-step"><div class="setup-step-num">1</div><div>前往 <strong>console.anthropic.com</strong></div></div>
+      <div class="setup-step"><div class="setup-step-num">2</div><div>登入或建立帳號</div></div>
+      <div class="setup-step"><div class="setup-step-num">3</div><div>左側選單 → <strong>API Keys</strong> → Create Key</div></div>
+      <div class="setup-step"><div class="setup-step-num">4</div><div>複製 <code>sk-ant-...</code> 格式的金鑰</div></div>
+    </div>
+    <div class="setup-card">
+      <h4>🐙 GitHub Personal Access Token</h4>
+      <div class="setup-step"><div class="setup-step-num">1</div><div>前往 <strong>github.com/settings/tokens</strong></div></div>
+      <div class="setup-step"><div class="setup-step-num">2</div><div>Generate new token (classic)</div></div>
+      <div class="setup-step"><div class="setup-step-num">3</div><div>勾選 <strong>repo</strong> 完整權限</div></div>
+      <div class="setup-step"><div class="setup-step-num">4</div><div>複製 <code>ghp_...</code> 格式的 Token（只顯示一次）</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- BRAND -->
+<div class="brand-section fade-up">
+  <div class="brand-inner">
+    <div class="sec-label">
+      <div class="sec-tag">BRAND</div>
+      <h2>品牌色票</h2>
+      <p>樂放旅遊官方視覺規範</p>
+    </div>
+    <div class="colors-grid">
+      <div class="color-swatch" style="background:#81F8B9">
+        <div class="swatch-name" style="color:#1a5c3a">薄荷綠</div>
+        <div class="swatch-hex" style="color:#1a5c3a">#81F8B9</div>
+      </div>
+      <div class="color-swatch" style="background:#ECD1D5">
+        <div class="swatch-name" style="color:#6b3a42">玫瑰粉</div>
+        <div class="swatch-hex" style="color:#6b3a42">#ECD1D5</div>
+      </div>
+      <div class="color-swatch" style="background:#EE6543">
+        <div class="swatch-name" style="color:#fff">番茄橘</div>
+        <div class="swatch-hex" style="color:rgba(255,255,255,.7)">#EE6543</div>
+      </div>
+      <div class="color-swatch" style="background:#99EBF7">
+        <div class="swatch-name" style="color:#1a4a5c">淺藍</div>
+        <div class="swatch-hex" style="color:#1a4a5c">#99EBF7</div>
+      </div>
+      <div class="color-swatch" style="background:#E3FF85">
+        <div class="swatch-name" style="color:#4a5c1a">嫩黃</div>
+        <div class="swatch-hex" style="color:#4a5c1a">#E3FF85</div>
+      </div>
+      <div class="color-swatch" style="background:#1a1a1a">
+        <div class="swatch-name" style="color:#fff">深黑</div>
+        <div class="swatch-hex" style="color:rgba(255,255,255,.5)">#1a1a1a</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="brand">樂放旅遊 Le Fun Travel</div>
+  <div>行前說明電子書系統 · 技術棧：純 HTML/CSS/JS · PDF.js · Claude API · GitHub Pages</div>
+  <div style="margin-top:12px">
+    <a href="tool.html" style="color:var(--g);text-decoration:none;margin:0 10px">電子書產生器</a>
+    <a href="viewer.html" style="color:rgba(255,255,255,.4);text-decoration:none;margin:0 10px">遊客閱覽端</a>
+  </div>
+</footer>
+
+<script>
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.08 });
+document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>

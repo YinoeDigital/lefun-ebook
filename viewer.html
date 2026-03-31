@@ -120,7 +120,7 @@ function err(msg){document.getElementById('app').innerHTML='<div class="loading"
 function render(d){
   const m=d.meta||{};
   document.title=s(m.tourName,'行前說明')+'｜樂放旅遊';
-  const nav=`<nav class="nav"><div class="nav-logo"><img src="${LOGO}" alt="Le Fun"><div class="nav-brand">樂放旅遊 Le Fun</div></div><button class="nav-toc" onclick="od()">目錄</button></nav>
+  const nav=`<nav class="nav"><div class="nav-logo"><img src="logo.png" alt="樂放旅遊" style="height:28px;object-fit:contain;"></div><button class="nav-toc" onclick="od()">目錄</button></nav>
 <div class="drawer-bg" id="db" onclick="cd()"><div class="drawer" onclick="event.stopPropagation()"><button class="drawer-close" onclick="cd()">✕</button><h3>行前說明目錄</h3><a href="#as" onclick="cd()">✈ 集合與航班</a><a href="#it" onclick="cd()">🗺 行程總覽</a><a href="#dy" onclick="cd()">📅 每日行程</a><a href="#tp" onclick="cd()">💡 旅遊注意事項</a><a href="#im" onclick="cd()">🛂 入境手續</a><a href="#tx" onclick="cd()">🧾 退稅說明</a><a href="#ck" onclick="cd()">🎒 行李清單</a><a href="#dp" onclick="cd()">🚢 出境集合</a><a href="#em" onclick="cd()">📞 緊急聯絡</a></div></div>`;
 
   const hero=`<section class="hero"><div class="hero-logo"><img src="${LOGO}" alt="Le Fun"></div><div class="hero-tag">樂放旅遊 × 行前說明</div><h1>${s(m.tourName,'行前說明')}<br><em>${s(m.destination)}</em></h1><p class="hero-sub">${s(m.departDate)} — ${s(m.returnDate)}</p><div class="hero-pills">${m.flightOut?'<div class="pill">✈ '+m.flightOut+'</div>':''}${m.hotel?'<div class="pill">🏨 '+m.hotel+'</div>':''}${m.leaderName?'<div class="pill"><strong>領隊：</strong>'+m.leaderName+'</div>':''}</div><p class="scroll-hint">↓ 向下滑動閱覽</p></section>`;

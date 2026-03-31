@@ -581,10 +581,27 @@ async function generate() {
     const push = await fetch(apiUrl, {method:'PUT', headers:{'Authorization':'token '+githubToken,'Content-Type':'application/json'}, body:JSON.stringify(body)});
     if (!push.ok) { const pe = await push.json(); throw new Error('GitHub 推送失敗：' + (pe.message || push.status)); }
 
+    // 推送 share HTML（含 OG 標籤，LINE / iMessage 預覽用）
+    const tourName = document.getElementById('tourName').value.trim();
+    const destination = document.getElementById('destination').value.trim();
+    const departDate = document.getElementById('departDate').value;
+    const baseUrl = `https://${githubUser}.github.io/${githubRepo}`;
+    const viewerUrl = `${baseUrl}/viewer.html?id=${ebookId}`;
+    const ogTitle = `${tourName || ebookId} ✈ 行前說明`;
+    const ogDesc = `${destination ? destination + '・' : ''}${departDate || ''}｜樂放旅遊 Le Fun Travel`;
+    const shareHtml = `<!DOCTYPE html><html lang="zh-TW"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${ogTitle}</title><meta property="og:title" content="${ogTitle}"><meta property="og:description" content="${ogDesc}"><meta property="og:image" content="${baseUrl}/logo.png"><meta property="og:url" content="${baseUrl}/share/${ebookId}.html"><meta property="og:type" content="website"><meta property="og:locale" content="zh_TW"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="${ogTitle}"><meta name="twitter:description" content="${ogDesc}"><meta http-equiv="refresh" content="0;url=${viewerUrl}"><script>location.replace('${viewerUrl}');<\/script></head><body></body></html>`;
+    const shareEncoded = btoa(unescape(encodeURIComponent(shareHtml)));
+    const shareApiUrl = `https://api.github.com/repos/${githubUser}/${githubRepo}/contents/share/${ebookId}.html`;
+    let shareSha = '';
+    try { const sc = await fetch(shareApiUrl, {headers:{'Authorization':'token '+githubToken}}); if(sc.ok) shareSha=(await sc.json()).sha; } catch(e){}
+    const shareBody = {message:`share: add ${ebookId}`, content:shareEncoded, branch:'main'};
+    if (shareSha) shareBody.sha = shareSha;
+    await fetch(shareApiUrl, {method:'PUT', headers:{'Authorization':'token '+githubToken,'Content-Type':'application/json'}, body:JSON.stringify(shareBody)});
+
     setStep(4);
     await new Promise(r => setTimeout(r, 700));
     document.getElementById('progFill').style.width = '100%';
-    const shareUrl = `https://${githubUser}.github.io/${githubRepo}/viewer.html?id=${ebookId}`;
+    const shareUrl = `${baseUrl}/share/${ebookId}.html`;
     document.getElementById('resultUrl').textContent = shareUrl;
     document.getElementById('previewLink').href = shareUrl;
     document.getElementById('resultPanel').classList.add('show');

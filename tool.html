@@ -619,9 +619,6 @@ async function generate() {
     if (!push.ok) { const pe = await push.json(); throw new Error('GitHub 推送失敗：' + (pe.message || push.status)); }
 
     // 推送 share HTML（含 OG 標籤，LINE / iMessage 預覽用）
-    const tourName = document.getElementById('tourName').value.trim();
-    const destination = document.getElementById('destination').value.trim();
-    const departDate = document.getElementById('departDate').value;
     const baseUrl = `https://${githubUser}.github.io/${githubRepo}`;
     const viewerUrl = `${baseUrl}/viewer.html?id=${ebookId}`;
     const ogTitle = `${tourName || ebookId} ✈ 行前說明`;

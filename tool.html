@@ -6,12 +6,13 @@
 <title>樂放旅遊 ✦ 電子書產生器</title>
 <link rel="icon" type="image/png" href="favicon.png">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <style>
 :root{
   --aqua:#81F8B9;--tomato:#EE6543;--rose:#ECD1D5;
   --glass:rgba(255,255,255,0.62);--glass-b:rgba(129,248,185,0.22);
   --glass-dk:rgba(10,20,15,0.85);
-  --text:#2d2d2d;--soft:#888;--r:16px
+  --text:rgba(255,255,255,0.92);--soft:rgba(255,255,255,0.5);--r:16px
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Noto Sans TC','Helvetica Neue',sans-serif;background:transparent;color:var(--text);font-size:1rem;line-height:1.85}
@@ -21,8 +22,10 @@ body{font-family:'Noto Sans TC','Helvetica Neue',sans-serif;background:transpare
 }
 .parallax-bg::after{content:"";position:absolute;inset:0;background:rgba(0,0,0,0.1)}
 header{
-  background:rgba(10,22,16,0.55);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-  border-bottom:1px solid var(--glass-b);
+  background:rgba(8,18,14,0.45);
+  backdrop-filter:blur(52px) saturate(200%);-webkit-backdrop-filter:blur(52px) saturate(200%);
+  border-bottom:1px solid rgba(255,255,255,0.12);
+  box-shadow:inset 0 -0.5px 0 rgba(0,0,0,0.2),0 1px 0 rgba(255,255,255,0.05);
   padding:0 28px;display:flex;align-items:center;justify-content:space-between;
   height:60px;position:sticky;top:0;z-index:100
 }
@@ -36,8 +39,12 @@ header{
 .btn-settings:hover{background:rgba(255,255,255,.14);color:#fff}
 .main{max-width:680px;margin:0 auto;padding:32px 20px 80px;position:relative;z-index:1}
 .s-card{
-  background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-  border:1px solid var(--glass-b);border-radius:var(--r);
+  background:rgba(255,255,255,0.10);
+  backdrop-filter:blur(52px) saturate(200%) brightness(1.10);
+  -webkit-backdrop-filter:blur(52px) saturate(200%) brightness(1.10);
+  border:1px solid rgba(255,255,255,0.22);
+  box-shadow:inset 0 1.5px 0 rgba(255,255,255,0.40),inset 0 -0.5px 0 rgba(0,0,0,0.12),0 8px 40px rgba(0,0,0,0.22),0 1px 3px rgba(0,0,0,0.15);
+  border-radius:var(--r);
   padding:24px;margin-bottom:16px
 }
 .s-title{
@@ -51,7 +58,10 @@ header{
   display:flex;align-items:center;justify-content:center;flex-shrink:0
 }
 .upload-zone{
-  border:1.5px dashed var(--glass-b);border-radius:13px;
+  background:rgba(255,255,255,0.06);
+  backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);
+  border:1.5px dashed rgba(129,248,185,0.3);border-radius:13px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.15);
   padding:36px 20px;text-align:center;cursor:pointer;transition:all .25s;position:relative
 }
 .upload-zone:hover,.upload-zone.drag{
@@ -59,22 +69,24 @@ header{
 }
 .upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
 .up-icon{font-size:28px;margin-bottom:10px;opacity:.6}
-.up-main{font-size:.9375rem;font-weight:500;margin-bottom:4px;color:var(--text)}
-.up-sub{font-size:.75rem;color:var(--soft)}
+.up-icon i[data-lucide]{width:44px;height:44px;display:block;margin:0 auto}
+.up-main{font-size:.9375rem;font-weight:500;margin-bottom:4px;color:rgba(255,255,255,0.85)}
+.up-sub{font-size:.75rem;color:rgba(255,255,255,0.45)}
 .file-info{display:none;align-items:center;gap:10px;background:rgba(129,248,185,.1);border:1px solid var(--glass-b);border-radius:10px;padding:12px 16px;margin-top:12px}
 .file-info.show{display:flex}
 .fi-icon{font-size:20px;color:var(--aqua)}
-.fi-name{font-weight:500;font-size:.8125rem;color:var(--text)}
-.fi-size{font-size:.6875rem;color:var(--soft)}
+.fi-name{font-weight:500;font-size:.8125rem;color:rgba(255,255,255,0.85)}
+.fi-size{font-size:.6875rem;color:rgba(255,255,255,0.5)}
 .field-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
 .field-full{grid-column:1/-1}
-.field label{display:block;font-size:.6875rem;font-weight:400;color:var(--soft);margin-bottom:6px;letter-spacing:.08em;text-transform:uppercase}
+.field label{display:block;font-size:.6875rem;font-weight:400;color:rgba(255,255,255,0.6);margin-bottom:6px;letter-spacing:.08em;text-transform:uppercase}
 .field input,.field select{
-  width:100%;border:1px solid rgba(129,248,185,.2);border-radius:10px;
-  padding:10px 14px;font-size:.875rem;font-family:inherit;color:var(--text);
-  background:rgba(255,255,255,.7);backdrop-filter:blur(4px);transition:border-color .2s
+  width:100%;border:1px solid rgba(255,255,255,0.18);border-radius:10px;
+  padding:10px 14px;font-size:.875rem;font-family:inherit;color:rgba(255,255,255,0.92);
+  background:rgba(255,255,255,.08);backdrop-filter:blur(4px);transition:border-color .2s
 }
-.field input:focus,.field select:focus{outline:none;border-color:var(--aqua);background:rgba(255,255,255,.85)}
+.field input::placeholder{color:rgba(255,255,255,0.3)}
+.field input:focus,.field select:focus{outline:none;border-color:var(--aqua);background:rgba(255,255,255,.12)}
 .btn{padding:10px 20px;border-radius:10px;font-size:.875rem;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .15s}
 .btn-dark{background:rgba(10,20,15,.9);color:#fff;border:1px solid var(--glass-b)}
 .btn-ghost{background:rgba(255,255,255,.15);color:var(--soft);border:1px solid var(--glass-b)}
@@ -91,9 +103,9 @@ header{
 .prog-bar{height:3px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden;margin:14px 0}
 .prog-fill{height:100%;background:var(--aqua);border-radius:2px;width:0%;transition:width .5s ease}
 .prog-steps{display:flex;flex-direction:column;gap:8px}
-.pstep{display:flex;align-items:center;gap:10px;font-size:.8125rem;color:var(--soft);opacity:.3;transition:opacity .3s}
-.pstep.active{opacity:1;color:var(--text);font-weight:500}
-.pstep.done{opacity:.5;color:#1a5c3a}
+.pstep{display:flex;align-items:center;gap:10px;font-size:.8125rem;color:rgba(255,255,255,0.5);opacity:.3;transition:opacity .3s}
+.pstep.active{opacity:1;color:rgba(255,255,255,0.92);font-weight:500}
+.pstep.done{opacity:.5;color:var(--aqua)}
 .pdot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.2);flex-shrink:0;transition:background .3s}
 .pstep.active .pdot{background:var(--aqua);animation:pdot .9s ease-in-out infinite}
 .pstep.done .pdot{background:var(--aqua)}
@@ -120,8 +132,12 @@ header{
 .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
 .modal-bg.open{display:flex}
 .modal{
-  background:rgba(255,255,255,.96);backdrop-filter:blur(20px);
-  border:1px solid var(--glass-b);border-radius:20px;padding:28px;width:min(480px,100%)
+  background:rgba(255,255,255,0.92);
+  backdrop-filter:blur(52px) saturate(200%) brightness(1.08);
+  -webkit-backdrop-filter:blur(52px) saturate(200%) brightness(1.08);
+  border:1px solid rgba(255,255,255,0.55);
+  box-shadow:inset 0 1.5px 0 rgba(255,255,255,0.80),inset 0 -0.5px 0 rgba(0,0,0,0.06),0 20px 60px rgba(0,0,0,0.30),0 1px 3px rgba(0,0,0,0.12);
+  border-radius:20px;padding:28px;width:min(480px,100%)
 }
 .modal h3{font-size:1.0625rem;font-weight:500;margin-bottom:6px;color:var(--text)}
 .modal-desc{font-size:.8125rem;color:var(--soft);margin-bottom:22px;line-height:1.85}
@@ -130,6 +146,38 @@ header{
 .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:22px}
 .status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px}
 .dot-ok{background:#52c41a}.dot-no{background:#ff4d4f}
+.bg-preview{
+  width:100%;height:120px;object-fit:cover;border-radius:10px;
+  margin-top:12px;display:none;border:1px solid var(--glass-b)
+}
+.cover-preview-grid{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:8px;
+  margin-top:12px
+}
+.cover-thumb{
+  position:relative;border-radius:8px;overflow:hidden;
+  aspect-ratio:4/3;background:rgba(255,255,255,.08);
+  border:1px solid var(--glass-b)
+}
+.cover-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.cover-thumb-label{
+  position:absolute;bottom:0;left:0;right:0;
+  background:rgba(0,0,0,.55);color:#fff;font-size:9px;
+  text-align:center;padding:3px 0;letter-spacing:.06em
+}
+.cover-thumb-empty{
+  display:flex;align-items:center;justify-content:center;
+  color:rgba(255,255,255,.2);font-size:20px
+}
+/* Lucide upload icons */
+.up-icon i[data-lucide]{width:44px;height:44px;display:block;margin:0 auto}
+.up-icon svg{width:44px!important;height:44px!important;stroke:rgba(129,248,185,0.5);stroke-width:1.2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+/* Settings button icon */
+.btn-settings svg{width:13px;height:13px;stroke:currentColor;stroke-width:1.8;fill:none;vertical-align:middle;margin-right:5px}
+/* Modal header icon */
+.modal h3 svg{width:17px;height:17px;stroke:#2d2d2d;stroke-width:1.8;fill:none;vertical-align:middle;margin-right:6px}
+/* fi-icon */
+.fi-icon svg{width:20px;height:20px;stroke:var(--aqua);stroke-width:1.8;fill:none}
 </style>
 </head>
 <body>
@@ -139,7 +187,7 @@ header{
   <img src="logo.png" alt="樂放旅遊" style="height:30px;object-fit:contain;filter:brightness(0) invert(1)">
   <div class="hdr-right">
     <span class="hdr-title">電子書產生器</span>
-    <button class="btn-settings" onclick="openSettings()">⚙ 設定 API Keys</button>
+    <button class="btn-settings" onclick="openSettings()"><i data-lucide="settings-2" style="width:13px;height:13px;display:inline-block;vertical-align:middle;margin-right:5px"></i>設定 API Keys</button>
   </div>
 </header>
 
@@ -149,17 +197,46 @@ header{
     <div class="s-title"><div class="s-num">1</div>上傳行前說明 PDF</div>
     <div class="upload-zone" id="uploadZone">
       <input type="file" accept=".pdf" id="pdfInput" onchange="handleFile(this.files[0])">
-      <div class="up-icon">📄</div>
+      <div class="up-icon"><i data-lucide="file-text"></i></div>
       <div class="up-main">點擊或拖曳 PDF 到此處</div>
       <div class="up-sub">支援行前說明書 PDF 格式</div>
     </div>
     <div class="file-info" id="fileInfo">
-      <div class="fi-icon">✅</div>
+      <div class="fi-icon"><i data-lucide="circle-check" style="width:20px;height:20px;display:inline-block"></i></div>
       <div>
         <div class="fi-name" id="fileName">—</div>
         <div class="fi-size" id="fileSize">—</div>
       </div>
     </div>
+  </div>
+
+  <div class="s-card">
+    <div class="s-title"><div class="s-num">1.5</div>電子書背景圖片（選填）</div>
+    <div class="upload-zone" id="bgZone">
+      <input type="file" accept="image/*" id="bgInput" onchange="handleBg(this.files[0])">
+      <div class="up-icon"><i data-lucide="image"></i></div>
+      <div class="up-main">上傳目的地風景照作為背景</div>
+      <div class="up-sub">JPG / PNG · 建議 16:9 橫式寬景，最小 1920×1080px，系統自動壓縮</div>
+    </div>
+    <img class="bg-preview" id="bgPreview" alt="背景預覽">
+    <div class="file-info" id="bgInfo">
+      <div class="fi-icon" style="color:var(--aqua)"><i data-lucide="mountain" style="width:20px;height:20px;display:inline-block"></i></div>
+      <div>
+        <div class="fi-name" id="bgName">—</div>
+        <div class="fi-size" id="bgSize">—</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="s-card">
+    <div class="s-title"><div class="s-num">1.7</div>電子書封面照片（選填）</div>
+    <div class="upload-zone" id="coverZone">
+      <input type="file" accept="image/*" multiple id="coverInput" onchange="handleCoverPhotos(this.files)">
+      <div class="up-icon"><i data-lucide="images"></i></div>
+      <div class="up-main">上傳封面照片（最多 5 張）</div>
+      <div class="up-sub">建議 4:3 比例，最小 1200×800px，第一張為主封面大圖</div>
+    </div>
+    <div class="cover-preview-grid" id="coverGrid"></div>
   </div>
 
   <div class="s-card">
@@ -209,7 +286,7 @@ header{
     </div>
     <div class="error-box" id="errorBox"></div>
     <div class="result-panel" id="resultPanel">
-      <div class="res-title">🎉 電子書發佈成功！</div>
+      <div class="res-title">電子書發佈成功！</div>
       <div class="res-sub">複製連結分享給遊客</div>
       <div class="res-url" id="resultUrl">—</div>
       <div class="res-actions">
@@ -217,14 +294,14 @@ header{
         <a class="btn-preview" id="previewLink" target="_blank">在新分頁預覽 →</a>
       </div>
     </div>
-    <button class="btn-generate" id="genBtn" onclick="generate()" disabled>✦ 一鍵產生電子書</button>
+    <button class="btn-generate" id="genBtn" onclick="generate()" disabled>✦  一鍵產生電子書</button>
   </div>
 
 </div>
 
 <div class="modal-bg" id="settingsModal">
   <div class="modal">
-    <h3>⚙ API Keys 設定</h3>
+    <h3><i data-lucide="settings-2" style="width:17px;height:17px;display:inline-block;vertical-align:middle;margin-right:6px"></i>API Keys 設定</h3>
     <p class="modal-desc">Keys 存於瀏覽器 localStorage，不會上傳至任何伺服器。一次設定，之後免輸入。</p>
     <div class="field">
       <label>Anthropic API Key <span class="status-dot" id="dotAnthropic"></span></label>
@@ -248,6 +325,88 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs
 const GITHUB_USER = 'YinoeDigital';
 const GITHUB_REPO = 'lefun-ebook';
 let pdfFile = null;
+let bgFile = null, bgDataUrl = null;
+let coverFiles = [], coverDataUrls = [];
+
+// 背景圖片處理
+const bgZone = document.getElementById('bgZone');
+bgZone.addEventListener('dragover', e => { e.preventDefault(); bgZone.classList.add('drag'); });
+bgZone.addEventListener('dragleave', () => bgZone.classList.remove('drag'));
+bgZone.addEventListener('drop', e => { e.preventDefault(); bgZone.classList.remove('drag'); handleBg(e.dataTransfer.files[0]); });
+
+// 封面照片處理
+const coverZone = document.getElementById('coverZone');
+coverZone.addEventListener('dragover', e => { e.preventDefault(); coverZone.classList.add('drag'); });
+coverZone.addEventListener('dragleave', () => coverZone.classList.remove('drag'));
+coverZone.addEventListener('drop', e => { e.preventDefault(); coverZone.classList.remove('drag'); handleCoverPhotos(e.dataTransfer.files); });
+
+function handleCoverPhotos(files) {
+  if (!files || files.length === 0) return;
+  const imgs = Array.from(files).filter(f => f.type.startsWith('image/')).slice(0, 5);
+  coverFiles = imgs;
+  const labels = ['主封面', '2', '3', '4', '5'];
+  const grid = document.getElementById('coverGrid');
+  grid.innerHTML = '';
+  imgs.forEach((file, i) => {
+    const url = URL.createObjectURL(file);
+    const div = document.createElement('div');
+    div.className = 'cover-thumb';
+    div.innerHTML = '<img src="'+url+'" alt="封面'+labels[i]+'"><div class="cover-thumb-label">'+labels[i]+'</div>';
+    grid.appendChild(div);
+  });
+  // fill empty slots
+  for (let i = imgs.length; i < 5; i++) {
+    const div = document.createElement('div');
+    div.className = 'cover-thumb cover-thumb-empty';
+    div.textContent = '+';
+    grid.appendChild(div);
+  }
+}
+
+function resizeCover(file, maxW = 1600, quality = 0.82) {
+  return new Promise(resolve => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      const ratio = Math.min(maxW / img.width, 1);
+      const c = document.createElement('canvas');
+      c.width = Math.round(img.width * ratio);
+      c.height = Math.round(img.height * ratio);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url);
+      resolve(c.toDataURL('image/jpeg', quality));
+    };
+    img.src = url;
+  });
+}
+
+function handleBg(file) {
+  if (!file || !file.type.startsWith('image/')) return;
+  bgFile = file;
+  document.getElementById('bgName').textContent = file.name;
+  document.getElementById('bgSize').textContent = (file.size / 1024).toFixed(1) + ' KB';
+  document.getElementById('bgInfo').classList.add('show');
+  const prev = document.getElementById('bgPreview');
+  prev.src = URL.createObjectURL(file);
+  prev.style.display = 'block';
+}
+
+function resizeBg(file, maxW = 1920, quality = 0.78) {
+  return new Promise(resolve => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      const ratio = Math.min(maxW / img.width, 1);
+      const c = document.createElement('canvas');
+      c.width = Math.round(img.width * ratio);
+      c.height = Math.round(img.height * ratio);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url);
+      resolve(c.toDataURL('image/jpeg', quality));
+    };
+    img.src = url;
+  });
+}
 
 const zone = document.getElementById('uploadZone');
 zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag'); });
@@ -298,7 +457,7 @@ function setStep(n) {
 
 function showError(msg) {
   const el = document.getElementById('errorBox');
-  el.textContent = '⚠️ ' + msg;
+  el.textContent = msg;
   el.classList.add('show');
 }
 
@@ -380,6 +539,20 @@ async function generate() {
     ebookData.id = ebookId;
     ebookData.generatedAt = new Date().toISOString();
 
+    // 背景圖片：壓縮後存入 JSON
+    if (bgFile) {
+      const step2el = document.getElementById('ps2');
+      step2el.querySelector('.pdot') && (step2el.querySelector('.pdot').style.animation = '');
+      bgDataUrl = await resizeBg(bgFile);
+      ebookData.backgroundImage = bgDataUrl;
+    }
+
+    // 封面照片：壓縮後存入 JSON
+    if (coverFiles.length > 0) {
+      const resizedCovers = await Promise.all(coverFiles.map(f => resizeCover(f)));
+      ebookData.coverPhotos = resizedCovers;
+    }
+
     setStep(3);
 
     if (!githubToken || !githubUser || !githubRepo) {
@@ -389,7 +562,7 @@ async function generate() {
       URL.revokeObjectURL(url);
       const eb = document.getElementById('errorBox');
       eb.style.background='#fffbe6'; eb.style.borderColor='#ffe58f'; eb.style.color='#614700';
-      eb.textContent = '⚠️ 未設定 GitHub Token，JSON 已下載。請手動上傳到 repo 的 data/ 資料夾，再用 viewer.html?id=' + ebookId + ' 開啟。';
+      eb.textContent = '未設定 GitHub Token，JSON 已下載。請手動上傳到 repo 的 data/ 資料夾，再用 viewer.html?id=' + ebookId + ' 開啟。';
       eb.classList.add('show');
       document.getElementById('genBtn').disabled = false;
       return;
@@ -451,6 +624,8 @@ function updateDots() {
 }
 updateDots();
 document.getElementById('departDate').value = new Date().toISOString().slice(0,10);
+// Render Lucide icons on page load
+if (typeof lucide !== 'undefined') lucide.createIcons();
 // 首次使用：若 API Keys 尚未設定，自動彈出設定視窗
 if (!localStorage.getItem('lf_anthropic_key') || !localStorage.getItem('lf_github_token')) {
   openSettings();

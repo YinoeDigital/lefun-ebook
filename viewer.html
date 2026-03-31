@@ -5,13 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title id="pt">樂放旅遊 行前說明</title>
 <link rel="icon" type="image/png" href="favicon.png">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{
   --aqua:#81F8B9;--blue:#99EBF7;--tomato:#EE6543;--rose:#ECD1D5;
   --dk:rgba(20,32,26,0.85);--bg2:rgba(245,246,244,0.75);--bd:rgba(129,248,185,0.2);
   --glass:rgba(255,255,255,0.62);--glass-b:rgba(129,248,185,0.22);
-  --text:#2d2d2d;--soft:#777;--r:16px
+  --text:rgba(255,255,255,0.90);--soft:rgba(255,255,255,0.5);--r:16px
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:"Noto Sans TC",sans-serif;background:transparent;color:var(--text);line-height:1.85;font-size:1rem}
@@ -30,9 +31,10 @@ body{font-family:"Noto Sans TC",sans-serif;background:transparent;color:var(--te
 /* ── Nav ── */
 .nav{
   position:sticky;top:0;z-index:200;
-  background:rgba(10,24,20,0.55);
-  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-  border-bottom:1px solid var(--glass-b);
+  background:rgba(8,18,14,0.45);
+  backdrop-filter:blur(52px) saturate(200%);-webkit-backdrop-filter:blur(52px) saturate(200%);
+  border-bottom:1px solid rgba(255,255,255,0.12);
+  box-shadow:inset 0 -0.5px 0 rgba(0,0,0,0.2),0 1px 0 rgba(255,255,255,0.05);
   padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:56px
 }
 .nav-logo{display:flex;align-items:center;gap:10px}
@@ -43,6 +45,23 @@ body{font-family:"Noto Sans TC",sans-serif;background:transparent;color:var(--te
   padding:6px 16px;font-size:11px;font-weight:700;cursor:pointer;
   color:#1a1a1a;font-family:inherit;letter-spacing:.06em;text-transform:uppercase
 }
+.nav-font{
+  background:rgba(255,255,255,0.10);backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,0.18);
+  box-shadow:inset 0 1.5px 0 rgba(255,255,255,0.22);
+  border-radius:20px;padding:5px 13px;
+  font-size:11px;font-weight:500;cursor:pointer;
+  color:rgba(255,255,255,0.75);font-family:inherit;
+  display:inline-flex;align-items:center;gap:5px;
+  transition:all .2s
+}
+.nav-font:hover{background:rgba(255,255,255,0.16);color:#fff}
+.nav-font svg{width:22px;height:18px;flex-shrink:0;overflow:visible}
+/* Font size levels applied to main content */
+#app.fs-md{font-size:1.08rem}
+#app.fs-lg{font-size:1.18rem}
+#app.fs-xl{font-size:1.3rem}
+.nav-right{display:flex;align-items:center;gap:8px}
 .drawer-bg{display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.55)}
 .drawer-bg.open{display:block}
 .drawer{
@@ -92,7 +111,7 @@ body{font-family:"Noto Sans TC",sans-serif;background:transparent;color:var(--te
 
 /* ── Sections ── */
 .sec{padding:100px 24px;max-width:680px;margin:0 auto;position:relative;z-index:1}
-.sec-tinted{background:transparent}
+.sec-tinted{background:rgba(255,255,255,0.05)}
 .sec-label{display:flex;align-items:flex-start;gap:12px;margin-bottom:28px}
 .sec-icon{
   width:36px;height:36px;display:flex;align-items:center;justify-content:center;
@@ -102,25 +121,29 @@ body{font-family:"Noto Sans TC",sans-serif;background:transparent;color:var(--te
 .sec-label h2{font-size:1.4rem;font-weight:500;color:var(--tomato);margin-bottom:2px}
 .sec-label p{font-size:.75rem;color:rgba(255,255,255,.4);margin-top:3px;letter-spacing:.08em;text-transform:uppercase}
 
-/* ── Frosted Glass Cards ── */
+/* ── Frosted Glass Cards (Liquid Glass) ── */
 .card{
-  background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-  border:1px solid var(--glass-b);border-radius:var(--r);
+  background:rgba(255,255,255,0.16);
+  backdrop-filter:blur(52px) saturate(200%) brightness(1.10);
+  -webkit-backdrop-filter:blur(52px) saturate(200%) brightness(1.10);
+  border:1px solid rgba(255,255,255,0.22);
+  box-shadow:inset 0 1.5px 0 rgba(255,255,255,0.40),inset 0 -0.5px 0 rgba(0,0,0,0.12),0 8px 40px rgba(0,0,0,0.22),0 1px 3px rgba(0,0,0,0.15);
+  border-radius:var(--r);
   padding:20px;margin-bottom:14px
 }
-.card-g{border-left:3px solid var(--aqua)}
-.card-p{border-left:3px solid var(--rose)}
-.card-t{border-left:3px solid var(--tomato)}
-.card-b{border-left:3px solid var(--blue)}
-.card-y{border-left:3px solid #E3FF85}
+.card-g{border-left:3px solid var(--aqua);background:rgba(129,248,185,0.12);backdrop-filter:blur(52px) saturate(200%) brightness(1.08);-webkit-backdrop-filter:blur(52px) saturate(200%) brightness(1.08);box-shadow:inset 0 1.5px 0 rgba(255,255,255,0.35),inset 0 -0.5px 0 rgba(0,0,0,0.1),0 8px 40px rgba(0,0,0,0.2)}
+.card-p{border-left:3px solid var(--rose);background:rgba(236,209,213,0.12);backdrop-filter:blur(52px) saturate(200%) brightness(1.08);-webkit-backdrop-filter:blur(52px) saturate(200%) brightness(1.08);box-shadow:inset 0 1.5px 0 rgba(255,255,255,0.35),inset 0 -0.5px 0 rgba(0,0,0,0.1),0 8px 40px rgba(0,0,0,0.2)}
+.card-t{border-left:3px solid var(--tomato);background:rgba(238,101,67,0.10);backdrop-filter:blur(52px) saturate(200%) brightness(1.08);-webkit-backdrop-filter:blur(52px) saturate(200%) brightness(1.08);box-shadow:inset 0 1.5px 0 rgba(255,255,255,0.35),inset 0 -0.5px 0 rgba(0,0,0,0.1),0 8px 40px rgba(0,0,0,0.2)}
+.card-b{border-left:3px solid var(--blue);background:rgba(153,235,247,0.12);backdrop-filter:blur(52px) saturate(200%) brightness(1.08);-webkit-backdrop-filter:blur(52px) saturate(200%) brightness(1.08);box-shadow:inset 0 1.5px 0 rgba(255,255,255,0.35),inset 0 -0.5px 0 rgba(0,0,0,0.1),0 8px 40px rgba(0,0,0,0.2)}
+.card-y{border-left:3px solid #E3FF85;background:rgba(227,255,133,0.10);backdrop-filter:blur(52px) saturate(200%) brightness(1.08);-webkit-backdrop-filter:blur(52px) saturate(200%) brightness(1.08);box-shadow:inset 0 1.5px 0 rgba(255,255,255,0.35),inset 0 -0.5px 0 rgba(0,0,0,0.1),0 8px 40px rgba(0,0,0,0.2)}
 .info-row{display:flex;gap:10px;margin-bottom:10px;align-items:flex-start}
-.ir-label{font-size:.75rem;font-weight:400;letter-spacing:.08em;color:var(--soft);min-width:72px;padding-top:2px;text-transform:uppercase}
-.ir-val{font-size:.875rem;color:var(--text);flex:1}
-.ir-val strong{color:var(--tomato);font-weight:700}
+.ir-label{font-size:.75rem;font-weight:400;letter-spacing:.08em;color:rgba(255,255,255,0.5);min-width:72px;padding-top:2px;text-transform:uppercase}
+.ir-val{font-size:.875rem;color:rgba(255,255,255,0.90);flex:1}
+.ir-val strong{color:var(--aqua);font-weight:700}
 .flight-table{width:100%;border-collapse:collapse;font-size:.8125rem;margin-top:10px}
-.flight-table th{background:rgba(20,30,25,.8);color:#fff;padding:8px 10px;text-align:left;font-weight:400;letter-spacing:.04em;font-size:.75rem}
+.flight-table th{background:rgba(20,30,25,.8);color:rgba(255,255,255,0.9);padding:8px 10px;text-align:left;font-weight:400;letter-spacing:.04em;font-size:.75rem}
 .flight-table th:first-child{border-radius:8px 0 0 0}.flight-table th:last-child{border-radius:0 8px 0 0}
-.flight-table td{padding:10px;border-bottom:1px solid rgba(0,0,0,.06)}
+.flight-table td{padding:10px;border-bottom:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,0.80)}
 .flight-table tr:last-child td{border-bottom:none}
 .fbadge{background:var(--aqua);color:#1a1a1a;font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;letter-spacing:.04em}
 .fbadge-p{background:var(--rose)}
@@ -128,8 +151,12 @@ body{font-family:"Noto Sans TC",sans-serif;background:transparent;color:var(--te
 
 /* ── Day Cards ── */
 .day-card{
-  background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-  border:1px solid var(--glass-b);border-radius:var(--r);
+  background:rgba(255,255,255,0.14);
+  backdrop-filter:blur(52px) saturate(200%) brightness(1.10);
+  -webkit-backdrop-filter:blur(52px) saturate(200%) brightness(1.10);
+  border:1px solid rgba(255,255,255,0.22);
+  box-shadow:inset 0 1.5px 0 rgba(255,255,255,0.40),inset 0 -0.5px 0 rgba(0,0,0,0.12),0 8px 40px rgba(0,0,0,0.22),0 1px 3px rgba(0,0,0,0.15);
+  border-radius:var(--r);
   overflow:hidden;margin-bottom:16px
 }
 .day-hdr{display:flex;align-items:stretch}
@@ -140,24 +167,28 @@ body{font-family:"Noto Sans TC",sans-serif;background:transparent;color:var(--te
 }
 .day-num span{font-size:1.6rem;font-weight:300;color:var(--aqua);line-height:1}
 .day-ttl{padding:14px 16px;flex:1}
-.day-ttl .date{font-size:.75rem;color:var(--soft);margin-bottom:4px;letter-spacing:.08em;text-transform:uppercase}
-.day-ttl h3{font-size:.9375rem;font-weight:500;line-height:1.5;color:var(--text)}
+.day-ttl .date{font-size:.75rem;color:rgba(255,255,255,0.5);margin-bottom:4px;letter-spacing:.08em;text-transform:uppercase}
+.day-ttl h3{font-size:.9375rem;font-weight:500;line-height:1.5;color:rgba(255,255,255,0.92)}
 .day-body{padding:14px 20px 20px}
 .spot{display:flex;gap:12px;margin-bottom:14px;align-items:flex-start}
 .spot-dot{width:6px;height:6px;border-radius:50%;background:var(--aqua);margin-top:7px;flex-shrink:0}
-.spot h4{font-size:.875rem;font-weight:500;margin-bottom:3px;color:var(--text)}
-.spot p{font-size:.8125rem;color:var(--soft);line-height:1.7}
-.meal-row{display:flex;gap:7px;flex-wrap:wrap;margin-top:14px;padding-top:14px;border-top:1px solid rgba(0,0,0,.07)}
-.meal-chip{background:rgba(153,235,247,.12);border:1px solid rgba(153,235,247,.2);border-radius:8px;padding:4px 12px;font-size:.75rem;color:var(--text)}
-.hotel-chip{background:rgba(0,0,0,.06);border-radius:8px;padding:4px 12px;font-size:.75rem;color:var(--soft);margin-top:8px;display:inline-flex;align-items:center;gap:5px}
+.spot h4{font-size:.875rem;font-weight:500;margin-bottom:3px;color:rgba(255,255,255,0.92)}
+.spot p{font-size:.8125rem;color:rgba(255,255,255,0.70);line-height:1.7}
+.meal-row{display:flex;gap:7px;flex-wrap:wrap;margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.10)}
+.meal-chip{background:rgba(255,255,255,.10);border:1px solid rgba(153,235,247,.2);border-radius:8px;padding:4px 12px;font-size:.75rem;color:rgba(255,255,255,0.85)}
+.hotel-chip{background:rgba(255,255,255,.08);border-radius:8px;padding:4px 12px;font-size:.75rem;color:rgba(255,255,255,0.70);margin-top:8px;display:inline-flex;align-items:center;gap:5px}
 .tips-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .tip-card{
-  background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-  border:1px solid var(--glass-b);border-radius:var(--r);padding:18px
+  background:rgba(255,255,255,0.14);
+  backdrop-filter:blur(52px) saturate(200%) brightness(1.10);
+  -webkit-backdrop-filter:blur(52px) saturate(200%) brightness(1.10);
+  border:1px solid rgba(255,255,255,0.22);
+  box-shadow:inset 0 1.5px 0 rgba(255,255,255,0.40),inset 0 -0.5px 0 rgba(0,0,0,0.12),0 8px 40px rgba(0,0,0,0.22),0 1px 3px rgba(0,0,0,0.15);
+  border-radius:var(--r);padding:18px
 }
 .tip-card .ti{font-size:1.25rem;margin-bottom:8px;color:var(--aqua)}
-.tip-card h4{font-size:.8125rem;font-weight:500;margin-bottom:6px;color:var(--text)}
-.tip-card p{font-size:.75rem;color:var(--soft);line-height:1.7}
+.tip-card h4{font-size:.8125rem;font-weight:500;margin-bottom:6px;color:rgba(255,255,255,0.92)}
+.tip-card p{font-size:.75rem;color:rgba(255,255,255,0.55);line-height:1.7}
 .steps{counter-reset:step}
 .step-item{display:flex;gap:14px;align-items:flex-start;margin-bottom:14px}
 .step-item::before{
@@ -167,31 +198,85 @@ body{font-family:"Noto Sans TC",sans-serif;background:transparent;color:var(--te
   font-weight:700;font-size:11px;
   display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px
 }
-.step-item p{font-size:.875rem;color:var(--text);line-height:1.85}
+.step-item p{font-size:.875rem;color:rgba(255,255,255,0.85);line-height:1.85}
 .checklist{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .check-item{
   display:flex;align-items:center;gap:8px;
-  background:rgba(255,255,255,.52);backdrop-filter:blur(8px);
+  background:rgba(255,255,255,.12);backdrop-filter:blur(8px);
   border:1px solid var(--glass-b);border-radius:9px;
-  padding:8px 12px;font-size:.8125rem;color:var(--text)
+  padding:8px 12px;font-size:.8125rem;color:rgba(255,255,255,0.85)
 }
 .check-item::before{content:"○";color:var(--aqua);font-size:12px;flex-shrink:0}
 .emergency{
-  background:rgba(12,22,18,.88);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
-  border:1px solid var(--glass-b);border-radius:var(--r);padding:24px;color:#fff
+  background:rgba(8,18,14,0.72);
+  backdrop-filter:blur(52px) saturate(200%) brightness(1.05);
+  -webkit-backdrop-filter:blur(52px) saturate(200%) brightness(1.05);
+  border:1px solid rgba(255,255,255,0.14);
+  box-shadow:inset 0 1.5px 0 rgba(255,255,255,0.18),inset 0 -0.5px 0 rgba(0,0,0,0.2),0 8px 40px rgba(0,0,0,0.28),0 1px 3px rgba(0,0,0,0.2);
+  border-radius:var(--r);padding:24px;color:#fff
 }
 .emergency h3{color:var(--aqua);font-size:.9375rem;font-weight:500;margin-bottom:16px;letter-spacing:.04em}
 .em-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.07)}
 .em-row:last-child{border-bottom:none}
 .em-label{font-size:.75rem;color:rgba(255,255,255,.38);letter-spacing:.06em}
 .em-val{font-size:.875rem;font-weight:500;color:var(--aqua)}
-footer{
-  background:rgba(8,16,12,.92);backdrop-filter:blur(16px);
-  color:rgba(255,255,255,.3);text-align:center;padding:36px 24px;
-  font-size:.75rem;line-height:2;position:relative;z-index:1;
-  border-top:1px solid var(--glass-b)
+/* ── Company Footer ── */
+.co-footer{
+  background:rgba(6,14,10,0.82);backdrop-filter:blur(52px) saturate(180%);
+  border-top:1px solid rgba(255,255,255,0.10);
+  padding:52px 28px 44px;text-align:center;
+  position:relative;z-index:1
 }
-footer .brand{color:var(--aqua);font-weight:500;font-size:.875rem;margin-bottom:8px;letter-spacing:.06em}
+.co-logo-wrap{margin-bottom:28px}
+.co-logo{height:34px;object-fit:contain;opacity:.92}
+.co-tagline{
+  font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--aqua);margin-bottom:18px;font-weight:400
+}
+.co-desc{
+  font-size:11.5px;line-height:2;color:rgba(255,255,255,.48);
+  max-width:500px;margin:0 auto 30px;text-align:left
+}
+.co-divider{
+  width:36px;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(129,248,185,.35),transparent);
+  margin:0 auto 28px
+}
+.co-info-grid{max-width:480px;margin:0 auto 34px;display:flex;flex-direction:column;gap:0}
+.co-info-item{
+  display:flex;justify-content:space-between;align-items:baseline;gap:12px;
+  padding:9px 0;border-bottom:1px solid rgba(255,255,255,.06)
+}
+.co-info-item:last-child{border-bottom:none}
+.co-info-label{
+  font-size:9.5px;color:rgba(255,255,255,.28);letter-spacing:.12em;
+  text-transform:uppercase;white-space:nowrap;flex-shrink:0
+}
+.co-info-val{font-size:11.5px;color:rgba(255,255,255,.72);text-align:right;line-height:1.6}
+.co-social{display:flex;justify-content:center;gap:14px;margin-bottom:36px}
+.co-social-link{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:44px;height:44px;border-radius:50%;
+  background:rgba(255,255,255,.07);
+  backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,.14);
+  box-shadow:inset 0 1.5px 0 rgba(255,255,255,.18),0 4px 16px rgba(0,0,0,.2);
+  text-decoration:none;transition:all .25s
+}
+.co-social-link:hover{
+  background:rgba(129,248,185,.14);border-color:rgba(129,248,185,.4);
+  box-shadow:inset 0 1.5px 0 rgba(255,255,255,.25),0 4px 20px rgba(129,248,185,.15)
+}
+.co-social-link svg{
+  width:18px;height:18px;stroke:rgba(255,255,255,.6);
+  stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round;
+  transition:stroke .25s
+}
+.co-social-link:hover svg{stroke:var(--aqua)}
+.co-bottom{
+  font-size:10.5px;color:rgba(255,255,255,.2);line-height:2;
+  border-top:1px solid rgba(255,255,255,.05);padding-top:20px;margin-top:4px
+}
 .loading{
   min-height:100vh;display:flex;align-items:center;justify-content:center;
   flex-direction:column;gap:16px;color:rgba(255,255,255,.45)
@@ -199,11 +284,55 @@ footer .brand{color:var(--aqua);font-weight:500;font-size:.875rem;margin-bottom:
 .loading-dot{width:10px;height:10px;border-radius:50%;background:var(--aqua);animation:ldot 1.2s ease-in-out infinite}
 @keyframes ldot{0%,100%{transform:scale(.5);opacity:.4}50%{transform:scale(1);opacity:1}}
 
+/* ── Lucide Icons ── */
+.sec-icon svg,.sec-icon i{width:22px;height:22px;display:block}
+.sec-icon svg{stroke:var(--aqua);stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.tip-card .ti svg,.tip-card .ti i{width:22px;height:22px;margin-bottom:8px;display:block}
+.tip-card .ti svg{stroke:var(--aqua);stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+/* Inline li-icon helper */
+.li-icon{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;vertical-align:middle;flex-shrink:0;margin-right:5px}
+.li-icon svg{width:100%;height:100%;stroke:currentColor;stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.li-icon-lg{width:28px;height:28px;margin-right:0;display:inline-flex;align-items:center;justify-content:center}
+.li-icon-lg svg{width:100%;height:100%;stroke:var(--aqua);stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.drawer a .li-icon{width:16px;height:16px;margin-right:10px;opacity:.7;vertical-align:middle}
+.drawer a:hover .li-icon svg{stroke:var(--aqua);opacity:1}
+.drawer a .li-icon svg{stroke:rgba(255,255,255,.55);transition:stroke .2s}
+.meal-chip .li-icon{width:13px;height:13px;margin-right:3px;opacity:.85}
+.meal-chip .li-icon svg{stroke:currentColor}
+.hotel-chip .li-icon{width:13px;height:13px;margin-right:4px;opacity:.8}
+.hotel-chip .li-icon svg{stroke:currentColor}
+.pill .li-icon{width:13px;height:13px;margin-right:4px;vertical-align:middle}
+.pill .li-icon svg{stroke:currentColor}
+.scroll-hint .li-icon{width:13px;height:13px;margin-right:4px;vertical-align:middle;animation:bob 2.2s ease-in-out infinite}
+.scroll-hint .li-icon svg{stroke:rgba(255,255,255,.22)}
+.emergency h3 .li-icon{width:17px;height:17px;margin-right:7px}
+.emergency h3 .li-icon svg{stroke:var(--aqua)}
+.warn-icon-wrap .li-icon{width:14px;height:14px;margin-right:5px;vertical-align:middle}
+.ins-icon-wrap .li-icon{width:14px;height:14px;margin-right:5px;vertical-align:middle}
 /* ── Scroll Reveal ── */
 .fade-up{opacity:0;transform:translateY(32px);transition:opacity 650ms ease-out,transform 650ms ease-out}
 .fade-up.visible{opacity:1;transform:translateY(0)}
 
 @media(max-width:420px){.tips-grid,.checklist{grid-template-columns:1fr}.hero h1{font-size:1.9rem}}
+
+/* Magazine Cover Page */
+.cover-page{position:relative;height:100vh;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end}
+.cover-bg{position:absolute;inset:0;background-size:cover;background-position:center;transform:scale(1.04);transition:transform 8s ease-out}
+.cover-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.72) 75%, rgba(0,0,0,0.88) 100%)}
+.cover-top{position:absolute;top:28px;left:24px;right:24px;display:flex;align-items:center;justify-content:space-between;z-index:10}
+.cover-top-logo img{height:26px;object-fit:contain}
+.cover-top-tag{background:rgba(255,255,255,0.12);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border:1px solid rgba(255,255,255,0.22);box-shadow:inset 0 1.5px 0 rgba(255,255,255,0.3),0 4px 16px rgba(0,0,0,0.2);color:rgba(255,255,255,0.85);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border-radius:20px}
+.cover-info{position:relative;z-index:10;padding:0 24px 16px;color:#fff}
+.cover-dest{font-size:10px;color:var(--aqua);letter-spacing:0.16em;text-transform:uppercase;margin-bottom:10px;font-weight:400}
+.cover-title{font-size:clamp(2rem,9vw,3.2rem);font-weight:200;line-height:1.1;margin-bottom:10px;letter-spacing:-0.01em}
+.cover-dates{font-size:12px;color:rgba(255,255,255,0.6);margin-bottom:14px;letter-spacing:0.04em}
+.cover-pills{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:0}
+.cover-pill{background:rgba(255,255,255,0.1);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border:1px solid rgba(255,255,255,0.2);box-shadow:inset 0 1px 0 rgba(255,255,255,0.25),0 4px 12px rgba(0,0,0,0.15);color:rgba(255,255,255,0.85);padding:5px 13px;border-radius:20px;font-size:11px;display:inline-flex;align-items:center;gap:5px}
+.cover-pill .li-icon svg{stroke:rgba(255,255,255,.7)}
+.cover-strip{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;height:88px;flex-shrink:0;position:relative;z-index:10;gap:2px}
+.cover-strip-item{background-size:cover;background-position:center}
+.cover-scroll-hint{position:absolute;bottom:108px;right:22px;z-index:10;display:flex;align-items:center;gap:5px;color:rgba(255,255,255,0.3);font-size:10px;letter-spacing:0.1em;text-transform:uppercase}
+.cover-scroll-hint .li-icon{width:12px;height:12px}.cover-scroll-hint .li-icon svg{stroke:rgba(255,255,255,0.3)}
 </style>
 </head>
 <body>
@@ -222,23 +351,81 @@ async function load(){
   try{
     const r=await fetch(base+'/data/'+id+'.json');
     if(!r.ok)throw new Error('HTTP '+r.status);
-    render(await r.json());
+    const d=await r.json();
+    render(d);
+    setupIcons();
+    if(d.backgroundImage){
+      const bg=document.querySelector('.parallax-bg');
+      if(bg){
+        bg.style.backgroundImage=`url('${d.backgroundImage}')`;
+        bg.style.backgroundSize='cover';
+        bg.style.backgroundPosition='center';
+      }
+    }
   }catch(e){err('無法載入行前說明（'+e.message+'）');}
 }
-function err(msg){document.getElementById('app').innerHTML='<div class="loading"><div style="font-size:32px">⚠️</div><div style="color:#a8071a">'+msg+'</div></div>';}
+const FS_LEVELS=['','fs-md','fs-lg','fs-xl'];
+const FS_LABELS=['<svg viewBox="0 0 20 20"><text x="1" y="14" font-size="9" font-family="sans-serif" fill="currentColor">A</text><text x="9" y="16" font-size="13" font-family="sans-serif" fill="currentColor">A</text></svg>','<svg viewBox="0 0 20 20"><text x="0" y="14" font-size="9" font-family="sans-serif" fill="currentColor">A</text><text x="8" y="17" font-size="15" font-family="sans-serif" fill="currentColor" font-weight="600">A</text></svg>','<svg viewBox="0 0 20 20"><text x="0" y="14" font-size="9" font-family="sans-serif" fill="currentColor">A</text><text x="7" y="18" font-size="17" font-family="sans-serif" fill="currentColor" font-weight="700">A</text></svg>','<svg viewBox="0 0 20 20"><text x="0" y="13" font-size="8" font-family="sans-serif" fill="rgba(255,255,255,0.4)">A</text><text x="6" y="18" font-size="18" font-family="sans-serif" fill="var(--aqua)" font-weight="700">A</text></svg>'];
+let fsIdx=0;
+function cycleFont(){
+  const app=document.getElementById('app');
+  if(!app)return;
+  FS_LEVELS.forEach(c=>{if(c)app.classList.remove(c);});
+  fsIdx=(fsIdx+1)%FS_LEVELS.length;
+  if(FS_LEVELS[fsIdx])app.classList.add(FS_LEVELS[fsIdx]);
+  const btn=document.getElementById('fontBtn');
+  if(btn)btn.innerHTML=FS_LABELS[fsIdx];
+  try{localStorage.setItem('lf_fs',fsIdx);}catch(e){}
+}
+(function initFont(){
+  try{const s=parseInt(localStorage.getItem('lf_fs')||0);if(s>0&&s<FS_LEVELS.length){fsIdx=s;const app=document.getElementById('app');if(app&&FS_LEVELS[s])app.classList.add(FS_LEVELS[s]);}}catch(e){}
+})();
+function setupIcons(){
+  const EM={
+    '✈️':'plane','🗺️':'map','📅':'calendar-days','💡':'lightbulb',
+    '🛂':'shield-check','🧾':'receipt','🎒':'backpack','🚢':'anchor','📞':'phone',
+    '🌡️':'thermometer','💴':'banknote','🔌':'plug','🕐':'clock',
+    '🚰':'droplets','🛁':'sparkles','🏨':'building-2',
+    '⚠️':'triangle-alert','📋':'clipboard-list','🆘':'siren'
+  };
+  document.querySelectorAll('.sec-icon,.tip-card .ti').forEach(el=>{
+    const key=el.textContent.trim();
+    if(EM[key]) el.innerHTML=`<i data-lucide="${EM[key]}"></i>`;
+  });
+  if(window.lucide) lucide.createIcons();
+}
+function li(name,cls=''){return`<i data-lucide="${name}" class="li-icon${cls?' '+cls:''}"></i>`;}
+function err(msg){document.getElementById('app').innerHTML='<div class="loading"><div style="font-size:32px;color:#EE6543"><i data-lucide="triangle-alert" style="width:32px;height:32px;display:inline-block"></i></div><div style="color:#ff7a5c">'+msg+'</div></div>';if(typeof lucide!=='undefined')lucide.createIcons();}
 function render(d){
   const m=d.meta||{};
   document.title=s(m.tourName,'行前說明')+'｜樂放旅遊';
-  const nav=`<nav class="nav"><div class="nav-logo"><img src="logo.png" alt="樂放旅遊" style="height:28px;object-fit:contain;"></div><button class="nav-toc" onclick="od()">目錄</button></nav>
-<div class="drawer-bg" id="db" onclick="cd()"><div class="drawer" onclick="event.stopPropagation()"><button class="drawer-close" onclick="cd()">✕</button><h3>行前說明目錄</h3><a href="#as" onclick="cd()">✈ 集合與航班</a><a href="#it" onclick="cd()">🗺 行程總覽</a><a href="#dy" onclick="cd()">📅 每日行程</a><a href="#tp" onclick="cd()">💡 旅遊注意事項</a><a href="#im" onclick="cd()">🛂 入境手續</a><a href="#tx" onclick="cd()">🧾 退稅說明</a><a href="#ck" onclick="cd()">🎒 行李清單</a><a href="#dp" onclick="cd()">🚢 出境集合</a><a href="#em" onclick="cd()">📞 緊急聯絡</a></div></div>`;
+  const nav=`<nav class="nav"><div class="nav-logo"><img src="logo.png" alt="樂放旅遊" style="height:28px;object-fit:contain;"></div><div class="nav-right"><button class="nav-font" onclick="cycleFont()" id="fontBtn"><svg viewBox="0 0 20 20"><text x="1" y="14" font-size="9" font-family="sans-serif" fill="currentColor">A</text><text x="9" y="16" font-size="13" font-family="sans-serif" fill="currentColor">A</text></svg></button><button class="nav-toc" onclick="od()">目錄</button></div></nav>
+<div class="drawer-bg" id="db" onclick="cd()"><div class="drawer" onclick="event.stopPropagation()"><button class="drawer-close" onclick="cd()">✕</button><h3>行前說明目錄</h3><a href="#as" onclick="cd()">${li('plane')}集合與航班</a><a href="#it" onclick="cd()">${li('map')}行程總覽</a><a href="#dy" onclick="cd()">${li('calendar-days')}每日行程</a><a href="#tp" onclick="cd()">${li('lightbulb')}旅遊注意事項</a><a href="#im" onclick="cd()">${li('shield-check')}入境手續</a><a href="#tx" onclick="cd()">${li('receipt')}退稅說明</a><a href="#ck" onclick="cd()">${li('backpack')}行李清單</a><a href="#dp" onclick="cd()">${li('anchor')}出境集合</a><a href="#em" onclick="cd()">${li('phone')}緊急聯絡</a></div></div>`;
 
-  const hero=`<section class="hero"><div class="hero-logo"><img src="${LOGO}" alt="Le Fun"></div><div class="hero-tag">樂放旅遊 × 行前說明</div><h1>${s(m.tourName,'行前說明')}<br><em>${s(m.destination)}</em></h1><p class="hero-sub">${s(m.departDate)} — ${s(m.returnDate)}</p><div class="hero-pills">${m.flightOut?'<div class="pill">✈ '+m.flightOut+'</div>':''}${m.hotel?'<div class="pill">🏨 '+m.hotel+'</div>':''}${m.leaderName?'<div class="pill"><strong>領隊：</strong>'+m.leaderName+'</div>':''}</div><p class="scroll-hint">↓ 向下滑動閱覽</p></section>`;
+  const hero=`<section class="hero"><div class="hero-logo"><img src="${LOGO}" alt="Le Fun"></div><div class="hero-tag">樂放旅遊 × 行前說明</div><h1>${s(m.tourName,'行前說明')}<br><em>${s(m.destination)}</em></h1><p class="hero-sub">${s(m.departDate)} — ${s(m.returnDate)}</p><div class="hero-pills">${m.flightOut?'<div class="pill">'+li('plane')+m.flightOut+'</div>':''}${m.hotel?'<div class="pill">'+li('building-2')+m.hotel+'</div>':''}${m.leaderName?'<div class="pill"><strong>領隊：</strong>'+m.leaderName+'</div>':''}</div><p class="scroll-hint">${li('chevron-down')}向下滑動閱覽</p></section>`;
+
+  const cover = d.coverPhotos && d.coverPhotos.length > 0 ? `
+<section class="cover-page">
+  <div class="cover-bg" style="background-image:url('${d.coverPhotos[0]}')"></div>
+  <div class="cover-top">
+    <div class="cover-top-logo"><img src="logo.png" alt="樂放旅遊"></div>
+    <div class="cover-top-tag">Le Fun Travel × 行前說明</div>
+  </div>
+  ${d.coverPhotos.length > 1 ? '' : '<div class="cover-scroll-hint">'+li('chevron-down')+'Scroll</div>'}
+  <div class="cover-info">
+    <div class="cover-dest">${s(m.destination)} · Pre-Trip Guide</div>
+    <h1 class="cover-title">${s(m.tourName,'行前說明')}</h1>
+    <div class="cover-dates">${s(m.departDate)} — ${s(m.returnDate)}</div>
+    <div class="cover-pills">${m.flightOut?'<div class="cover-pill">'+li('plane')+m.flightOut+'</div>':''}${m.leaderName?'<div class="cover-pill">'+li('user')+m.leaderName+'</div>':''}</div>
+  </div>
+  ${d.coverPhotos.length > 1 ? '<div class="cover-strip">'+d.coverPhotos.slice(1).map(p=>'<div class="cover-strip-item" style="background-image:url(\''+p+'\')"></div>').join('')+'</div>' : ''}
+</section>` : hero;
 
   const days=(d.days||[]).map(day=>{
     const spots=(day.spots||[]).map(sp=>'<div class="spot"><div class="spot-dot"></div><div><h4>'+sp.name+'</h4><p>'+sp.desc+'</p></div></div>').join('');
-    const meals=[day.breakfast?'<div class="meal-chip">🌅 早餐 — '+day.breakfast+'</div>':'',day.lunch?'<div class="meal-chip">☀️ 午餐 — '+day.lunch+'</div>':'',day.dinner?'<div class="meal-chip">🌙 晚餐 — '+day.dinner+'</div>':''].filter(Boolean).join('');
+    const meals=[day.breakfast?'<div class="meal-chip">'+li('coffee')+'早餐 — '+day.breakfast+'</div>':'',day.lunch?'<div class="meal-chip">'+li('utensils')+'午餐 — '+day.lunch+'</div>':'',day.dinner?'<div class="meal-chip">'+li('wine')+'晚餐 — '+day.dinner+'</div>':''].filter(Boolean).join('');
     const isLast=!day.hotel||/家|回|home/i.test(day.hotel);
-    return '<div class="day-card"><div class="day-hdr"><div class="day-num"'+(isLast?' style="background:#b1d3c5"':'')+'>DAY<span'+(isLast?' style="color:var(--dk)"':'')+'>'+day.day+'</span></div><div class="day-ttl"><div class="date">'+s(day.date)+'</div><h3>'+s(day.title,'今日行程')+'</h3></div></div><div class="day-body">'+spots+'<div class="meal-row">'+meals+'</div>'+(day.hotel?'<div class="hotel-chip">🏨 '+day.hotel+'</div>':'')+'</div></div>';
+    return '<div class="day-card"><div class="day-hdr"><div class="day-num"'+(isLast?' style="background:#b1d3c5"':'')+'>DAY<span'+(isLast?' style="color:var(--dk)"':'')+'>'+day.day+'</span></div><div class="day-ttl"><div class="date">'+s(day.date)+'</div><h3>'+s(day.title,'今日行程')+'</h3></div></div><div class="day-body">'+spots+'<div class="meal-row">'+meals+'</div>'+(day.hotel?'<div class="hotel-chip">'+li('building-2')+day.hotel+'</div>':'')+'</div></div>';
   }).join('');
 
   const tips=d.tips||{};
@@ -252,30 +439,57 @@ function render(d){
   const chkB=(chk.beforeDepart||[]).map(i=>'<div class="check-item">'+i+'</div>').join('');
   const chkC=(chk.carry||[]).map(i=>'<div class="check-item">'+i+'</div>').join('');
   const dep=d.departure||{};
-  const depR=(dep.rules||[]).map(r=>'<div class="spot"><div class="spot-dot" style="background:var(--pk)"></div><div><p>'+r+'</p></div></div>').join('');
+  const depR=(dep.rules||[]).map(r=>'<div class="spot"><div class="spot-dot" style="background:var(--rose)"></div><div><p>'+r+'</p></div></div>').join('');
   const em=d.emergency||{};
   const emC=(em.contacts||[]).map(c=>'<div class="em-row"><span class="em-label">'+c.label+'</span><span class="em-val">'+c.value+'</span></div>').join('');
 
   const body=`
-${nav}${hero}
-<section class="sec fade-up" id="as"><div class="sec-label"><div class="sec-icon" style="background:#e8f9f1">✈️</div><div><h2>集合與航班資訊</h2><p>出發前請再確認</p></div></div>
+${nav}${cover}
+<section class="sec fade-up" id="as"><div class="sec-label"><div class="sec-icon">${li('plane')}</div><div><h2>集合與航班資訊</h2><p>出發前請再確認</p></div></div>
 <div class="card card-g"><div class="info-row"><span class="ir-label">集合時間</span><span class="ir-val"><strong>${s(m.assemblyTime)}</strong></span></div><div class="info-row"><span class="ir-label">集合地點</span><span class="ir-val">${s(m.assemblyPlace)}</span></div></div>
-<div class="card"><table class="flight-table"><thead><tr><th></th><th>航班</th><th>出發 → 抵達</th></tr></thead><tbody>${m.flightOut?'<tr><td><span class="fbadge">去程</span></td><td colspan="2">'+m.flightOut+'</td></tr>':''}${m.flightReturn?'<tr><td><span class="fbadge fbadge-p">回程</span></td><td colspan="2">'+m.flightReturn+'</td></tr>':''}</tbody></table><p style="font-size:11px;color:#aaa;margin-top:8px">※ 航班時間以出發前說明會資料為準</p></div>
+<div class="card"><table class="flight-table"><thead><tr><th></th><th>航班</th><th>出發 → 抵達</th></tr></thead><tbody>${m.flightOut?'<tr><td><span class="fbadge">去程</span></td><td colspan="2">'+m.flightOut+'</td></tr>':''}${m.flightReturn?'<tr><td><span class="fbadge fbadge-p">回程</span></td><td colspan="2">'+m.flightReturn+'</td></tr>':''}</tbody></table><p style="font-size:11px;color:rgba(255,255,255,.4);margin-top:8px">※ 航班時間以出發前說明會資料為準</p></div>
 </section><div class="divider"></div>
-<section class="sec fade-up" id="it"><div class="sec-label"><div class="sec-icon" style="background:#fff3e0">🗺️</div><div><h2>行程總覽</h2><p>${(d.days||[]).length} 天精華路線</p></div></div>
-<div class="card" style="background:var(--dk);color:#fff;border:none"><div style="display:flex;gap:14px;align-items:center;margin-bottom:14px"><div style="font-size:28px">🏨</div><div><div style="font-size:11px;color:rgba(255,255,255,.45);margin-bottom:3px">住宿</div><div style="font-weight:700;color:var(--g)">${s(m.hotel,'全程住宿')}</div></div></div>${(d.days||[]).map(day=>'<div style="background:rgba(255,255,255,.06);border-radius:11px;padding:11px;margin-bottom:7px"><div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:3px">第'+day.day+'天 '+s(day.date)+'</div><div style="font-size:13px;color:#fff">'+(day.spots||[]).map(sp=>sp.name).join('・')+'</div></div>').join('')}</div>
+<section class="sec fade-up" id="it"><div class="sec-label"><div class="sec-icon">${li('map')}</div><div><h2>行程總覽</h2><p>${(d.days||[]).length} 天精華路線</p></div></div>
+<div class="card" style="background:var(--dk);color:#fff;border:none"><div style="display:flex;gap:14px;align-items:center;margin-bottom:14px">${li('building-2','li-icon-lg')}<div><div style="font-size:11px;color:rgba(255,255,255,.45);margin-bottom:3px">住宿</div><div style="font-weight:700;color:var(--aqua)">${s(m.hotel,'全程住宿')}</div></div></div>${(d.days||[]).map(day=>'<div style="background:rgba(255,255,255,.06);border-radius:11px;padding:11px;margin-bottom:7px"><div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:3px">第'+day.day+'天 '+s(day.date)+'</div><div style="font-size:13px;color:#fff">'+(day.spots||[]).map(sp=>sp.name).join('・')+'</div></div>').join('')}</div>
 </section><div class="divider"></div>
-<section class="sec fade-up" id="dy"><div class="sec-label"><div class="sec-icon" style="background:#e8f9f1">📅</div><div><h2>每日詳細行程</h2><p>景點介紹・餐食・住宿</p></div></div>${days}</section><div class="divider"></div>
-<div class="sec-tinted"><section class="sec fade-up" id="tp" style="max-width:100%;padding-left:20px;padding-right:20px"><div style="max-width:640px;margin:0 auto"><div class="sec-label"><div class="sec-icon" style="background:#fff3e0">💡</div><div><h2>旅遊注意事項</h2><p>出發前請仔細閱讀</p></div></div><div class="tips-grid">${tipsG}</div></div></section></div><div class="divider"></div>
-<section class="sec fade-up" id="im"><div class="sec-label"><div class="sec-icon" style="background:#e8f0ff">🛂</div><div><h2>入境手續</h2><p>${s(imm.visa)}</p></div></div><div class="card card-b">${imm.qcode?'<p style="font-size:13px;color:var(--md);margin-bottom:14px">'+imm.qcode+'</p>':''}<div class="steps">${immS}</div></div></section><div class="divider"></div>
-<section class="sec fade-up" id="tx"><div class="sec-label"><div class="sec-icon" style="background:#fff8e1">🧾</div><div><h2>退稅說明</h2><p>滿 ${s(tax.threshold,'30,000韓圜')} 即可退稅</p></div></div><div class="card card-y"><div class="steps">${taxS}</div></div></section><div class="divider"></div>
-<div class="sec-tinted"><section class="sec fade-up" id="ck" style="max-width:100%;padding-left:20px;padding-right:20px"><div style="max-width:640px;margin:0 auto"><div class="sec-label"><div class="sec-icon" style="background:#f3e8ff">🎒</div><div><h2>行李攜帶清單</h2><p>出發前對照確認</p></div></div><p style="font-size:12px;font-weight:700;color:var(--sf);margin-bottom:9px">出發前必備</p><div class="checklist" style="margin-bottom:18px">${chkB}</div><p style="font-size:12px;font-weight:700;color:var(--sf);margin-bottom:9px">隨身行李</p><div class="checklist" style="margin-bottom:16px">${chkC}</div>${chk.forbidden?'<div class="card" style="background:var(--tm);border:none;color:#fff"><p style="font-size:13px;font-weight:700;margin-bottom:5px">⚠️ 禁止攜帶</p><p style="font-size:13px;opacity:.9">'+chk.forbidden+'</p></div>':''}</div></section></div><div class="divider"></div>
-<section class="sec fade-up" id="dp"><div class="sec-label"><div class="sec-icon" style="background:#fce4ec">🚢</div><div><h2>出境集合須知</h2><p>${s(dep.assemblyTime)}</p></div></div><div class="card card-p">${depR}</div></section><div class="divider"></div>
-<section class="sec fade-up" id="em"><div class="sec-label"><div class="sec-icon" style="background:#ffebee">📞</div><div><h2>緊急聯絡資訊</h2><p>截圖存起來備用</p></div></div>
-<div class="emergency"><h3>🆘 重要電話</h3>${m.leaderName?'<div class="em-row"><span class="em-label">領隊 '+m.leaderName+'</span><span class="em-val">'+s(m.leaderPhone)+'</span></div>':''}${em.international?'<div class="em-row"><span class="em-label">國際救援</span><span class="em-val">'+em.international+'</span></div>':''}${em.overseas?'<div class="em-row"><span class="em-label">旅外急難</span><span class="em-val">'+em.overseas+'</span></div>':''}${emC}</div>
-${em.insurance?'<div class="card" style="margin-top:12px;background:var(--bg2)"><p style="font-size:13px;font-weight:700;margin-bottom:7px">📋 保險說明</p><p style="font-size:13px;color:var(--md)">'+em.insurance+'</p></div>':''}
+<section class="sec fade-up" id="dy"><div class="sec-label"><div class="sec-icon">${li('calendar-days')}</div><div><h2>每日詳細行程</h2><p>景點介紹・餐食・住宿</p></div></div>${days}</section><div class="divider"></div>
+<div class="sec-tinted"><section class="sec fade-up" id="tp" style="max-width:100%;padding-left:20px;padding-right:20px"><div style="max-width:640px;margin:0 auto"><div class="sec-label"><div class="sec-icon">${li('lightbulb')}</div><div><h2>旅遊注意事項</h2><p>出發前請仔細閱讀</p></div></div><div class="tips-grid">${tipsG}</div></div></section></div><div class="divider"></div>
+<section class="sec fade-up" id="im"><div class="sec-label"><div class="sec-icon">${li('shield-check')}</div><div><h2>入境手續</h2><p>${s(imm.visa)}</p></div></div><div class="card card-b">${imm.qcode?'<p style="font-size:13px;color:rgba(255,255,255,.65);margin-bottom:14px">'+imm.qcode+'</p>':''}<div class="steps">${immS}</div></div></section><div class="divider"></div>
+<section class="sec fade-up" id="tx"><div class="sec-label"><div class="sec-icon">${li('receipt')}</div><div><h2>退稅說明</h2><p>滿 ${s(tax.threshold,'30,000韓圜')} 即可退稅</p></div></div><div class="card card-y"><div class="steps">${taxS}</div></div></section><div class="divider"></div>
+<div class="sec-tinted"><section class="sec fade-up" id="ck" style="max-width:100%;padding-left:20px;padding-right:20px"><div style="max-width:640px;margin:0 auto"><div class="sec-label"><div class="sec-icon">${li('backpack')}</div><div><h2>行李攜帶清單</h2><p>出發前對照確認</p></div></div><p style="font-size:12px;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:9px">出發前必備</p><div class="checklist" style="margin-bottom:18px">${chkB}</div><p style="font-size:12px;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:9px">隨身行李</p><div class="checklist" style="margin-bottom:16px">${chkC}</div>${chk.forbidden?'<div class="card" style="background:var(--tomato);border:none;color:#fff"><p style="font-size:13px;font-weight:700;margin-bottom:5px;display:flex;align-items:center;gap:5px">'+li('triangle-alert')+'禁止攜帶</p><p style="font-size:13px;opacity:.9">'+chk.forbidden+'</p></div>':''}</div></section></div><div class="divider"></div>
+<section class="sec fade-up" id="dp"><div class="sec-label"><div class="sec-icon">${li('plane-takeoff')}</div><div><h2>出境集合須知</h2><p>${s(dep.assemblyTime)}</p></div></div><div class="card card-p">${depR}</div></section><div class="divider"></div>
+<section class="sec fade-up" id="em"><div class="sec-label"><div class="sec-icon">${li('phone')}</div><div><h2>緊急聯絡資訊</h2><p>截圖存起來備用</p></div></div>
+<div class="emergency"><h3>${li('siren')}重要電話</h3>${m.leaderName?'<div class="em-row"><span class="em-label">領隊 '+m.leaderName+'</span><span class="em-val">'+s(m.leaderPhone)+'</span></div>':''}${em.international?'<div class="em-row"><span class="em-label">國際救援</span><span class="em-val">'+em.international+'</span></div>':''}${em.overseas?'<div class="em-row"><span class="em-label">旅外急難</span><span class="em-val">'+em.overseas+'</span></div>':''}${emC}</div>
+${em.insurance?'<div class="card" style="margin-top:12px;background:var(--bg2)"><p style="font-size:13px;font-weight:700;margin-bottom:7px;display:flex;align-items:center;gap:5px">'+li('clipboard-list')+'保險說明</p><p style="font-size:13px;color:rgba(255,255,255,.75)">'+em.insurance+'</p></div>':''}
 </section>
-<footer><div class="brand">樂放旅遊 Le Fun Travel</div><div>${s(m.tourName)} · ${s(m.destination)} · ${s(m.departDate)}–${s(m.returnDate)}</div><div style="margin-top:6px">行程內容如有異動，以出發前說明會資料為準</div><div style="margin-top:14px;opacity:.3">Powered by Le Fun Travel × AI 電子書系統</div></footer>`;
+<footer class="co-footer">
+  <div class="co-logo-wrap"><img src="logo.png" alt="樂放旅遊 Le Fun Travel" class="co-logo"></div>
+  <p class="co-desc">台灣旅遊、包車服務、專業司機、訂房服務、機場接駁、商務接駁等，以女性需求為出發點，以「全日客服，隱私保障」、「注重形象，舒適如家」、「隨心旅行，安全第一」、「捕捉美好，分享精彩」來設計服務體驗，讓所有旅客感到放鬆與賓至如歸。</p>
+  <div class="co-divider"></div>
+  <div class="co-info-grid">
+    <div class="co-info-item"><span class="co-info-label">公司</span><span class="co-info-val">眾恆旅行社有限公司</span></div>
+    <div class="co-info-item"><span class="co-info-label">地址</span><span class="co-info-val">814 高雄市仁武區永昌二街 110 巷 6 號 4 樓</span></div>
+    <div class="co-info-item"><span class="co-info-label">代表人</span><span class="co-info-val">李宗軒</span></div>
+    <div class="co-info-item"><span class="co-info-label">統一編號</span><span class="co-info-val">00227376</span></div>
+    <div class="co-info-item"><span class="co-info-label">甲種旅行社</span><span class="co-info-val">交觀甲字 4032 號</span></div>
+    <div class="co-info-item"><span class="co-info-label">品保協會</span><span class="co-info-val">中華民國旅行業品質保障協會　高字第 0673 號</span></div>
+  </div>
+  <div class="co-social">
+    <a href="https://www.facebook.com/profile.php?id=61563888242869" target="_blank" rel="noopener" class="co-social-link" aria-label="Facebook">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+    </a>
+    <a href="https://www.instagram.com/lovefuntravel_2024?igsh=bmhidWFza3E5czNz&utm_source=qr" target="_blank" rel="noopener" class="co-social-link" aria-label="Instagram">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".5" fill="currentColor"/></svg>
+    </a>
+    <a href="https://youtube.com/@lovefuntravel2024" target="_blank" rel="noopener" class="co-social-link" aria-label="YouTube">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.95C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.95C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" stroke="none" fill="currentColor"/></svg>
+    </a>
+  </div>
+  <div class="co-bottom">
+    <div>${s(m.tourName)} · ${s(m.destination)} · ${s(m.departDate)} – ${s(m.returnDate)}</div>
+    <div>行程內容如有異動，以出發前說明會資料為準</div>
+  </div>
+</footer>`;
 
   document.getElementById('app').innerHTML=body;
   const obs=new IntersectionObserver(entries=>entries.forEach(e=>{

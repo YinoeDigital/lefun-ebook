@@ -6,12 +6,13 @@
 <title>樂放旅遊 ✦ 行前電子書系統</title>
 <link rel="icon" type="image/png" href="favicon.png">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <style>
 :root{
   --aqua:#81F8B9;--blue:#99EBF7;--tomato:#EE6543;--rose:#ECD1D5;--yw:#E3FF85;
   --glass:rgba(255,255,255,0.62);--glass-b:rgba(129,248,185,0.22);
   --glass-dk:rgba(12,22,18,0.82);
-  --text:#2d2d2d;--soft:#888;--r:16px
+  --text:rgba(255,255,255,0.92);--soft:rgba(255,255,255,0.5);--r:16px
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Noto Sans TC',sans-serif;background:transparent;color:var(--text);line-height:1.85;font-size:1rem}
@@ -25,8 +26,10 @@ body{font-family:'Noto Sans TC',sans-serif;background:transparent;color:var(--te
 /* NAV */
 nav{
   position:sticky;top:0;z-index:100;
-  background:rgba(10,24,18,0.55);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-  border-bottom:1px solid var(--glass-b);
+  background:rgba(8,18,14,0.45);
+  backdrop-filter:blur(52px) saturate(200%);-webkit-backdrop-filter:blur(52px) saturate(200%);
+  border-bottom:1px solid rgba(255,255,255,0.12);
+  box-shadow:inset 0 -0.5px 0 rgba(0,0,0,0.2),0 1px 0 rgba(255,255,255,0.05);
   display:flex;align-items:center;justify-content:space-between;
   padding:0 32px;height:60px;position:relative;z-index:100
 }
@@ -92,14 +95,18 @@ nav{
 .sec-label h2{font-size:1.875rem;font-weight:300;color:#fff;margin-bottom:10px;letter-spacing:-0.02em}
 .sec-label p{font-size:.875rem;color:rgba(255,255,255,.4);max-width:400px;margin:0 auto;line-height:1.85}
 
-/* FLOW CARDS → Frosted Glass */
+/* FLOW CARDS → Liquid Glass */
 .flow-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
 .flow-card{
-  background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-  border:1px solid var(--glass-b);border-radius:var(--r);padding:28px;
+  background:rgba(255,255,255,0.10);
+  backdrop-filter:blur(52px) saturate(200%) brightness(1.10);
+  -webkit-backdrop-filter:blur(52px) saturate(200%) brightness(1.10);
+  border:1px solid rgba(255,255,255,0.22);
+  box-shadow:inset 0 1.5px 0 rgba(255,255,255,0.40),inset 0 -0.5px 0 rgba(0,0,0,0.12),0 8px 40px rgba(0,0,0,0.22),0 1px 3px rgba(0,0,0,0.15);
+  border-radius:var(--r);padding:28px;
   position:relative;overflow:hidden;transition:transform .25s,box-shadow .25s
 }
-.flow-card:hover{transform:translateY(-5px);box-shadow:0 16px 48px rgba(0,0,0,.2)}
+.flow-card:hover{transform:translateY(-5px);box-shadow:inset 0 1.5px 0 rgba(255,255,255,0.50),0 20px 56px rgba(0,0,0,.3)}
 .flow-card::before{content:"";position:absolute;top:0;left:0;right:0;height:3px}
 .flow-card:nth-child(1)::before{background:var(--aqua)}
 .flow-card:nth-child(2)::before{background:var(--blue)}
@@ -113,19 +120,27 @@ nav{
   margin-bottom:16px;flex-shrink:0
 }
 .flow-icon{font-size:26px;margin-bottom:12px;color:var(--aqua)}
-.flow-card h3{font-size:1rem;font-weight:500;margin-bottom:8px;color:var(--text)}
-.flow-card p{font-size:.8125rem;color:var(--soft);line-height:1.85}
+.flow-card h3{font-size:1rem;font-weight:500;margin-bottom:8px;color:rgba(255,255,255,0.92)}
+.flow-card p{font-size:.8125rem;color:rgba(255,255,255,0.55);line-height:1.85}
 
 /* FEATURE CARDS */
 .feature-split{display:grid;grid-template-columns:1fr 1fr;gap:20px}
 @media(max-width:680px){.feature-split{grid-template-columns:1fr}}
 .feat-card{
-  background:var(--glass-dk);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
-  border:1px solid var(--glass-b);border-radius:var(--r);padding:36px;
+  background:rgba(12,22,18,0.72);
+  backdrop-filter:blur(52px) saturate(200%) brightness(1.05);
+  -webkit-backdrop-filter:blur(52px) saturate(200%) brightness(1.05);
+  border:1px solid rgba(255,255,255,0.16);
+  box-shadow:inset 0 1.5px 0 rgba(255,255,255,0.18),inset 0 -0.5px 0 rgba(0,0,0,0.2),0 8px 40px rgba(0,0,0,0.28),0 1px 3px rgba(0,0,0,0.2);
+  border-radius:var(--r);padding:36px;
   position:relative;overflow:hidden
 }
 .feat-card.light{
-  background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)
+  background:rgba(255,255,255,0.14);
+  backdrop-filter:blur(52px) saturate(200%) brightness(1.10);
+  -webkit-backdrop-filter:blur(52px) saturate(200%) brightness(1.10);
+  border:1px solid rgba(255,255,255,0.28);
+  box-shadow:inset 0 1.5px 0 rgba(255,255,255,0.50),inset 0 -0.5px 0 rgba(0,0,0,0.08),0 8px 40px rgba(0,0,0,0.18),0 1px 3px rgba(0,0,0,0.12)
 }
 .feat-card .fc-tag{
   display:inline-block;font-size:.625rem;font-weight:400;letter-spacing:.14em;text-transform:uppercase;
@@ -135,10 +150,10 @@ nav{
 .feat-card.light .fc-tag{background:rgba(129,248,185,.12);color:var(--aqua);border:1px solid var(--glass-b)}
 .feat-card h3{font-size:1.375rem;font-weight:300;margin-bottom:12px;letter-spacing:-0.01em}
 .feat-card.dark h3{color:#fff}
-.feat-card.light h3{color:var(--text)}
+.feat-card.light h3{color:rgba(255,255,255,0.92)}
 .feat-card p{font-size:.8125rem;line-height:1.85;margin-bottom:22px}
 .feat-card.dark p{color:rgba(255,255,255,.45)}
-.feat-card.light p{color:var(--soft)}
+.feat-card.light p{color:rgba(255,255,255,0.55)}
 .feat-link{
   display:inline-flex;align-items:center;gap:6px;
   padding:10px 20px;border-radius:11px;font-size:.8125rem;font-weight:700;
@@ -160,8 +175,8 @@ nav{
   font-weight:700;font-size:17px;
   display:flex;align-items:center;justify-content:center;flex-shrink:0
 }
-.how-body h4{font-size:.9375rem;font-weight:500;margin-bottom:6px;color:var(--text)}
-.how-body p{font-size:.8125rem;color:var(--soft);line-height:1.85}
+.how-body h4{font-size:.9375rem;font-weight:500;margin-bottom:6px;color:rgba(255,255,255,0.92)}
+.how-body p{font-size:.8125rem;color:rgba(255,255,255,0.55);line-height:1.85}
 .how-body .tag{
   display:inline-block;
   background:rgba(129,248,185,.1);border:1px solid var(--glass-b);color:var(--aqua);
@@ -169,32 +184,44 @@ nav{
   padding:2px 8px;border-radius:8px;margin-top:8px
 }
 .how-wrap{
-  background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-  border:1px solid var(--glass-b);border-radius:var(--r);padding:24px 32px
+  background:rgba(255,255,255,0.10);
+  backdrop-filter:blur(52px) saturate(200%) brightness(1.10);
+  -webkit-backdrop-filter:blur(52px) saturate(200%) brightness(1.10);
+  border:1px solid rgba(255,255,255,0.22);
+  box-shadow:inset 0 1.5px 0 rgba(255,255,255,0.40),inset 0 -0.5px 0 rgba(0,0,0,0.12),0 8px 40px rgba(0,0,0,0.22),0 1px 3px rgba(0,0,0,0.15);
+  border-radius:var(--r);padding:24px 32px
 }
 
 /* CHAPTERS */
 .chapters-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px}
 .ch-card{
-  background:var(--glass);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
-  border:1px solid var(--glass-b);border-radius:13px;padding:16px;
+  background:rgba(255,255,255,0.10);
+  backdrop-filter:blur(52px) saturate(200%) brightness(1.10);
+  -webkit-backdrop-filter:blur(52px) saturate(200%) brightness(1.10);
+  border:1px solid rgba(255,255,255,0.22);
+  box-shadow:inset 0 1.5px 0 rgba(255,255,255,0.40),inset 0 -0.5px 0 rgba(0,0,0,0.12),0 4px 20px rgba(0,0,0,0.18);
+  border-radius:13px;padding:16px;
   display:flex;align-items:center;gap:12px;
-  transition:transform .15s,border-color .2s
+  transition:transform .15s,box-shadow .2s
 }
-.ch-card:hover{transform:translateY(-3px);border-color:rgba(129,248,185,.5)}
+.ch-card:hover{transform:translateY(-3px);box-shadow:inset 0 1.5px 0 rgba(255,255,255,0.50),0 10px 32px rgba(0,0,0,.25)}
 .ch-icon{font-size:22px;flex-shrink:0;color:var(--aqua)}
-.ch-name{font-size:.8125rem;font-weight:500;color:var(--text)}
-.ch-desc{font-size:.6875rem;color:var(--soft);margin-top:2px}
+.ch-name{font-size:.8125rem;font-weight:500;color:rgba(255,255,255,0.92)}
+.ch-desc{font-size:.6875rem;color:rgba(255,255,255,0.5);margin-top:2px}
 
 /* SETUP */
 .setup-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
 @media(max-width:680px){.setup-grid{grid-template-columns:1fr}}
 .setup-card{
-  background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-  border:1px solid var(--glass-b);border-radius:var(--r);padding:28px
+  background:rgba(255,255,255,0.10);
+  backdrop-filter:blur(52px) saturate(200%) brightness(1.10);
+  -webkit-backdrop-filter:blur(52px) saturate(200%) brightness(1.10);
+  border:1px solid rgba(255,255,255,0.22);
+  box-shadow:inset 0 1.5px 0 rgba(255,255,255,0.40),inset 0 -0.5px 0 rgba(0,0,0,0.12),0 8px 40px rgba(0,0,0,0.22),0 1px 3px rgba(0,0,0,0.15);
+  border-radius:var(--r);padding:28px
 }
-.setup-card h4{font-size:.9375rem;font-weight:500;margin-bottom:18px;display:flex;align-items:center;gap:8px;color:var(--text)}
-.setup-step{display:flex;gap:10px;margin-bottom:12px;font-size:.8125rem;color:var(--soft);line-height:1.85}
+.setup-card h4{font-size:.9375rem;font-weight:500;margin-bottom:18px;display:flex;align-items:center;gap:8px;color:rgba(255,255,255,0.92)}
+.setup-step{display:flex;gap:10px;margin-bottom:12px;font-size:.8125rem;color:rgba(255,255,255,0.55);line-height:1.85}
 .setup-step-num{
   width:22px;height:22px;border-radius:50%;
   background:var(--aqua);color:#1a1a1a;
@@ -245,6 +272,17 @@ footer .brand{color:var(--aqua);font-weight:500;font-size:.875rem;margin-bottom:
 /* FADE */
 .fade-up{opacity:0;transform:translateY(32px);transition:opacity 650ms ease-out,transform 650ms ease-out}
 .fade-up.visible{opacity:1;transform:translateY(0)}
+/* Lucide icons */
+.flow-icon i[data-lucide]{display:block}
+.flow-icon svg{width:26px;height:26px;stroke:var(--aqua);stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.ch-icon i[data-lucide]{display:inline-block}
+.ch-icon svg{width:22px;height:22px;stroke:var(--aqua);stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.setup-card h4 i[data-lucide]{display:inline-block;vertical-align:middle}
+.setup-card h4 svg{width:18px;height:18px;stroke:var(--aqua);stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.feat-deco i[data-lucide]{display:block}
+.feat-deco svg{width:90px;height:90px;stroke:rgba(255,255,255,.06);stroke-width:0.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.cta-btn i[data-lucide]{display:inline-block;vertical-align:middle}
+.cta-btn svg{width:16px;height:16px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
 </style>
 </head>
 <body>
@@ -267,7 +305,7 @@ footer .brand{color:var(--aqua);font-weight:500;font-size:.875rem;margin-bottom:
   <h1>行前說明<br><em>電子書系統</em></h1>
   <p class="hero-sub">上傳 PDF，Claude AI 自動解析 · 一鍵推送 GitHub Pages · 遊客手機直開，無需安裝任何 App</p>
   <div class="hero-cta">
-    <a class="cta-btn cta-primary" href="tool.html">✦ 開始產生電子書</a>
+    <a class="cta-btn cta-primary" href="tool.html">✦  開始產生電子書</a>
     <a class="cta-btn cta-ghost" href="#how">了解流程 →</a>
   </div>
   <div class="hero-stats">
@@ -300,25 +338,25 @@ footer .brand{color:var(--aqua);font-weight:500;font-size:.875rem;margin-bottom:
   <div class="flow-grid">
     <div class="flow-card">
       <div class="flow-num">1</div>
-      <div class="flow-icon">📄</div>
+      <div class="flow-icon"><i data-lucide="file-text"></i></div>
       <h3>上傳行前說明 PDF</h3>
       <p>支援一般可選取文字的 PDF，拖曳或點擊上傳即可。</p>
     </div>
     <div class="flow-card">
       <div class="flow-num">2</div>
-      <div class="flow-icon">✍️</div>
+      <div class="flow-icon"><i data-lucide="pencil-line"></i></div>
       <h3>填寫基本資訊</h3>
       <p>輸入團名、日期、目的地、領隊資訊，系統自動補入電子書。</p>
     </div>
     <div class="flow-card">
       <div class="flow-num">3</div>
-      <div class="flow-icon">🤖</div>
+      <div class="flow-icon"><i data-lucide="cpu"></i></div>
       <h3>Claude AI 自動解析</h3>
       <p>AI 解讀 PDF 全文，整理成 8 大章節的結構化 JSON 資料。</p>
     </div>
     <div class="flow-card">
       <div class="flow-num">4</div>
-      <div class="flow-icon">🔗</div>
+      <div class="flow-icon"><i data-lucide="share-2"></i></div>
       <h3>一鍵發佈 &amp; 分享</h3>
       <p>自動推送到 GitHub Pages，複製連結傳給遊客，即刻可覽。</p>
     </div>
@@ -335,14 +373,14 @@ footer .brand{color:var(--aqua);font-weight:500;font-size:.875rem;margin-bottom:
       <h3>電子書<br>產生器</h3>
       <p>員工操作端。上傳 PDF、填寫資訊、一鍵發佈。API Keys 存在瀏覽器本地，安全便利。</p>
       <a class="feat-link" href="tool.html">開啟產生器 →</a>
-      <div class="feat-deco">⚙️</div>
+      <div class="feat-deco"><i data-lucide="settings-2"></i></div>
     </div>
     <div class="feat-card light">
       <div class="fc-tag">TOURIST VIEWER</div>
       <h3>遊客<br>閱覽端</h3>
       <p>遊客收到連結後直接用手機瀏覽器開啟。自動渲染行程、景點、清單、緊急聯絡等全部資訊。</p>
       <a class="feat-link" href="viewer.html?id=example">預覽閱覽頁 →</a>
-      <div class="feat-deco">📱</div>
+      <div class="feat-deco"><i data-lucide="smartphone"></i></div>
     </div>
   </div>
 </div>
@@ -358,35 +396,35 @@ footer .brand{color:var(--aqua);font-weight:500;font-size:.875rem;margin-bottom:
   </div>
   <div class="chapters-grid">
     <div class="ch-card">
-      <div class="ch-icon">✈️</div>
+      <div class="ch-icon"><i data-lucide="plane"></i></div>
       <div><div class="ch-name">集合與航班</div><div class="ch-desc">時間、地點、航班資訊</div></div>
     </div>
     <div class="ch-card">
-      <div class="ch-icon">🗺️</div>
+      <div class="ch-icon"><i data-lucide="map"></i></div>
       <div><div class="ch-name">行程總覽</div><div class="ch-desc">全程路線摘要</div></div>
     </div>
     <div class="ch-card">
-      <div class="ch-icon">📅</div>
+      <div class="ch-icon"><i data-lucide="calendar-days"></i></div>
       <div><div class="ch-name">每日詳細行程</div><div class="ch-desc">景點、餐食、住宿</div></div>
     </div>
     <div class="ch-card">
-      <div class="ch-icon">💡</div>
+      <div class="ch-icon"><i data-lucide="lightbulb"></i></div>
       <div><div class="ch-name">旅遊注意事項</div><div class="ch-desc">天氣、貨幣、電壓</div></div>
     </div>
     <div class="ch-card">
-      <div class="ch-icon">🛂</div>
+      <div class="ch-icon"><i data-lucide="shield-check"></i></div>
       <div><div class="ch-name">入境手續</div><div class="ch-desc">簽證、QR Code 說明</div></div>
     </div>
     <div class="ch-card">
-      <div class="ch-icon">🧾</div>
+      <div class="ch-icon"><i data-lucide="receipt"></i></div>
       <div><div class="ch-name">退稅說明</div><div class="ch-desc">門檻與步驟</div></div>
     </div>
     <div class="ch-card">
-      <div class="ch-icon">🎒</div>
+      <div class="ch-icon"><i data-lucide="backpack"></i></div>
       <div><div class="ch-name">行李清單</div><div class="ch-desc">必備、隨身、禁攜</div></div>
     </div>
     <div class="ch-card">
-      <div class="ch-icon">📞</div>
+      <div class="ch-icon"><i data-lucide="phone"></i></div>
       <div><div class="ch-name">緊急聯絡</div><div class="ch-desc">領隊、保險、救援</div></div>
     </div>
   </div>
@@ -449,14 +487,14 @@ footer .brand{color:var(--aqua);font-weight:500;font-size:.875rem;margin-bottom:
   </div>
   <div class="setup-grid">
     <div class="setup-card">
-      <h4>🤖 Anthropic API Key</h4>
+      <h4><i data-lucide="cpu"></i> Anthropic API Key</h4>
       <div class="setup-step"><div class="setup-step-num">1</div><div>前往 <strong>console.anthropic.com</strong></div></div>
       <div class="setup-step"><div class="setup-step-num">2</div><div>登入或建立帳號</div></div>
       <div class="setup-step"><div class="setup-step-num">3</div><div>左側選單 → <strong>API Keys</strong> → Create Key</div></div>
       <div class="setup-step"><div class="setup-step-num">4</div><div>複製 <code>sk-ant-...</code> 格式的金鑰</div></div>
     </div>
     <div class="setup-card">
-      <h4>🐙 GitHub Personal Access Token</h4>
+      <h4><i data-lucide="github"></i> GitHub Personal Access Token</h4>
       <div class="setup-step"><div class="setup-step-num">1</div><div>前往 <strong>github.com/settings/tokens</strong></div></div>
       <div class="setup-step"><div class="setup-step-num">2</div><div>Generate new token (classic)</div></div>
       <div class="setup-step"><div class="setup-step-num">3</div><div>勾選 <strong>repo</strong> 完整權限</div></div>
@@ -507,12 +545,13 @@ footer .brand{color:var(--aqua);font-weight:500;font-size:.875rem;margin-bottom:
   <div class="brand">樂放旅遊 Le Fun Travel</div>
   <div>行前說明電子書系統 · 技術棧：純 HTML/CSS/JS · PDF.js · Claude API · GitHub Pages</div>
   <div style="margin-top:12px">
-    <a href="tool.html" style="color:var(--g);text-decoration:none;margin:0 10px">電子書產生器</a>
+    <a href="tool.html" style="color:var(--aqua);text-decoration:none;margin:0 10px">電子書產生器</a>
     <a href="viewer.html" style="color:rgba(255,255,255,.4);text-decoration:none;margin:0 10px">遊客閱覽端</a>
   </div>
 </footer>
 
 <script>
+if (typeof lucide !== 'undefined') lucide.createIcons();
 const obs = new IntersectionObserver(entries => {
   entries.forEach(e => {
     if (e.isIntersecting) {

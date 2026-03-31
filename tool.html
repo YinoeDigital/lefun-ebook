@@ -129,6 +129,29 @@ header{
 .btn-preview:hover{background:rgba(255,255,255,.15)}
 .error-box{background:rgba(238,101,67,.1);border:1px solid rgba(238,101,67,.3);border-radius:10px;padding:14px 16px;margin-top:12px;display:none;font-size:.8125rem;color:var(--tomato)}
 .error-box.show{display:block}
+/* ── History Panel ── */
+.hist-card{margin-top:24px}
+.hist-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.hist-label{font-size:.6875rem;font-weight:400;letter-spacing:.12em;color:rgba(255,255,255,.5);text-transform:uppercase;display:flex;align-items:center;gap:8px}
+.hist-label svg{width:15px;height:15px;stroke:var(--aqua);stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.hist-badge{background:rgba(129,248,185,.15);color:var(--aqua);font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;letter-spacing:0}
+.btn-hist-clear{background:none;border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.3);font-size:10px;padding:4px 10px;border-radius:8px;cursor:pointer;font-family:inherit;transition:all .2s}
+.btn-hist-clear:hover{border-color:rgba(238,101,67,.45);color:var(--tomato)}
+.hist-empty{text-align:center;padding:26px 0;color:rgba(255,255,255,.22);font-size:12px;letter-spacing:.06em}
+.hist-item{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.hist-item:first-child{padding-top:4px}
+.hist-item:last-child{border-bottom:none;padding-bottom:2px}
+.hist-info{flex:1;min-width:0}
+.hist-name{font-size:13px;font-weight:500;color:rgba(255,255,255,.88);margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hist-meta{font-size:11px;color:rgba(255,255,255,.38);display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.hist-dest{color:var(--aqua)}
+.hist-time{margin-left:auto;font-size:10px;color:rgba(255,255,255,.2)}
+.hist-btns{display:flex;gap:6px;flex-shrink:0}
+.btn-hcopy{background:rgba(129,248,185,.1);border:1px solid rgba(129,248,185,.22);color:var(--aqua);font-size:11px;padding:6px 12px;border-radius:8px;cursor:pointer;font-family:inherit;transition:all .2s;white-space:nowrap}
+.btn-hcopy:hover{background:rgba(129,248,185,.2)}
+.btn-hcopy.done{background:var(--aqua);color:#1a1a1a;border-color:var(--aqua)}
+.btn-hopen{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);color:rgba(255,255,255,.55);font-size:13px;padding:5px 10px;border-radius:8px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;transition:all .2s}
+.btn-hopen:hover{background:rgba(255,255,255,.14);color:#fff}
 .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
 .modal-bg.open{display:flex}
 .modal{
@@ -233,7 +256,7 @@ header{
     <div class="upload-zone" id="coverZone">
       <input type="file" accept="image/*" multiple id="coverInput" onchange="handleCoverPhotos(this.files)">
       <div class="up-icon"><i data-lucide="images"></i></div>
-      <div class="up-main">上傳封面照片（最多 5 張）</div>
+      <div class="up-main">上傳封面照片（最多 10 張）</div>
       <div class="up-sub">建議 4:3 比例，最小 1200×800px，第一張為主封面大圖</div>
     </div>
     <div class="cover-preview-grid" id="coverGrid"></div>
@@ -297,6 +320,19 @@ header{
     <button class="btn-generate" id="genBtn" onclick="generate()" disabled>✦  一鍵產生電子書</button>
   </div>
 
+  <!-- 發布紀錄 -->
+  <div class="s-card hist-card" id="histCard">
+    <div class="hist-hdr">
+      <div class="hist-label">
+        <svg viewBox="0 0 24 24"><polyline points="12 8 12 12 14 14"/><path d="M3.05 11a9 9 0 1 1 .5 4"/><polyline points="3 16 3 11 8 11"/></svg>
+        發布紀錄
+        <span class="hist-badge" id="histBadge">0</span>
+      </div>
+      <button class="btn-hist-clear" onclick="clearHistory()">清除全部</button>
+    </div>
+    <div id="histList"><div class="hist-empty">尚無發布紀錄</div></div>
+  </div>
+
 </div>
 
 <div class="modal-bg" id="settingsModal">
@@ -342,9 +378,9 @@ coverZone.addEventListener('drop', e => { e.preventDefault(); coverZone.classLis
 
 function handleCoverPhotos(files) {
   if (!files || files.length === 0) return;
-  const imgs = Array.from(files).filter(f => f.type.startsWith('image/')).slice(0, 5);
+  const imgs = Array.from(files).filter(f => f.type.startsWith('image/')).slice(0, 10);
   coverFiles = imgs;
-  const labels = ['主封面', '2', '3', '4', '5'];
+  const labels = ['主封面','2','3','4','5','6','7','8','9','10'];
   const grid = document.getElementById('coverGrid');
   grid.innerHTML = '';
   imgs.forEach((file, i) => {
@@ -354,8 +390,9 @@ function handleCoverPhotos(files) {
     div.innerHTML = '<img src="'+url+'" alt="封面'+labels[i]+'"><div class="cover-thumb-label">'+labels[i]+'</div>';
     grid.appendChild(div);
   });
-  // fill empty slots
-  for (let i = imgs.length; i < 5; i++) {
+  // fill empty slots up to 5 min preview
+  const minSlots = Math.max(5, imgs.length);
+  for (let i = imgs.length; i < minSlots; i++) {
     const div = document.createElement('div');
     div.className = 'cover-thumb cover-thumb-empty';
     div.textContent = '+';
@@ -605,6 +642,15 @@ async function generate() {
     document.getElementById('resultUrl').textContent = shareUrl;
     document.getElementById('previewLink').href = shareUrl;
     document.getElementById('resultPanel').classList.add('show');
+    saveHistory({
+      id: ebookId,
+      tourName: document.getElementById('tourName').value.trim(),
+      destination: document.getElementById('destination').value.trim(),
+      departDate: document.getElementById('departDate').value,
+      returnDate: document.getElementById('returnDate').value,
+      shareUrl: shareUrl,
+      createdAt: Date.now()
+    });
 
   } catch(e) {
     showError(e.message);
@@ -618,6 +664,57 @@ async function copyLink() {
   btn.textContent = '✓ 已複製！';
   setTimeout(()=>btn.textContent='複製連結', 2000);
 }
+
+/* ── 發布紀錄 ── */
+const HIST_KEY = 'lf_history';
+function getHistory(){ try{return JSON.parse(localStorage.getItem(HIST_KEY)||'[]');}catch(e){return[];} }
+function saveHistory(item){
+  let h = getHistory().filter(x=>x.id!==item.id);
+  h.unshift(item);
+  if(h.length>100) h=h.slice(0,100);
+  localStorage.setItem(HIST_KEY, JSON.stringify(h));
+  renderHistory();
+}
+function clearHistory(){
+  if(!confirm('確定清除所有發布紀錄？此操作無法復原。')) return;
+  localStorage.removeItem(HIST_KEY);
+  renderHistory();
+}
+function copyHistLink(url, btn){
+  navigator.clipboard.writeText(url).then(()=>{
+    btn.textContent='✓ 已複製';
+    btn.classList.add('done');
+    setTimeout(()=>{ btn.textContent='複製連結'; btn.classList.remove('done'); }, 2000);
+  });
+}
+function renderHistory(){
+  const hist = getHistory();
+  const listEl = document.getElementById('histList');
+  const badge = document.getElementById('histBadge');
+  if(!listEl) return;
+  if(badge) badge.textContent = hist.length;
+  if(hist.length===0){ listEl.innerHTML='<div class="hist-empty">尚無發布紀錄</div>'; return; }
+  listEl.innerHTML = hist.map(h=>{
+    const d = h.createdAt ? new Date(h.createdAt) : null;
+    const time = d ? (d.getMonth()+1)+'/'+ d.getDate()+' '+ String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0') : '';
+    const safeUrl = h.shareUrl.replace(/'/g,"\\'");
+    return `<div class="hist-item">
+      <div class="hist-info">
+        <div class="hist-name">${h.tourName||h.id}</div>
+        <div class="hist-meta">
+          ${h.destination?`<span class="hist-dest">${h.destination}</span>`:''}
+          ${h.departDate?`<span>${h.departDate}</span>`:''}
+          ${time?`<span class="hist-time">${time}</span>`:''}
+        </div>
+      </div>
+      <div class="hist-btns">
+        <button class="btn-hcopy" onclick="copyHistLink('${safeUrl}',this)">複製連結</button>
+        <a class="btn-hopen" href="${h.shareUrl}" target="_blank" title="開啟電子書">↗</a>
+      </div>
+    </div>`;
+  }).join('');
+}
+renderHistory();
 
 function openSettings() {
   document.getElementById('inputAnthropic').value = localStorage.getItem('lf_anthropic_key') || '';

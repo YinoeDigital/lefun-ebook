@@ -56,11 +56,25 @@ body{font-family:"Noto Sans TC",sans-serif;background:transparent;color:var(--te
   transition:all .2s
 }
 .nav-font:hover{background:rgba(255,255,255,0.16);color:#fff}
+.nav-font{padding:5px 11px !important}
 .nav-font svg{width:22px;height:18px;flex-shrink:0;overflow:visible}
-/* Font size levels applied to main content */
-#app.fs-md{font-size:1.08rem}
-#app.fs-lg{font-size:1.18rem}
-#app.fs-xl{font-size:1.3rem}
+/* Font size levels — applied to html root so all rem units scale */
+html.fs-1{font-size:19px}
+html.fs-2{font-size:22px}
+html.fs-3{font-size:26px}
+html.fs-4{font-size:31px}
+html.fs-5{font-size:37px}
+/* Tighten padding at larger sizes to avoid overflow */
+html.fs-3 .card,html.fs-4 .card,html.fs-5 .card{padding:14px 12px}
+html.fs-4 .sec,html.fs-5 .sec{padding-left:16px;padding-right:16px}
+html.fs-4 .main,html.fs-5 .main{padding-left:12px;padding-right:12px}
+/* Font button dot indicator */
+.nav-font{position:relative}
+.fn-wrap{display:flex;flex-direction:column;align-items:center;gap:3px}
+.fn-aa{line-height:1}
+.fn-dots{display:flex;gap:3px;align-items:center}
+.fn-dot{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,0.2);transition:background .2s}
+.fn-dot.on{background:var(--aqua)}
 .nav-right{display:flex;align-items:center;gap:8px}
 .drawer-bg{display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.55)}
 .drawer-bg.open{display:block}
@@ -329,9 +343,46 @@ body{font-family:"Noto Sans TC",sans-serif;background:transparent;color:var(--te
 .cover-pills{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:0}
 .cover-pill{background:rgba(255,255,255,0.1);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border:1px solid rgba(255,255,255,0.2);box-shadow:inset 0 1px 0 rgba(255,255,255,0.25),0 4px 12px rgba(0,0,0,0.15);color:rgba(255,255,255,0.85);padding:5px 13px;border-radius:20px;font-size:11px;display:inline-flex;align-items:center;gap:5px}
 .cover-pill .li-icon svg{stroke:rgba(255,255,255,.7)}
-.cover-strip{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;height:88px;flex-shrink:0;position:relative;z-index:10;gap:2px}
-.cover-strip-item{background-size:cover;background-position:center}
-.cover-scroll-hint{position:absolute;bottom:108px;right:22px;z-index:10;display:flex;align-items:center;gap:5px;color:rgba(255,255,255,0.3);font-size:10px;letter-spacing:0.1em;text-transform:uppercase}
+/* ── Cover Carousel ── */
+.cover-bg{transition:opacity .65s ease;z-index:1}
+.cover-bg-next{position:absolute;inset:0;background-size:cover;background-position:center;transform:scale(1.04);z-index:0}
+.cover-progress{position:absolute;top:0;left:0;right:0;height:2px;z-index:20;background:rgba(255,255,255,.1);overflow:hidden}
+.cover-progress-fill{height:100%;background:var(--aqua);width:0%}
+.cover-strip{display:flex;gap:6px;padding:10px 16px 16px;flex-shrink:0;position:relative;z-index:10;overflow-x:auto;scrollbar-width:none;align-items:center}
+.cover-strip::-webkit-scrollbar{display:none}
+.cover-strip-item{flex-shrink:0;width:68px;height:50px;border-radius:7px;background-size:cover;background-position:center;cursor:pointer;opacity:.42;border:2px solid transparent;transition:opacity .3s,border-color .3s,transform .3s}
+.cover-strip-item.active{opacity:1;border-color:var(--aqua);transform:scaleY(1.08);box-shadow:0 0 0 1px rgba(129,248,185,.25),0 6px 18px rgba(0,0,0,.45)}
+.cover-strip-item:hover:not(.active){opacity:.72;transform:scaleY(1.04)}
+.cover-arrow{position:absolute;top:42%;transform:translateY(-50%);z-index:15;background:rgba(255,255,255,.08);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.16);border-radius:50%;width:38px;height:38px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;box-shadow:inset 0 1.5px 0 rgba(255,255,255,.22)}
+.cover-arrow:hover{background:rgba(255,255,255,.2)}
+.cover-arrow svg{width:15px;height:15px;stroke:#fff;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.cover-arrow-l{left:12px}.cover-arrow-r{right:12px}
+.cover-counter{position:absolute;bottom:92px;right:16px;z-index:15;font-size:10px;color:rgba(255,255,255,.5);letter-spacing:.1em;background:rgba(0,0,0,.32);backdrop-filter:blur(8px);padding:3px 9px;border-radius:10px;border:1px solid rgba(255,255,255,.1)}
+/* ── Weather Section ── */
+.wx-scroll{overflow-x:auto;scrollbar-width:none;padding-bottom:4px}
+.wx-scroll::-webkit-scrollbar{display:none}
+.wx-row{display:flex;gap:10px;padding:4px 0 8px}
+.wx-day-card{
+  flex-shrink:0;min-width:80px;
+  background:rgba(255,255,255,0.12);
+  backdrop-filter:blur(52px) saturate(200%) brightness(1.10);
+  -webkit-backdrop-filter:blur(52px) saturate(200%) brightness(1.10);
+  border:1px solid rgba(255,255,255,0.18);
+  box-shadow:inset 0 1.5px 0 rgba(255,255,255,0.32),0 4px 20px rgba(0,0,0,0.18);
+  border-radius:14px;padding:14px 10px;text-align:center
+}
+.wx-date{font-size:.65rem;color:rgba(255,255,255,.45);margin-bottom:8px;letter-spacing:.04em}
+.wx-icon-wrap{display:flex;justify-content:center;margin-bottom:6px}
+.wx-icon{width:26px;height:26px;color:var(--blue);display:block}
+.wx-desc{font-size:.65rem;color:rgba(255,255,255,.55);margin-bottom:8px;line-height:1.3}
+.wx-temp{display:flex;gap:5px;justify-content:center;align-items:baseline;margin-bottom:5px}
+.wx-hi{font-size:.9rem;font-weight:600;color:rgba(255,255,255,.92)}
+.wx-lo{font-size:.75rem;color:rgba(255,255,255,.38)}
+.wx-rain{font-size:.65rem;color:rgba(153,235,247,.65)}
+.wx-note{font-size:.7rem;color:rgba(255,255,255,.28);margin-top:12px;line-height:1.6}
+.wx-link{color:var(--aqua);text-decoration:none;margin-left:6px}
+.wx-link:hover{text-decoration:underline}
+.cover-scroll-hint{position:absolute;bottom:100px;right:22px;z-index:10;display:flex;align-items:center;gap:5px;color:rgba(255,255,255,0.3);font-size:10px;letter-spacing:0.1em;text-transform:uppercase}
 .cover-scroll-hint .li-icon{width:12px;height:12px}.cover-scroll-hint .li-icon svg{stroke:rgba(255,255,255,0.3)}
 </style>
 </head>
@@ -354,6 +405,13 @@ async function load(){
     const d=await r.json();
     render(d);
     setupIcons();
+    if(d.coverPhotos&&d.coverPhotos.length>1)initCoverCarousel(d.coverPhotos);
+    const m2=d.meta||{};
+    if(m2.destination&&m2.departDate&&m2.returnDate){
+      loadWeather(m2.destination,m2.departDate,m2.returnDate);
+    }
+    const fontBtn=document.getElementById('fontBtn');
+    if(fontBtn) fontBtn.innerHTML=makeFontBtn(fsIdx);
     if(d.backgroundImage){
       const bg=document.querySelector('.parallax-bg');
       if(bg){
@@ -364,21 +422,41 @@ async function load(){
     }
   }catch(e){err('無法載入行前說明（'+e.message+'）');}
 }
-const FS_LEVELS=['','fs-md','fs-lg','fs-xl'];
-const FS_LABELS=['<svg viewBox="0 0 20 20"><text x="1" y="14" font-size="9" font-family="sans-serif" fill="currentColor">A</text><text x="9" y="16" font-size="13" font-family="sans-serif" fill="currentColor">A</text></svg>','<svg viewBox="0 0 20 20"><text x="0" y="14" font-size="9" font-family="sans-serif" fill="currentColor">A</text><text x="8" y="17" font-size="15" font-family="sans-serif" fill="currentColor" font-weight="600">A</text></svg>','<svg viewBox="0 0 20 20"><text x="0" y="14" font-size="9" font-family="sans-serif" fill="currentColor">A</text><text x="7" y="18" font-size="17" font-family="sans-serif" fill="currentColor" font-weight="700">A</text></svg>','<svg viewBox="0 0 20 20"><text x="0" y="13" font-size="8" font-family="sans-serif" fill="rgba(255,255,255,0.4)">A</text><text x="6" y="18" font-size="18" font-family="sans-serif" fill="var(--aqua)" font-weight="700">A</text></svg>'];
+const FS_LEVELS=['','fs-1','fs-2','fs-3','fs-4','fs-5'];
+const FS_NAMES=['預設','較大','大','很大','特大','最大'];
+function makeFontBtn(idx){
+  // Two A's: small fixed, big grows with level; dot row shows progress
+  const bigSizes=[13,15,17,20,23,27];
+  const bigColors=['currentColor','currentColor','currentColor','currentColor',
+    'rgba(129,248,185,0.85)','var(--aqua)'];
+  const bigWeights=[400,500,600,700,700,800];
+  const dots=FS_LEVELS.map((_,i)=>`<span class="fn-dot${i<=idx&&idx>0?' on':''}"></span>`).join('');
+  return `<div class="fn-wrap">
+    <div class="fn-aa"><svg viewBox="0 0 22 18" style="width:22px;height:18px;overflow:visible">
+      <text x="0" y="13" font-size="9" font-family="sans-serif" fill="rgba(255,255,255,0.4)">A</text>
+      <text x="9" y="${10+bigSizes[idx]*0.55}" font-size="${bigSizes[idx]}" font-family="sans-serif" fill="${bigColors[idx]}" font-weight="${bigWeights[idx]}">${idx===5?'A':'A'}</text>
+    </svg></div>
+    <div class="fn-dots">${dots}</div>
+  </div>`;
+}
 let fsIdx=0;
 function cycleFont(){
-  const app=document.getElementById('app');
-  if(!app)return;
-  FS_LEVELS.forEach(c=>{if(c)app.classList.remove(c);});
+  const root=document.documentElement;
+  FS_LEVELS.forEach(c=>{if(c)root.classList.remove(c);});
   fsIdx=(fsIdx+1)%FS_LEVELS.length;
-  if(FS_LEVELS[fsIdx])app.classList.add(FS_LEVELS[fsIdx]);
+  if(FS_LEVELS[fsIdx])root.classList.add(FS_LEVELS[fsIdx]);
   const btn=document.getElementById('fontBtn');
-  if(btn)btn.innerHTML=FS_LABELS[fsIdx];
+  if(btn){btn.innerHTML=makeFontBtn(fsIdx);btn.title=FS_NAMES[fsIdx];}
   try{localStorage.setItem('lf_fs',fsIdx);}catch(e){}
 }
 (function initFont(){
-  try{const s=parseInt(localStorage.getItem('lf_fs')||0);if(s>0&&s<FS_LEVELS.length){fsIdx=s;const app=document.getElementById('app');if(app&&FS_LEVELS[s])app.classList.add(FS_LEVELS[s]);}}catch(e){}
+  try{
+    const s=parseInt(localStorage.getItem('lf_fs')||0);
+    if(s>0&&s<FS_LEVELS.length){
+      fsIdx=s;
+      document.documentElement.classList.add(FS_LEVELS[s]);
+    }
+  }catch(e){}
 })();
 function setupIcons(){
   const EM={
@@ -395,30 +473,135 @@ function setupIcons(){
   if(window.lucide) lucide.createIcons();
 }
 function li(name,cls=''){return`<i data-lucide="${name}" class="li-icon${cls?' '+cls:''}"></i>`;}
+
+/* ── Cover Carousel ── */
+let _cPhotos=[],_cIdx=0,_cTimer=null,_cDur=5000;
+function initCoverCarousel(photos){
+  if(!photos||photos.length<=1)return;
+  _cPhotos=photos;_cIdx=0;
+  _startCoverTimer();
+}
+function coverGoTo(idx){
+  if(idx===_cIdx||!_cPhotos.length)return;
+  const bg=document.getElementById('coverBgMain');
+  const next=document.getElementById('coverBgNext');
+  if(next)next.style.backgroundImage=`url('${_cPhotos[idx]}')`;
+  if(bg){
+    bg.style.opacity='0';
+    setTimeout(()=>{bg.style.backgroundImage=`url('${_cPhotos[idx]}')`;bg.style.opacity='1';},650);
+  }
+  _cIdx=idx;
+  document.querySelectorAll('.cover-strip-item').forEach((el,i)=>el.classList.toggle('active',i===idx));
+  const counter=document.getElementById('coverCounter');
+  if(counter)counter.textContent=(_cIdx+1)+' / '+_cPhotos.length;
+  _startCoverTimer();
+}
+function coverNav(dir){if(_cPhotos.length)coverGoTo((_cIdx+dir+_cPhotos.length)%_cPhotos.length);}
+function _startCoverTimer(){
+  clearInterval(_cTimer);
+  const fill=document.getElementById('coverFill');
+  if(fill){fill.style.transition='none';fill.style.width='0%';setTimeout(()=>{fill.style.transition='width '+_cDur+'ms linear';fill.style.width='100%';},50);}
+  _cTimer=setInterval(()=>coverGoTo((_cIdx+1)%_cPhotos.length),_cDur);
+}
+
+/* ── Weather API (Open-Meteo, free, no key) ── */
+const WX_ICONS={0:'sun',1:'cloud-sun',2:'cloud-sun',3:'cloud',45:'cloud-fog',48:'cloud-fog',
+  51:'cloud-drizzle',53:'cloud-drizzle',55:'cloud-drizzle',
+  61:'cloud-rain',63:'cloud-rain',65:'cloud-rain',
+  71:'snowflake',73:'snowflake',75:'snowflake',77:'snowflake',
+  80:'cloud-rain',81:'cloud-rain',82:'cloud-rain',
+  85:'snowflake',86:'snowflake',
+  95:'cloud-lightning',96:'cloud-lightning',99:'cloud-lightning'};
+const WX_DESC={0:'晴天',1:'晴時多雲',2:'多雲',3:'陰天',45:'起霧',48:'霧淞',
+  51:'毛毛雨',53:'毛毛雨',55:'毛毛雨',
+  61:'小雨',63:'中雨',65:'大雨',
+  71:'小雪',73:'中雪',75:'大雪',77:'冰晶',
+  80:'陣雨',81:'陣雨',82:'大陣雨',
+  85:'陣雪',86:'大陣雪',
+  95:'雷陣雨',96:'雷雨夾雹',99:'強雷雨'};
+function wxIcon(code){return WX_ICONS[code]||'cloud';}
+function wxDesc(code){return WX_DESC[code]||'未知';}
+function fmtDate(str){
+  if(!str)return '';
+  const d=new Date(str+'T00:00:00');
+  const days=['日','一','二','三','四','五','六'];
+  return (d.getMonth()+1)+'/'+(d.getDate())+' ('+days[d.getDay()]+')';
+}
+async function loadWeather(dest,startDate,endDate){
+  const sec=document.getElementById('wxSection');
+  if(!sec||!dest)return;
+  try{
+    // 1. Geocode the destination
+    const geoR=await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(dest)}&count=1&language=zh&format=json`);
+    const geoD=await geoR.json();
+    if(!geoD.results||!geoD.results.length){sec.innerHTML='';return;}
+    const {latitude:lat,longitude:lon,name:geoName,country_code:cc}=geoD.results[0];
+    // 2. Fetch forecast
+    const wxR=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto&start_date=${startDate}&end_date=${endDate}&format=json`);
+    const wxD=await wxR.json();
+    const daily=wxD.daily;
+    if(!daily||!daily.time||!daily.time.length){sec.innerHTML='';return;}
+    // 3. Build forecast URL
+    const wxUrl=`https://www.windy.com/?${lat},${lon},7`;
+    // 4. Render
+    const cards=daily.time.map((dt,i)=>{
+      const code=daily.weather_code[i];
+      const hi=Math.round(daily.temperature_2m_max[i]);
+      const lo=Math.round(daily.temperature_2m_min[i]);
+      const rain=daily.precipitation_probability_max[i]??'—';
+      return `<div class="wx-day-card">
+        <div class="wx-date">${fmtDate(dt)}</div>
+        <div class="wx-icon-wrap"><i data-lucide="${wxIcon(code)}" class="wx-icon"></i></div>
+        <div class="wx-desc">${wxDesc(code)}</div>
+        <div class="wx-temp"><span class="wx-hi">${hi}°</span><span class="wx-lo">${lo}°</span></div>
+        <div class="wx-rain"><i data-lucide="droplets" style="width:11px;height:11px;display:inline-block;vertical-align:middle;margin-right:2px;color:var(--blue)"></i>${rain}%</div>
+      </div>`;
+    }).join('');
+    sec.innerHTML=`
+    <section class="sec fade-up" id="wx">
+      <div class="sec-label">
+        <div class="sec-icon"><i data-lucide="cloud-sun"></i></div>
+        <div><h2>旅遊期間天氣預報</h2><p>${geoName}${cc?' · '+cc.toUpperCase():''} 每日天氣</p></div>
+      </div>
+      <div class="wx-scroll"><div class="wx-row">${cards}</div></div>
+      <p class="wx-note"><i data-lucide="info" style="width:12px;height:12px;display:inline-block;vertical-align:middle;margin-right:4px"></i>資料來源：Open-Meteo 免費天氣 API，僅供參考。
+        <a class="wx-link" href="${wxUrl}" target="_blank" rel="noopener">查看詳細預報 <i data-lucide="external-link" style="width:11px;height:11px;display:inline-block;vertical-align:middle"></i></a>
+      </p>
+    </section><div class="divider"></div>`;
+    if(window.lucide)lucide.createIcons();
+    // observe new fade-up
+    if(window._wxObs){document.querySelectorAll('#wx.fade-up').forEach(el=>window._wxObs.observe(el));}
+  }catch(e){if(sec)sec.innerHTML='';}
+}
+
 function err(msg){document.getElementById('app').innerHTML='<div class="loading"><div style="font-size:32px;color:#EE6543"><i data-lucide="triangle-alert" style="width:32px;height:32px;display:inline-block"></i></div><div style="color:#ff7a5c">'+msg+'</div></div>';if(typeof lucide!=='undefined')lucide.createIcons();}
 function render(d){
   const m=d.meta||{};
   document.title=s(m.tourName,'行前說明')+'｜樂放旅遊';
-  const nav=`<nav class="nav"><div class="nav-logo"><img src="logo.png" alt="樂放旅遊" style="height:28px;object-fit:contain;"></div><div class="nav-right"><button class="nav-font" onclick="cycleFont()" id="fontBtn"><svg viewBox="0 0 20 20"><text x="1" y="14" font-size="9" font-family="sans-serif" fill="currentColor">A</text><text x="9" y="16" font-size="13" font-family="sans-serif" fill="currentColor">A</text></svg></button><button class="nav-toc" onclick="od()">目錄</button></div></nav>
+  const nav=`<nav class="nav"><div class="nav-logo"><img src="logo.png" alt="樂放旅遊" style="height:28px;object-fit:contain;"></div><div class="nav-right"><button class="nav-font" onclick="cycleFont()" id="fontBtn" title="字級"></button><button class="nav-toc" onclick="od()">目錄</button></div></nav>
 <div class="drawer-bg" id="db" onclick="cd()"><div class="drawer" onclick="event.stopPropagation()"><button class="drawer-close" onclick="cd()">✕</button><h3>行前說明目錄</h3><a href="#as" onclick="cd()">${li('plane')}集合與航班</a><a href="#it" onclick="cd()">${li('map')}行程總覽</a><a href="#dy" onclick="cd()">${li('calendar-days')}每日行程</a><a href="#tp" onclick="cd()">${li('lightbulb')}旅遊注意事項</a><a href="#im" onclick="cd()">${li('shield-check')}入境手續</a><a href="#tx" onclick="cd()">${li('receipt')}退稅說明</a><a href="#ck" onclick="cd()">${li('backpack')}行李清單</a><a href="#dp" onclick="cd()">${li('anchor')}出境集合</a><a href="#em" onclick="cd()">${li('phone')}緊急聯絡</a></div></div>`;
 
   const hero=`<section class="hero"><div class="hero-logo"><img src="${LOGO}" alt="Le Fun"></div><div class="hero-tag">樂放旅遊 × 行前說明</div><h1>${s(m.tourName,'行前說明')}<br><em>${s(m.destination)}</em></h1><p class="hero-sub">${s(m.departDate)} — ${s(m.returnDate)}</p><div class="hero-pills">${m.flightOut?'<div class="pill">'+li('plane')+m.flightOut+'</div>':''}${m.hotel?'<div class="pill">'+li('building-2')+m.hotel+'</div>':''}${m.leaderName?'<div class="pill"><strong>領隊：</strong>'+m.leaderName+'</div>':''}</div><p class="scroll-hint">${li('chevron-down')}向下滑動閱覽</p></section>`;
 
-  const cover = d.coverPhotos && d.coverPhotos.length > 0 ? `
-<section class="cover-page">
-  <div class="cover-bg" style="background-image:url('${d.coverPhotos[0]}')"></div>
+  const cPhotos = d.coverPhotos && d.coverPhotos.length > 0 ? d.coverPhotos : null;
+  const cover = cPhotos ? `
+<section class="cover-page" id="coverSection">
+  <div class="cover-bg-next" id="coverBgNext"></div>
+  <div class="cover-bg" id="coverBgMain" style="background-image:url('${cPhotos[0]}')"></div>
+  <div class="cover-progress"><div class="cover-progress-fill" id="coverFill"></div></div>
   <div class="cover-top">
     <div class="cover-top-logo"><img src="logo.png" alt="樂放旅遊"></div>
     <div class="cover-top-tag">Le Fun Travel × 行前說明</div>
   </div>
-  ${d.coverPhotos.length > 1 ? '' : '<div class="cover-scroll-hint">'+li('chevron-down')+'Scroll</div>'}
+  ${cPhotos.length > 1 ? '<button class="cover-arrow cover-arrow-l" onclick="coverNav(-1)" aria-label="上一張"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button><button class="cover-arrow cover-arrow-r" onclick="coverNav(1)" aria-label="下一張"><svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg></button>' : ''}
+  ${cPhotos.length > 1 ? '<div class="cover-counter" id="coverCounter">1 / '+cPhotos.length+'</div>' : ''}
   <div class="cover-info">
     <div class="cover-dest">${s(m.destination)} · Pre-Trip Guide</div>
     <h1 class="cover-title">${s(m.tourName,'行前說明')}</h1>
     <div class="cover-dates">${s(m.departDate)} — ${s(m.returnDate)}</div>
     <div class="cover-pills">${m.flightOut?'<div class="cover-pill">'+li('plane')+m.flightOut+'</div>':''}${m.leaderName?'<div class="cover-pill">'+li('user')+m.leaderName+'</div>':''}</div>
   </div>
-  ${d.coverPhotos.length > 1 ? '<div class="cover-strip">'+d.coverPhotos.slice(1).map(p=>'<div class="cover-strip-item" style="background-image:url(\''+p+'\')"></div>').join('')+'</div>' : ''}
+  <div class="cover-strip" id="coverStrip">${cPhotos.map((p,i)=>'<div class="cover-strip-item'+(i===0?' active':'')+'" style="background-image:url(\''+p+'\')" onclick="coverGoTo('+i+')" title="第'+(i+1)+'張"></div>').join('')}</div>
 </section>` : hero;
 
   const days=(d.days||[]).map(day=>{
@@ -448,7 +631,9 @@ ${nav}${cover}
 <section class="sec fade-up" id="as"><div class="sec-label"><div class="sec-icon">${li('plane')}</div><div><h2>集合與航班資訊</h2><p>出發前請再確認</p></div></div>
 <div class="card card-g"><div class="info-row"><span class="ir-label">集合時間</span><span class="ir-val"><strong>${s(m.assemblyTime)}</strong></span></div><div class="info-row"><span class="ir-label">集合地點</span><span class="ir-val">${s(m.assemblyPlace)}</span></div></div>
 <div class="card"><table class="flight-table"><thead><tr><th></th><th>航班</th><th>出發 → 抵達</th></tr></thead><tbody>${m.flightOut?'<tr><td><span class="fbadge">去程</span></td><td colspan="2">'+m.flightOut+'</td></tr>':''}${m.flightReturn?'<tr><td><span class="fbadge fbadge-p">回程</span></td><td colspan="2">'+m.flightReturn+'</td></tr>':''}</tbody></table><p style="font-size:11px;color:rgba(255,255,255,.4);margin-top:8px">※ 航班時間以出發前說明會資料為準</p></div>
-</section><div class="divider"></div>
+</section>
+<div id="wxSection"></div>
+<div class="divider"></div>
 <section class="sec fade-up" id="it"><div class="sec-label"><div class="sec-icon">${li('map')}</div><div><h2>行程總覽</h2><p>${(d.days||[]).length} 天精華路線</p></div></div>
 <div class="card" style="background:var(--dk);color:#fff;border:none"><div style="display:flex;gap:14px;align-items:center;margin-bottom:14px">${li('building-2','li-icon-lg')}<div><div style="font-size:11px;color:rgba(255,255,255,.45);margin-bottom:3px">住宿</div><div style="font-weight:700;color:var(--aqua)">${s(m.hotel,'全程住宿')}</div></div></div>${(d.days||[]).map(day=>'<div style="background:rgba(255,255,255,.06);border-radius:11px;padding:11px;margin-bottom:7px"><div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:3px">第'+day.day+'天 '+s(day.date)+'</div><div style="font-size:13px;color:#fff">'+(day.spots||[]).map(sp=>sp.name).join('・')+'</div></div>').join('')}</div>
 </section><div class="divider"></div>
@@ -475,6 +660,9 @@ ${em.insurance?'<div class="card" style="margin-top:12px;background:var(--bg2)">
     <div class="co-info-item"><span class="co-info-label">品保協會</span><span class="co-info-val">中華民國旅行業品質保障協會　高字第 0673 號</span></div>
   </div>
   <div class="co-social">
+    <a href="https://lovefuntravel2024.com/" target="_blank" rel="noopener" class="co-social-link" aria-label="官方網站">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </a>
     <a href="https://www.facebook.com/profile.php?id=61563888242869" target="_blank" rel="noopener" class="co-social-link" aria-label="Facebook">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
     </a>
@@ -482,7 +670,7 @@ ${em.insurance?'<div class="card" style="margin-top:12px;background:var(--bg2)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".5" fill="currentColor"/></svg>
     </a>
     <a href="https://youtube.com/@lovefuntravel2024" target="_blank" rel="noopener" class="co-social-link" aria-label="YouTube">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.95C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.95C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" stroke="none" fill="currentColor"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.95C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.95C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" stroke="none" fill="#FF0000"/></svg>
     </a>
   </div>
   <div class="co-bottom">
@@ -502,6 +690,7 @@ ${em.insurance?'<div class="card" style="margin-top:12px;background:var(--bg2)">
     }
   }),{threshold:0.12,rootMargin:'0px 0px -60px 0px'});
   document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+  window._wxObs=obs;
 }
 load();
 </script>

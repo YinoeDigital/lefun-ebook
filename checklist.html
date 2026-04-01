@@ -27,7 +27,7 @@ body{font-family:"Noto Sans TC",sans-serif;background:transparent;color:var(--te
 .nav-back:hover{background:rgba(255,255,255,0.16);color:#fff}
 
 /* ── Main Layout ── */
-.main{max-width:680px;margin:0 auto;padding:0 20px 80px;position:relative;z-index:1}
+.main{max-width:680px;margin:0 auto;padding:0 20px 80px;position:relative;z-index:1;overflow-x:hidden}
 
 /* ── Trip Header ── */
 .trip-header{padding:32px 0 24px}
@@ -113,7 +113,7 @@ body{font-family:"Noto Sans TC",sans-serif;background:transparent;color:var(--te
 .ck-item.need-prep .ck-btn-prep svg{stroke:var(--tomato)}
 /* add custom item */
 .ck-add-wrap{grid-column:1/-1;display:flex;gap:8px;margin-top:4px}
-.ck-add-input{flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:9px 14px;font-size:.82rem;color:#fff;font-family:inherit;outline:none;transition:border-color .2s}
+.ck-add-input{flex:1;min-width:0;width:0;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:9px 14px;font-size:.82rem;color:#fff;font-family:inherit;outline:none;transition:border-color .2s}
 .ck-add-input::placeholder{color:rgba(255,255,255,.28)}
 .ck-add-input:focus{border-color:rgba(129,248,185,.4)}
 .ck-add-btn{background:rgba(129,248,185,.15);border:1px solid rgba(129,248,185,.25);border-radius:10px;padding:9px 14px;font-size:.82rem;font-weight:700;color:var(--aqua);cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px;white-space:nowrap;transition:all .2s}

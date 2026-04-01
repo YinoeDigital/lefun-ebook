@@ -155,7 +155,7 @@ html.fs-4 .main,html.fs-5 .main{padding-left:12px;padding-right:12px}
 .ir-val{font-size:.875rem;color:rgba(255,255,255,0.90);flex:1}
 .ir-val strong{color:var(--aqua);font-weight:700}
 .flight-table{width:100%;border-collapse:collapse;font-size:.8125rem;margin-top:10px}
-.flight-table th{background:rgba(20,30,25,.8);color:rgba(255,255,255,0.9);padding:8px 10px;text-align:left;font-weight:400;letter-spacing:.04em;font-size:.75rem}
+.flight-table th{background:rgba(129,248,185,0.15);color:var(--aqua);padding:8px 10px;text-align:left;font-weight:500;letter-spacing:.06em;font-size:.72rem;border-bottom:1px solid rgba(129,248,185,.2)}
 .flight-table th:first-child{border-radius:8px 0 0 0}.flight-table th:last-child{border-radius:0 8px 0 0}
 .flight-table td{padding:10px;border-bottom:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,0.80)}
 .flight-table tr:last-child td{border-bottom:none}
@@ -211,7 +211,7 @@ html.fs-4 .main,html.fs-5 .main{padding-left:12px;padding-right:12px}
 }
 .day-body{padding:16px 18px 18px}
 .spot{display:flex;gap:12px;margin-bottom:14px;align-items:flex-start}
-.spot-dot{width:6px;height:6px;border-radius:50%;background:var(--aqua);margin-top:7px;flex-shrink:0}
+.spot-pin{width:15px;height:15px;flex-shrink:0;margin-top:2px;color:var(--aqua)}
 .spot h4{font-size:.875rem;font-weight:500;margin-bottom:3px;color:rgba(255,255,255,0.92)}
 .spot p{font-size:.8125rem;color:rgba(255,255,255,0.70);line-height:1.7}
 .meal-row{display:flex;flex-direction:column;gap:0;margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.10)}
@@ -385,6 +385,22 @@ html.fs-4 .main,html.fs-5 .main{padding-left:12px;padding-right:12px}
 .cover-arrow svg{width:15px;height:15px;stroke:#fff;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
 .cover-arrow-l{left:12px}.cover-arrow-r{right:12px}
 .cover-counter{position:absolute;bottom:92px;right:16px;z-index:15;font-size:10px;color:rgba(255,255,255,.5);letter-spacing:.1em;background:rgba(0,0,0,.32);backdrop-filter:blur(8px);padding:3px 9px;border-radius:10px;border:1px solid rgba(255,255,255,.1)}
+/* ── PDF Button ── */
+.pdf-btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  margin-top:14px;background:var(--tomato);
+  border:none;border-radius:14px;padding:15px 20px;
+  font-size:.9rem;font-weight:700;color:#fff;
+  text-decoration:none;letter-spacing:.04em;
+  box-shadow:0 4px 20px rgba(238,101,67,.35);transition:opacity .2s
+}
+.pdf-btn:hover{opacity:.85}
+.pdf-btn .li-icon{width:18px;height:18px;flex-shrink:0}
+/* ── Overview disclaimer ── */
+.ov-disclaimer{font-size:.72rem;color:var(--tomato);text-align:center;padding:14px 8px 4px;opacity:.85;line-height:1.6;letter-spacing:.02em}
+/* ── Overview flight chip ── */
+.ov-flight{display:inline-flex;align-items:center;gap:4px;font-size:.7rem;color:rgba(255,255,255,.55);background:rgba(255,255,255,.07);border-radius:8px;padding:2px 8px;margin-top:5px}
+.ov-flight .li-icon{width:11px;height:11px;color:var(--blue)}
 /* ── Itinerary Overview Rows ── */
 .ov-row{display:flex;align-items:flex-start;gap:10px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.07);flex-wrap:wrap}
 .ov-row:last-child{border-bottom:none}
@@ -431,6 +447,8 @@ function cd(){document.getElementById('db').classList.remove('open')}
 function s(v,f){return(v&&v!=='undefined'&&v!=='null')?v:(f||'')}
 // 將半形冒號與括號轉為全形（用於顯示使用者資料）
 function tw(v){return(v||'').replace(/:/g,'：').replace(/\(/g,'（').replace(/\)/g,'）')}
+// 數字加千分位
+function numFmt(v){return(v||'').replace(/\d[\d,]*/g,n=>{const clean=n.replace(/,/g,'');return clean.length>3?Number(clean).toLocaleString():n;})}
 function gp(k){return new URLSearchParams(location.search).get(k)}
 async function load(){
   const id=gp('id');
@@ -682,7 +700,7 @@ function render(d){
     const n=day.day||1;
     const zhNum=ZH_NUM[n-1]||n;
     const enOrd=(EN_ORD[n-1]||n+'th')+' Day';
-    const spots=(day.spots||[]).map(sp=>'<div class="spot"><div class="spot-dot"></div><div><h4>'+tw(sp.name)+'</h4><p>'+tw(sp.desc)+'</p></div></div>').join('');
+    const spots=(day.spots||[]).map(sp=>'<div class="spot"><i data-lucide="map-pin" class="spot-pin"></i><div><h4>'+tw(sp.name)+'</h4><p>'+tw(sp.desc)+'</p></div></div>').join('');
     const meals=[
       day.breakfast?'<div class="meal-row-item">'+li('coffee')+'<span class="mr-label">早餐</span><span class="mr-sep">⟡</span><span class="mr-val">'+tw(day.breakfast)+'</span></div>':'',
       day.lunch?'<div class="meal-row-item">'+li('utensils')+'<span class="mr-label">午餐</span><span class="mr-sep">⟡</span><span class="mr-val">'+tw(day.lunch)+'</span></div>':'',
@@ -730,32 +748,60 @@ function render(d){
 ${nav}${cover}
 <section class="sec fade-up" id="as"><div class="sec-label"><div class="sec-icon">${li('plane')}</div><div><h2>集合與航班資訊</h2><p>出發前請再確認</p></div></div>
 <div class="card card-g"><div class="info-row"><span class="ir-label">集合時間</span><span class="ir-val"><strong>${s(m.assemblyTime)}</strong></span></div><div class="info-row"><span class="ir-label">集合地點</span><span class="ir-val">${s(m.assemblyPlace)}</span></div></div>
-<div class="card"><table class="flight-table"><thead><tr><th></th><th>航班</th><th>出發 → 抵達</th></tr></thead><tbody>${m.flightOut?'<tr><td><span class="fbadge">去程</span></td><td colspan="2">'+m.flightOut+'</td></tr>':''}${m.flightReturn?'<tr><td><span class="fbadge fbadge-p">回程</span></td><td colspan="2">'+m.flightReturn+'</td></tr>':''}</tbody></table><p style="font-size:11px;color:rgba(255,255,255,.4);margin-top:8px">※ 航班時間以出發前說明會資料為準</p></div>
+${(()=>{
+  const hasFull=m.flightOutAirline||m.flightOutDepTime||m.flightOutDepPort;
+  if(hasFull){
+    const outRow=m.flightOut||m.flightOutNo?`<tr><td><span class="fbadge">去程</span></td><td>${tw(s(m.flightOutAirline))}</td><td><strong>${s(m.flightOutNo||m.flightOut)}</strong></td><td>${tw(s(m.flightOutDepTime))} ${tw(s(m.flightOutDepPort))}</td><td>${tw(s(m.flightOutArrTime))} ${tw(s(m.flightOutArrPort))}</td></tr>`:'';
+    const retRow=m.flightReturn||m.flightReturnNo?`<tr><td><span class="fbadge fbadge-p">回程</span></td><td>${tw(s(m.flightReturnAirline))}</td><td><strong>${s(m.flightReturnNo||m.flightReturn)}</strong></td><td>${tw(s(m.flightReturnDepTime))} ${tw(s(m.flightReturnDepPort))}</td><td>${tw(s(m.flightReturnArrTime))} ${tw(s(m.flightReturnArrPort))}</td></tr>`:'';
+    return `<div class="card"><table class="flight-table"><thead><tr><th></th><th>航空公司</th><th>航班</th><th>出發</th><th>抵達</th></tr></thead><tbody>${outRow}${retRow}</tbody></table><p style="font-size:11px;color:rgba(255,255,255,.4);margin-top:8px">※ 航班時間以出發前說明會資料為準</p></div>`;
+  }else{
+    return `<div class="card"><table class="flight-table"><thead><tr><th></th><th>航班</th><th>出發 → 抵達</th></tr></thead><tbody>${m.flightOut?'<tr><td><span class="fbadge">去程</span></td><td colspan="2">'+tw(m.flightOut)+'</td></tr>':''}${m.flightReturn?'<tr><td><span class="fbadge fbadge-p">回程</span></td><td colspan="2">'+tw(m.flightReturn)+'</td></tr>':''}</tbody></table><p style="font-size:11px;color:rgba(255,255,255,.4);margin-top:8px">※ 航班時間以出發前說明會資料為準</p></div>`;
+  }
+})()}
 </section>
 <div id="wxSection"></div>
 <div class="divider"></div>
 <section class="sec fade-up" id="it"><div class="sec-label"><div class="sec-icon">${li('map')}</div><div><h2>行程總覽</h2><p>${(d.days||[]).length} 天精華路線</p></div></div>
-<div class="card" style="padding:8px 4px">
-${m.hotel?'<div style="display:flex;gap:10px;align-items:center;padding:10px 14px 14px;border-bottom:1px solid rgba(255,255,255,.08)">'+li('building-2')+'<div><div style="font-size:.68rem;color:rgba(255,255,255,.5);margin-bottom:2px;letter-spacing:.06em">全程住宿</div><div style="font-weight:700;color:var(--aqua);font-size:.9375rem">'+s(m.hotel)+'</div></div></div>':''}
-${(d.days||[]).map(day=>{
-  const n2=day.day||1;
-  const zh2=ZH_NUM[n2-1]||n2;
-  const _WD2=['日','一','二','三','四','五','六'];
-  let dl2='';
-  if(m.departDate){const _b2=new Date(m.departDate+'T00:00:00');_b2.setDate(_b2.getDate()+(n2-1));dl2=(_b2.getMonth()+1)+'月'+_b2.getDate()+'日（週'+_WD2[_b2.getDay()]+'）';}
-  return '<div class="ov-row"><div class="ov-badge">'+DOT_SVG+'<span class="ov-zh">第'+zh2+'天</span></div>'+(dl2?'<span class="ov-date">'+dl2+'</span>':'')+'<div class="ov-spots">'+(day.spots||[]).map(sp=>sp.name).join('・')+'</div></div>';
-}).join('')}
+<div class="card" style="padding:8px 16px">
+${m.hotel?'<div style="display:flex;gap:10px;align-items:center;padding:10px 0 14px;border-bottom:1px solid rgba(255,255,255,.08)">'+li('building-2')+'<div><div style="font-size:.68rem;color:rgba(255,255,255,.5);margin-bottom:2px;letter-spacing:.06em">全程住宿</div><div style="font-weight:700;color:var(--aqua);font-size:.9375rem">'+s(m.hotel)+'</div></div></div>':''}
+${(()=>{
+  const allDays=d.days||[];
+  const total=allDays.length;
+  return allDays.map(day=>{
+    const n2=day.day||1;
+    const zh2=ZH_NUM[n2-1]||n2;
+    const _WD2=['日','一','二','三','四','五','六'];
+    let dl2='';
+    if(m.departDate){const _b2=new Date(m.departDate+'T00:00:00');_b2.setDate(_b2.getDate()+(n2-1));dl2=(_b2.getMonth()+1)+'月'+_b2.getDate()+'日（週'+_WD2[_b2.getDay()]+'）';}
+    // 首天去程、末天回程 chip
+    let flightChip='';
+    if(n2===1&&(m.flightOut||m.flightOutNo)){
+      const fn=m.flightOutNo||m.flightOut;
+      const ft=m.flightOutDepTime?'　'+m.flightOutDepTime:'';
+      const route=(m.flightOutDepPort&&m.flightOutArrPort)?'　'+m.flightOutDepPort+'→'+m.flightOutArrPort:'';
+      flightChip='<span class="ov-flight">'+li('plane')+fn+ft+route+'</span>';
+    }else if(n2===total&&(m.flightReturn||m.flightReturnNo)){
+      const fn=m.flightReturnNo||m.flightReturn;
+      const ft=m.flightReturnDepTime?'　'+m.flightReturnDepTime:'';
+      const route=(m.flightReturnDepPort&&m.flightReturnArrPort)?'　'+m.flightReturnDepPort+'→'+m.flightReturnArrPort:'';
+      flightChip='<span class="ov-flight">'+li('plane-takeoff')+fn+ft+route+'</span>';
+    }
+    return '<div class="ov-row"><div class="ov-badge">'+DOT_SVG+'<span class="ov-zh">第'+zh2+'天</span></div>'+(dl2?'<span class="ov-date">'+dl2+'</span>':'')+'<div class="ov-spots">'+(day.spots||[]).map(sp=>sp.name).join('・')+flightChip+'</div></div>';
+  }).join('');
+})()}
+<p class="ov-disclaimer">※ 行程內容、次序、班次時間及住宿飯店，本公司保留變更的權利 ※</p>
 </div>
 </section><div class="divider"></div>
 <section class="sec fade-up" id="dy"><div class="sec-label"><div class="sec-icon">${li('calendar-days')}</div><div><h2>每日詳細行程</h2><p>景點介紹・餐食・住宿</p></div></div>${days}</section><div class="divider"></div>
 <div class="sec-tinted"><section class="sec fade-up" id="tp" style="max-width:100%;padding-left:20px;padding-right:20px"><div style="max-width:640px;margin:0 auto"><div class="sec-label"><div class="sec-icon">${li('lightbulb')}</div><div><h2>旅遊注意事項</h2><p>出發前請仔細閱讀</p></div></div><div class="tips-grid">${tipsG}</div></div></section></div><div class="divider"></div>
 <section class="sec fade-up" id="im"><div class="sec-label"><div class="sec-icon">${li('shield-check')}</div><div><h2>入境手續</h2><p>${s(imm.visa)}</p></div></div><div class="card card-b">${imm.qcode?'<p style="font-size:13px;color:rgba(255,255,255,.65);margin-bottom:14px">'+imm.qcode+'</p>':''}<div class="steps">${immS}</div></div></section><div class="divider"></div>
-<section class="sec fade-up" id="tx"><div class="sec-label"><div class="sec-icon">${li('receipt')}</div><div><h2>退稅說明</h2><p>滿 ${s(tax.threshold,'30,000韓圜')} 即可退稅</p></div></div><div class="card card-y"><div class="steps">${taxS}</div></div></section><div class="divider"></div>
+<section class="sec fade-up" id="tx"><div class="sec-label"><div class="sec-icon">${li('receipt')}</div><div><h2>退稅說明</h2><p>滿 ${numFmt(s(tax.threshold,'30,000 韓圜'))} 即可退稅</p></div></div><div class="card card-y"><div class="steps">${taxS}</div></div></section><div class="divider"></div>
 <div class="sec-tinted"><section class="sec fade-up" id="ck" style="max-width:100%;padding-left:20px;padding-right:20px"><div style="max-width:640px;margin:0 auto"><div class="sec-label"><div class="sec-icon">${li('backpack')}</div><div><h2>行李攜帶清單</h2><p>出發前對照確認</p></div></div><p style="font-size:12px;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:9px">出發前必備</p><div class="checklist" style="margin-bottom:18px">${chkB}</div><p style="font-size:12px;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:9px">隨身行李</p><div class="checklist" style="margin-bottom:16px">${chkC}</div>${chk.forbidden?'<div class="card" style="background:var(--tomato);border:none;color:#fff"><p style="font-size:13px;font-weight:700;margin-bottom:5px;display:flex;align-items:center;gap:5px">'+li('triangle-alert')+'禁止攜帶</p><p style="font-size:13px;opacity:.9">'+chk.forbidden+'</p></div>':''}</div></section></div><div class="divider"></div>
 <section class="sec fade-up" id="dp"><div class="sec-label"><div class="sec-icon">${li('plane-takeoff')}</div><div><h2>出境集合須知</h2><p>${s(dep.assemblyTime)}</p></div></div><div class="card card-p">${depR}</div></section><div class="divider"></div>
 <section class="sec fade-up" id="em"><div class="sec-label"><div class="sec-icon">${li('phone')}</div><div><h2>緊急聯絡資訊</h2><p>截圖存起來備用</p></div></div>
 <div class="emergency"><h3>${li('siren')}重要電話</h3>${m.leaderName?'<div class="em-row"><span class="em-label">領隊　'+m.leaderName+'</span><span class="em-val">'+tw(s(m.leaderPhone))+'</span></div>':''}${em.international?'<div class="em-row"><span class="em-label">國際救援</span><span class="em-val">'+tw(em.international)+'</span></div>':''}${em.overseas?'<div class="em-row"><span class="em-label">旅外急難</span><span class="em-val">'+tw(em.overseas)+'</span></div>':''}${emC}</div>
 ${em.insurance?'<div class="emergency" style="margin-top:10px"><h3>'+li('clipboard-list')+'保險說明</h3><p style="font-size:.875rem;color:rgba(255,255,255,.80);line-height:1.8">'+em.insurance+'</p></div>':''}
+${d.pdfUrl?'<a href="'+d.pdfUrl+'" target="_blank" rel="noopener" class="pdf-btn">'+li('file-text')+'點擊閱覽詳細行前說明資料</a>':''}
 </section>
 <footer class="co-footer">
   <div class="co-logo-wrap"><img src="logo.png" alt="樂放旅遊 Le Fun Travel" class="co-logo"></div>

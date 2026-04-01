@@ -531,7 +531,9 @@ async function generate() {
   "meta": {
     "tourName":"","destination":"","departDate":"","returnDate":"",
     "leaderName":"","leaderPhone":"","hotel":"","hotelPhone":"",
-    "flightOut":"","flightReturn":"","assemblyTime":"","assemblyPlace":""
+    "flightOut":"","flightOutAirline":"","flightOutNo":"","flightOutDepTime":"","flightOutDepPort":"","flightOutArrTime":"","flightOutArrPort":"",
+    "flightReturn":"","flightReturnAirline":"","flightReturnNo":"","flightReturnDepTime":"","flightReturnDepPort":"","flightReturnArrTime":"","flightReturnArrPort":"",
+    "assemblyTime":"","assemblyPlace":""
   },
   "days": [
     {"day":1,"date":"","title":"","spots":[{"name":"","desc":""}],
@@ -605,6 +607,8 @@ async function generate() {
       return;
     }
 
+    // 預設 PDF 連結（推送後實際存在於 GitHub Pages）
+    if (pdfFile) ebookData.pdfUrl = `https://${githubUser}.github.io/${githubRepo}/pdfs/${ebookId}.pdf`;
     const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(ebookData,null,2))));
     const apiUrl = `https://api.github.com/repos/${githubUser}/${githubRepo}/contents/data/${ebookId}.json`;
     let sha = '';
@@ -638,6 +642,22 @@ async function generate() {
           const coverPush = await fetch(coverApiUrl, {method:'PUT', headers:{'Authorization':'token '+githubToken,'Content-Type':'application/json'}, body:JSON.stringify(coverBody)});
           if (coverPush.ok) ogImageUrl = `${baseUrl}/covers/${ebookId}.jpg`;
         }
+      } catch(e) {}
+    }
+    // 推送原始 PDF（供電子書中「詳細行前說明」按鈕使用）
+    if (pdfFile) {
+      try {
+        const ab = await pdfFile.arrayBuffer();
+        let bin = '';
+        const bytes = new Uint8Array(ab);
+        for (let i = 0; i < bytes.byteLength; i++) bin += String.fromCharCode(bytes[i]);
+        const pdfB64 = btoa(bin);
+        const pdfApiUrl = `https://api.github.com/repos/${githubUser}/${githubRepo}/contents/pdfs/${ebookId}.pdf`;
+        let pdfSha = '';
+        try { const pc = await fetch(pdfApiUrl, {headers:{'Authorization':'token '+githubToken}}); if(pc.ok) pdfSha=(await pc.json()).sha; } catch(e){}
+        const pdfBody = {message:`pdf: ${ebookId}`, content:pdfB64, branch:'main'};
+        if (pdfSha) pdfBody.sha = pdfSha;
+        await fetch(pdfApiUrl, {method:'PUT', headers:{'Authorization':'token '+githubToken,'Content-Type':'application/json'}, body:JSON.stringify(pdfBody)});
       } catch(e) {}
     }
     const shareHtml = `<!DOCTYPE html><html lang="zh-TW"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${ogTitle}</title><meta property="og:title" content="${ogTitle}"><meta property="og:description" content="${ogDesc}"><meta property="og:image" content="${ogImageUrl}"><meta property="og:url" content="${baseUrl}/share/${ebookId}.html"><meta property="og:type" content="website"><meta property="og:locale" content="zh_TW"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${ogTitle}"><meta name="twitter:description" content="${ogDesc}"><meta name="twitter:image" content="${ogImageUrl}"><meta http-equiv="refresh" content="0;url=${viewerUrl}"><script>location.replace('${viewerUrl}');<\/script></head><body></body></html>`;

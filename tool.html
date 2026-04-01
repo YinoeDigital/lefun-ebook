@@ -623,7 +623,24 @@ async function generate() {
     const viewerUrl = `${baseUrl}/viewer.html?id=${ebookId}`;
     const ogTitle = `${tourName || ebookId} ✈ 行前說明`;
     const ogDesc = `${destination ? destination + '・' : ''}${departDate || ''}｜樂放旅遊 Le Fun Travel`;
-    const shareHtml = `<!DOCTYPE html><html lang="zh-TW"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${ogTitle}</title><meta property="og:title" content="${ogTitle}"><meta property="og:description" content="${ogDesc}"><meta property="og:image" content="${baseUrl}/logo.png"><meta property="og:url" content="${baseUrl}/share/${ebookId}.html"><meta property="og:type" content="website"><meta property="og:locale" content="zh_TW"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="${ogTitle}"><meta name="twitter:description" content="${ogDesc}"><meta http-equiv="refresh" content="0;url=${viewerUrl}"><script>location.replace('${viewerUrl}');<\/script></head><body></body></html>`;
+    // 嘗試將第一張封面照片推送為獨立圖檔，做為 OG image
+    let ogImageUrl = `${baseUrl}/logo.png`;
+    if (ebookData.coverPhotos && ebookData.coverPhotos.length > 0) {
+      try {
+        const firstCoverDataUrl = ebookData.coverPhotos[0];
+        const b64 = firstCoverDataUrl.split(',')[1];
+        if (b64) {
+          const coverApiUrl = `https://api.github.com/repos/${githubUser}/${githubRepo}/contents/covers/${ebookId}.jpg`;
+          let coverSha = '';
+          try { const cc = await fetch(coverApiUrl, {headers:{'Authorization':'token '+githubToken}}); if(cc.ok) coverSha=(await cc.json()).sha; } catch(e){}
+          const coverBody = {message:`cover: ${ebookId}`, content:b64, branch:'main'};
+          if (coverSha) coverBody.sha = coverSha;
+          const coverPush = await fetch(coverApiUrl, {method:'PUT', headers:{'Authorization':'token '+githubToken,'Content-Type':'application/json'}, body:JSON.stringify(coverBody)});
+          if (coverPush.ok) ogImageUrl = `${baseUrl}/covers/${ebookId}.jpg`;
+        }
+      } catch(e) {}
+    }
+    const shareHtml = `<!DOCTYPE html><html lang="zh-TW"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${ogTitle}</title><meta property="og:title" content="${ogTitle}"><meta property="og:description" content="${ogDesc}"><meta property="og:image" content="${ogImageUrl}"><meta property="og:url" content="${baseUrl}/share/${ebookId}.html"><meta property="og:type" content="website"><meta property="og:locale" content="zh_TW"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${ogTitle}"><meta name="twitter:description" content="${ogDesc}"><meta name="twitter:image" content="${ogImageUrl}"><meta http-equiv="refresh" content="0;url=${viewerUrl}"><script>location.replace('${viewerUrl}');<\/script></head><body></body></html>`;
     const shareEncoded = btoa(unescape(encodeURIComponent(shareHtml)));
     const shareApiUrl = `https://api.github.com/repos/${githubUser}/${githubRepo}/contents/share/${ebookId}.html`;
     let shareSha = '';

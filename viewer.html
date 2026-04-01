@@ -165,32 +165,58 @@ html.fs-4 .main,html.fs-5 .main{padding-left:12px;padding-right:12px}
 
 /* ── Day Cards ── */
 .day-card{
-  background:rgba(255,255,255,0.14);
+  background:rgba(255,255,255,0.13);
   backdrop-filter:blur(52px) saturate(200%) brightness(1.10);
   -webkit-backdrop-filter:blur(52px) saturate(200%) brightness(1.10);
-  border:1px solid rgba(255,255,255,0.22);
-  box-shadow:inset 0 1.5px 0 rgba(255,255,255,0.40),inset 0 -0.5px 0 rgba(0,0,0,0.12),0 8px 40px rgba(0,0,0,0.22),0 1px 3px rgba(0,0,0,0.15);
-  border-radius:var(--r);
-  overflow:hidden;margin-bottom:16px
+  border:1px solid rgba(255,255,255,0.20);
+  box-shadow:inset 0 1.5px 0 rgba(255,255,255,0.38),inset 0 -0.5px 0 rgba(0,0,0,0.10),0 10px 44px rgba(0,0,0,0.20),0 1px 3px rgba(0,0,0,0.12);
+  border-radius:20px;
+  overflow:hidden;margin-bottom:20px
 }
-.day-hdr{display:flex;align-items:stretch}
-.day-num{
-  background:rgba(15,28,22,.82);color:rgba(255,255,255,.35);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  min-width:64px;padding:16px 10px;font-size:.625rem;letter-spacing:.1em;text-transform:uppercase
+/* Badge row: dots icon + "第N天 Nth Day" + date */
+.day-badge-row{
+  display:flex;align-items:center;gap:10px;
+  padding:16px 18px 10px;
 }
-.day-num span{font-size:1.6rem;font-weight:300;color:var(--aqua);line-height:1}
-.day-ttl{padding:14px 16px;flex:1}
-.day-ttl .date{font-size:.75rem;color:rgba(255,255,255,0.5);margin-bottom:4px;letter-spacing:.08em;text-transform:uppercase}
-.day-ttl h3{font-size:.9375rem;font-weight:500;line-height:1.5;color:rgba(255,255,255,0.92)}
-.day-body{padding:14px 20px 20px}
+.day-badge{
+  display:inline-flex;align-items:center;gap:7px;
+  background:rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.16);
+  border-radius:22px;padding:5px 13px 5px 7px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.18)
+}
+.day-badge svg{flex-shrink:0;width:20px;height:20px}
+.day-badge-zh{
+  font-size:.9rem;font-weight:700;
+  color:var(--tomato);font-style:italic;letter-spacing:.02em
+}
+.day-badge-en{
+  font-size:.72rem;font-style:italic;
+  color:rgba(255,255,255,.40);letter-spacing:.05em;
+  margin-left:2px
+}
+.day-date-lbl{
+  margin-left:auto;font-size:.7rem;
+  color:rgba(255,255,255,.30);letter-spacing:.1em
+}
+/* Title */
+.day-title-row{
+  padding:2px 18px 14px;
+  font-size:.9375rem;font-weight:500;
+  color:rgba(255,255,255,.92);line-height:1.55;
+  border-bottom:1px solid rgba(255,255,255,.07)
+}
+.day-body{padding:16px 18px 18px}
 .spot{display:flex;gap:12px;margin-bottom:14px;align-items:flex-start}
 .spot-dot{width:6px;height:6px;border-radius:50%;background:var(--aqua);margin-top:7px;flex-shrink:0}
 .spot h4{font-size:.875rem;font-weight:500;margin-bottom:3px;color:rgba(255,255,255,0.92)}
 .spot p{font-size:.8125rem;color:rgba(255,255,255,0.70);line-height:1.7}
-.meal-row{display:flex;gap:7px;flex-wrap:wrap;margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.10)}
-.meal-chip{background:rgba(255,255,255,.10);border:1px solid rgba(153,235,247,.2);border-radius:8px;padding:4px 12px;font-size:.75rem;color:rgba(255,255,255,0.85)}
-.hotel-chip{background:rgba(255,255,255,.08);border-radius:8px;padding:4px 12px;font-size:.75rem;color:rgba(255,255,255,0.70);margin-top:8px;display:inline-flex;align-items:center;gap:5px}
+.meal-row{display:flex;flex-direction:column;gap:0;margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.10)}
+.meal-row-item{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.meal-row-item:last-child{border-bottom:none}
+.mr-label{font-size:.72rem;color:rgba(255,255,255,.42);min-width:28px;letter-spacing:.04em;flex-shrink:0}
+.mr-sep{color:var(--aqua);font-size:.65rem;opacity:.55;flex-shrink:0}
+.mr-val{font-size:.8125rem;color:rgba(255,255,255,.82);flex:1;line-height:1.5}
 .tips-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .tip-card{
   background:rgba(255,255,255,0.14);
@@ -311,10 +337,8 @@ html.fs-4 .main,html.fs-5 .main{padding-left:12px;padding-right:12px}
 .drawer a .li-icon{width:16px;height:16px;margin-right:10px;opacity:.7;vertical-align:middle}
 .drawer a:hover .li-icon svg{stroke:var(--aqua);opacity:1}
 .drawer a .li-icon svg{stroke:rgba(255,255,255,.55);transition:stroke .2s}
-.meal-chip .li-icon{width:13px;height:13px;margin-right:3px;opacity:.85}
-.meal-chip .li-icon svg{stroke:currentColor}
-.hotel-chip .li-icon{width:13px;height:13px;margin-right:4px;opacity:.8}
-.hotel-chip .li-icon svg{stroke:currentColor}
+.meal-row-item .li-icon{width:13px;height:13px;flex-shrink:0;opacity:.65}
+.meal-row-item .li-icon svg{stroke:currentColor}
 .pill .li-icon{width:13px;height:13px;margin-right:4px;vertical-align:middle}
 .pill .li-icon svg{stroke:currentColor}
 .scroll-hint .li-icon{width:13px;height:13px;margin-right:4px;vertical-align:middle;animation:bob 2.2s ease-in-out infinite}
@@ -330,7 +354,7 @@ html.fs-4 .main,html.fs-5 .main{padding-left:12px;padding-right:12px}
 @media(max-width:420px){.tips-grid,.checklist{grid-template-columns:1fr}.hero h1{font-size:1.9rem}}
 
 /* Magazine Cover Page */
-.cover-page{position:relative;height:100vh;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end}
+.cover-page{position:relative;height:78vh;min-height:480px;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end}
 .cover-bg{position:absolute;inset:0;background-size:cover;background-position:center;transform:scale(1.04);transition:transform 8s ease-out}
 .cover-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.72) 75%, rgba(0,0,0,0.88) 100%)}
 .cover-top{position:absolute;top:28px;left:24px;right:24px;display:flex;align-items:center;justify-content:space-between;z-index:10}
@@ -530,9 +554,32 @@ function fmtDate(str){
 async function loadWeather(dest,startDate,endDate){
   const sec=document.getElementById('wxSection');
   if(!sec||!dest)return;
+  // Open-Meteo 免費預報只支援未來 16 天
+  const today=new Date(); today.setHours(0,0,0,0);
+  const start=new Date(startDate+'T00:00:00');
+  const daysUntil=Math.round((start-today)/(1000*60*60*24));
+  if(daysUntil>16){
+    // 顯示預告卡片
+    sec.innerHTML=`
+    <section class="sec fade-up" id="wx">
+      <div class="sec-label">
+        <div class="sec-icon"><i data-lucide="cloud-sun"></i></div>
+        <div><h2>旅遊期間天氣預報</h2><p>出發前自動更新</p></div>
+      </div>
+      <div class="card" style="text-align:center;padding:28px 20px">
+        <i data-lucide="calendar-clock" style="width:32px;height:32px;display:block;margin:0 auto 12px;color:var(--blue)"></i>
+        <p style="font-size:.875rem;color:rgba(255,255,255,.75);margin-bottom:6px">距出發還有 <strong style="color:var(--aqua)">${daysUntil}</strong> 天</p>
+        <p style="font-size:.75rem;color:rgba(255,255,255,.38)">天氣預報將於出發前 16 天自動顯示</p>
+      </div>
+    </section><div class="divider"></div>`;
+    if(window.lucide)lucide.createIcons();
+    if(window._wxObs){document.querySelectorAll('#wx.fade-up').forEach(el=>window._wxObs.observe(el));}
+    return;
+  }
   try{
-    // 1. Geocode the destination
-    const geoR=await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(dest)}&count=1&language=zh&format=json`);
+    // 1. 清除中文國名前綴，只取地點關鍵字做 geocode
+    const cleanDest=dest.replace(/^(韓國|日本|泰國|越南|美國|歐洲|台灣|中國|香港|澳門|新加坡|馬來西亞|印尼|菲律賓|土耳其|法國|義大利|西班牙|德國|英國)/,'').trim()||dest;
+    const geoR=await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(cleanDest)}&count=1&language=zh&format=json`);
     const geoD=await geoR.json();
     if(!geoD.results||!geoD.results.length){sec.innerHTML='';return;}
     const {latitude:lat,longitude:lon,name:geoName,country_code:cc}=geoD.results[0];
@@ -604,11 +651,42 @@ function render(d){
   <div class="cover-strip" id="coverStrip">${cPhotos.map((p,i)=>'<div class="cover-strip-item'+(i===0?' active':'')+'" style="background-image:url(\''+p+'\')" onclick="coverGoTo('+i+')" title="第'+(i+1)+'張"></div>').join('')}</div>
 </section>` : hero;
 
+  const ZH_NUM=['一','二','三','四','五','六','七','八','九','十','十一','十二','十三','十四'];
+  const EN_ORD=['First','Second','Third','Fourth','Fifth','Sixth','Seventh','Eighth','Ninth','Tenth','Eleventh','Twelfth','Thirteenth','Fourteenth'];
+  // Brand-colored dots SVG — matches Le Fun visual identity
+  const DOT_SVG=`<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="3.5" cy="3.5" r="2.2" fill="#81F8B9"/>
+    <circle cx="10" cy="3.5" r="2.2" fill="#EE6543"/>
+    <circle cx="16.5" cy="3.5" r="2.2" fill="#99EBF7"/>
+    <circle cx="3.5" cy="10" r="2.2" fill="#ECD1D5"/>
+    <circle cx="10" cy="10" r="2.2" fill="#E3FF85"/>
+    <circle cx="16.5" cy="10" r="2.2" fill="#81F8B9"/>
+    <circle cx="3.5" cy="16.5" r="2.2" fill="#99EBF7"/>
+    <circle cx="10" cy="16.5" r="2.2" fill="#EE6543"/>
+    <circle cx="16.5" cy="16.5" r="2.2" fill="#ECD1D5"/>
+  </svg>`;
   const days=(d.days||[]).map(day=>{
+    const n=day.day||1;
+    const zhNum=ZH_NUM[n-1]||n;
+    const enOrd=(EN_ORD[n-1]||n+'th')+' Day';
     const spots=(day.spots||[]).map(sp=>'<div class="spot"><div class="spot-dot"></div><div><h4>'+sp.name+'</h4><p>'+sp.desc+'</p></div></div>').join('');
-    const meals=[day.breakfast?'<div class="meal-chip">'+li('coffee')+'早餐 — '+day.breakfast+'</div>':'',day.lunch?'<div class="meal-chip">'+li('utensils')+'午餐 — '+day.lunch+'</div>':'',day.dinner?'<div class="meal-chip">'+li('wine')+'晚餐 — '+day.dinner+'</div>':''].filter(Boolean).join('');
-    const isLast=!day.hotel||/家|回|home/i.test(day.hotel);
-    return '<div class="day-card"><div class="day-hdr"><div class="day-num"'+(isLast?' style="background:#b1d3c5"':'')+'>DAY<span'+(isLast?' style="color:var(--dk)"':'')+'>'+day.day+'</span></div><div class="day-ttl"><div class="date">'+s(day.date)+'</div><h3>'+s(day.title,'今日行程')+'</h3></div></div><div class="day-body">'+spots+'<div class="meal-row">'+meals+'</div>'+(day.hotel?'<div class="hotel-chip">'+li('building-2')+day.hotel+'</div>':'')+'</div></div>';
+    const meals=[
+      day.breakfast?'<div class="meal-row-item">'+li('coffee')+'<span class="mr-label">早餐</span><span class="mr-sep">⟡</span><span class="mr-val">'+day.breakfast+'</span></div>':'',
+      day.lunch?'<div class="meal-row-item">'+li('utensils')+'<span class="mr-label">午餐</span><span class="mr-sep">⟡</span><span class="mr-val">'+day.lunch+'</span></div>':'',
+      day.dinner?'<div class="meal-row-item">'+li('wine')+'<span class="mr-label">晚餐</span><span class="mr-sep">⟡</span><span class="mr-val">'+day.dinner+'</span></div>':'',
+      day.hotel?'<div class="meal-row-item">'+li('building-2')+'<span class="mr-label">住宿</span><span class="mr-sep">⟡</span><span class="mr-val">'+day.hotel+'</span></div>':''
+    ].filter(Boolean).join('');
+    // Format date: 2026-05-09 → 05 / 09
+    const dateParts=(s(day.date)||'').split('-');
+    const dateLbl=dateParts.length>=3?dateParts[1]+' / '+dateParts[2]:'';
+    return `<div class="day-card">
+  <div class="day-badge-row">
+    <div class="day-badge">${DOT_SVG}<span class="day-badge-zh">第${zhNum}天</span><span class="day-badge-en">${enOrd}</span></div>
+    ${dateLbl?'<span class="day-date-lbl">'+dateLbl+'</span>':''}
+  </div>
+  <div class="day-title-row">${s(day.title,'今日行程')}</div>
+  <div class="day-body">${spots}${meals?'<div class="meal-row">'+meals+'</div>':''}</div>
+</div>`;
   }).join('');
 
   const tips=d.tips||{};
@@ -624,7 +702,8 @@ function render(d){
   const dep=d.departure||{};
   const depR=(dep.rules||[]).map(r=>'<div class="spot"><div class="spot-dot" style="background:var(--rose)"></div><div><p>'+r+'</p></div></div>').join('');
   const em=d.emergency||{};
-  const emC=(em.contacts||[]).map(c=>'<div class="em-row"><span class="em-label">'+c.label+'</span><span class="em-val">'+c.value+'</span></div>').join('');
+  // 過濾掉來自 PDF 的領隊項目，避免與表單填入的領隊資訊重複
+  const emC=(em.contacts||[]).filter(c=>!/領隊|leader/i.test(c.label||'')).map(c=>'<div class="em-row"><span class="em-label">'+c.label+'</span><span class="em-val">'+c.value+'</span></div>').join('');
 
   const body=`
 ${nav}${cover}

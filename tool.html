@@ -525,14 +525,15 @@ async function generate() {
 
     setStep(2);
     const systemPrompt = `你是樂放旅遊的旅遊達人助手。請將行前說明文件以輕鬆友善口語化的繁體中文整理成 JSON。只回傳 JSON，不要任何說明文字或 markdown。
+欄位說明：flightOutDepTime/flightOutArrTime 為 HH:MM 格式起飛/落地時間，flightOutDepPort/flightOutArrPort 為機場中文名稱（如「桃園國際機場」），flightOutFromCode/flightOutToCode 為 IATA 3字機場代碼（如「TPE」、「ICN」），flightReturn* 同理填回程資料。
 
 格式：
 {
   "meta": {
     "tourName":"","destination":"","departDate":"","returnDate":"",
     "leaderName":"","leaderPhone":"","hotel":"","hotelPhone":"",
-    "flightOut":"","flightOutAirline":"","flightOutNo":"","flightOutDepTime":"","flightOutDepPort":"","flightOutArrTime":"","flightOutArrPort":"",
-    "flightReturn":"","flightReturnAirline":"","flightReturnNo":"","flightReturnDepTime":"","flightReturnDepPort":"","flightReturnArrTime":"","flightReturnArrPort":"",
+    "flightOut":"","flightOutAirline":"","flightOutNo":"","flightOutDepTime":"","flightOutDepPort":"","flightOutFromCode":"","flightOutArrTime":"","flightOutArrPort":"","flightOutToCode":"",
+    "flightReturn":"","flightReturnAirline":"","flightReturnNo":"","flightReturnDepTime":"","flightReturnDepPort":"","flightReturnFromCode":"","flightReturnArrTime":"","flightReturnArrPort":"","flightReturnToCode":"",
     "assemblyTime":"","assemblyPlace":""
   },
   "days": [

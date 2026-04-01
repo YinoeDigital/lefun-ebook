@@ -154,13 +154,25 @@ html.fs-4 .main,html.fs-5 .main{padding-left:12px;padding-right:12px}
 .ir-label{font-size:.75rem;font-weight:400;letter-spacing:.08em;color:rgba(255,255,255,0.5);min-width:72px;padding-top:2px;text-transform:uppercase}
 .ir-val{font-size:.875rem;color:rgba(255,255,255,0.90);flex:1}
 .ir-val strong{color:var(--aqua);font-weight:700}
-.flight-table{width:100%;border-collapse:collapse;font-size:.8125rem;margin-top:10px}
-.flight-table th{background:rgba(129,248,185,0.15);color:var(--aqua);padding:8px 10px;text-align:left;font-weight:500;letter-spacing:.06em;font-size:.72rem;border-bottom:1px solid rgba(129,248,185,.2)}
-.flight-table th:first-child{border-radius:8px 0 0 0}.flight-table th:last-child{border-radius:0 8px 0 0}
-.flight-table td{padding:10px;border-bottom:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,0.80)}
-.flight-table tr:last-child td{border-bottom:none}
-.fbadge{background:var(--aqua);color:#1a1a1a;font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;letter-spacing:.04em}
-.fbadge-p{background:var(--rose)}
+/* ── Flight Cards ── */
+.fbadge{background:var(--aqua);color:#0f1f16;font-size:10px;font-weight:800;padding:3px 10px;border-radius:20px;letter-spacing:.06em}
+.fbadge-p{background:var(--rose);color:#2a1215}
+.flight-card{
+  background:rgba(10,22,16,0.72);
+  border:1px solid rgba(129,248,185,.18);
+  border-radius:14px;padding:14px 16px;margin-bottom:10px
+}
+.flight-card-hdr{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.flight-no{font-size:.9375rem;font-weight:700;color:#fff;letter-spacing:.04em}
+.flight-airline{font-size:.75rem;color:rgba(255,255,255,.52);margin-left:auto}
+.flight-route{display:flex;align-items:center;gap:8px}
+.flight-port{flex:1;text-align:center}
+.port-time{font-size:1.25rem;font-weight:700;color:var(--aqua);line-height:1.1;margin-bottom:4px}
+.port-code{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.60);letter-spacing:.08em;margin-bottom:2px}
+.port-name{font-size:.65rem;color:rgba(255,255,255,.38);line-height:1.4}
+.flight-arrow-wrap{display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0;padding:0 4px}
+.flight-arrow-line{width:44px;height:1px;background:linear-gradient(to right,rgba(129,248,185,.2),rgba(129,248,185,.6),rgba(129,248,185,.2))}
+.flight-arrow-icon{color:var(--aqua);font-size:10px}
 .divider{height:1px;background:rgba(255,255,255,.08);margin:0 24px;position:relative;z-index:1}
 
 /* ── Day Cards ── */
@@ -734,7 +746,7 @@ function render(d){
   const imm=d.immigration||{};
   const immS=(imm.steps||[]).map(st=>'<div class="step-item"><p>'+tw(st)+'</p></div>').join('');
   const tax=d.taxRefund||{};
-  const taxS=(tax.steps||[]).map(st=>'<div class="step-item"><p>'+tw(st)+'</p></div>').join('');
+  const taxS=(tax.steps||[]).map(st=>'<div class="step-item"><p>'+numFmt(tw(st))+'</p></div>').join('');
   const chk=d.checklist||{};
   const chkB=(chk.beforeDepart||[]).map(i=>'<div class="check-item">'+tw(i)+'</div>').join('');
   const chkC=(chk.carry||[]).map(i=>'<div class="check-item">'+tw(i)+'</div>').join('');
@@ -749,14 +761,32 @@ ${nav}${cover}
 <section class="sec fade-up" id="as"><div class="sec-label"><div class="sec-icon">${li('plane')}</div><div><h2>集合與航班資訊</h2><p>出發前請再確認</p></div></div>
 <div class="card card-g"><div class="info-row"><span class="ir-label">集合時間</span><span class="ir-val"><strong>${s(m.assemblyTime)}</strong></span></div><div class="info-row"><span class="ir-label">集合地點</span><span class="ir-val">${s(m.assemblyPlace)}</span></div></div>
 ${(()=>{
-  const hasFull=m.flightOutAirline||m.flightOutDepTime||m.flightOutDepPort;
-  if(hasFull){
-    const outRow=m.flightOut||m.flightOutNo?`<tr><td><span class="fbadge">去程</span></td><td>${tw(s(m.flightOutAirline))}</td><td><strong>${s(m.flightOutNo||m.flightOut)}</strong></td><td>${tw(s(m.flightOutDepTime))} ${tw(s(m.flightOutDepPort))}</td><td>${tw(s(m.flightOutArrTime))} ${tw(s(m.flightOutArrPort))}</td></tr>`:'';
-    const retRow=m.flightReturn||m.flightReturnNo?`<tr><td><span class="fbadge fbadge-p">回程</span></td><td>${tw(s(m.flightReturnAirline))}</td><td><strong>${s(m.flightReturnNo||m.flightReturn)}</strong></td><td>${tw(s(m.flightReturnDepTime))} ${tw(s(m.flightReturnDepPort))}</td><td>${tw(s(m.flightReturnArrTime))} ${tw(s(m.flightReturnArrPort))}</td></tr>`:'';
-    return `<div class="card"><table class="flight-table"><thead><tr><th></th><th>航空公司</th><th>航班</th><th>出發</th><th>抵達</th></tr></thead><tbody>${outRow}${retRow}</tbody></table><p style="font-size:11px;color:rgba(255,255,255,.4);margin-top:8px">※ 航班時間以出發前說明會資料為準</p></div>`;
-  }else{
-    return `<div class="card"><table class="flight-table"><thead><tr><th></th><th>航班</th><th>出發 → 抵達</th></tr></thead><tbody>${m.flightOut?'<tr><td><span class="fbadge">去程</span></td><td colspan="2">'+tw(m.flightOut)+'</td></tr>':''}${m.flightReturn?'<tr><td><span class="fbadge fbadge-p">回程</span></td><td colspan="2">'+tw(m.flightReturn)+'</td></tr>':''}</tbody></table><p style="font-size:11px;color:rgba(255,255,255,.4);margin-top:8px">※ 航班時間以出發前說明會資料為準</p></div>`;
+  /* ── flight card renderer ── */
+  function mkCard(badge,badgeCls,airline,flightNo,depTime,depPort,depCode,arrTime,arrPort,arrCode){
+    const hasDetail=depTime||depPort||arrTime||arrPort;
+    if(!hasDetail){
+      return `<div class="flight-card"><div class="flight-card-hdr"><span class="fbadge ${badgeCls}">${badge}</span><span class="flight-no">${tw(s(flightNo))}</span>${airline?'<span class="flight-airline">'+tw(s(airline))+'</span>':''}</div></div>`;
+    }
+    const depLabel=depCode||depPort||'---';
+    const depSub=(depCode&&depPort&&depCode!==depPort)?tw(s(depPort)):'';
+    const arrLabel=arrCode||arrPort||'---';
+    const arrSub=(arrCode&&arrPort&&arrCode!==arrPort)?tw(s(arrPort)):'';
+    return `<div class="flight-card">
+<div class="flight-card-hdr"><span class="fbadge ${badgeCls}">${badge}</span><span class="flight-no">${tw(s(flightNo))}</span>${airline?'<span class="flight-airline">'+tw(s(airline))+'</span>':''}</div>
+<div class="flight-route">
+  <div class="flight-port"><div class="port-time">${s(depTime,'--:--')}</div><div class="port-code">${tw(depLabel)}</div>${depSub?'<div class="port-name">'+depSub+'</div>':''}</div>
+  <div class="flight-arrow-wrap"><div class="flight-arrow-line"></div><div class="flight-arrow-icon">${li('plane')}</div><div class="flight-arrow-line"></div></div>
+  <div class="flight-port"><div class="port-time">${s(arrTime,'--:--')}</div><div class="port-code">${tw(arrLabel)}</div>${arrSub?'<div class="port-name">'+arrSub+'</div>':''}</div>
+</div>
+</div>`;
   }
+  const hasOut=!!(m.flightOut||m.flightOutNo||m.flightOutDepTime||m.flightOutDepPort);
+  const hasRet=!!(m.flightReturn||m.flightReturnNo||m.flightReturnDepTime||m.flightReturnDepPort);
+  if(!hasOut&&!hasRet) return '';
+  let cards='';
+  if(hasOut) cards+=mkCard('去程','',m.flightOutAirline,m.flightOutNo||m.flightOut,m.flightOutDepTime,m.flightOutDepPort,m.flightOutFromCode,m.flightOutArrTime,m.flightOutArrPort,m.flightOutToCode);
+  if(hasRet) cards+=mkCard('回程','fbadge-p',m.flightReturnAirline,m.flightReturnNo||m.flightReturn,m.flightReturnDepTime,m.flightReturnDepPort,m.flightReturnFromCode,m.flightReturnArrTime,m.flightReturnArrPort,m.flightReturnToCode);
+  return `<div style="margin-top:10px">${cards}<p style="font-size:11px;color:rgba(255,255,255,.35);margin-top:6px;padding:0 2px">※ 航班時間以出發前說明會資料為準</p></div>`;
 })()}
 </section>
 <div id="wxSection"></div>

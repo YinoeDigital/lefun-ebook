@@ -133,7 +133,7 @@ html.fs-4 .main,html.fs-5 .main{padding-left:12px;padding-right:12px}
   background:transparent!important;color:var(--aqua)
 }
 .sec-label h2{font-size:1.4rem;font-weight:500;color:var(--tomato);margin-bottom:2px}
-.sec-label p{font-size:.75rem;color:rgba(255,255,255,.4);margin-top:3px;letter-spacing:.08em;text-transform:uppercase}
+.sec-label p{font-size:.75rem;color:rgba(255,255,255,.68);margin-top:3px;letter-spacing:.06em}
 
 /* ── Frosted Glass Cards (Liquid Glass) ── */
 .card{
@@ -196,8 +196,10 @@ html.fs-4 .main,html.fs-5 .main{padding-left:12px;padding-right:12px}
   margin-left:2px
 }
 .day-date-lbl{
-  margin-left:auto;font-size:.7rem;
-  color:rgba(255,255,255,.30);letter-spacing:.1em
+  margin-left:auto;font-size:.72rem;font-weight:500;
+  color:rgba(255,255,255,.62);letter-spacing:.06em;
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.13);
+  border-radius:10px;padding:3px 10px;flex-shrink:0
 }
 /* Title */
 .day-title-row{
@@ -382,6 +384,14 @@ html.fs-4 .main,html.fs-5 .main{padding-left:12px;padding-right:12px}
 .cover-arrow svg{width:15px;height:15px;stroke:#fff;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
 .cover-arrow-l{left:12px}.cover-arrow-r{right:12px}
 .cover-counter{position:absolute;bottom:92px;right:16px;z-index:15;font-size:10px;color:rgba(255,255,255,.5);letter-spacing:.1em;background:rgba(0,0,0,.32);backdrop-filter:blur(8px);padding:3px 9px;border-radius:10px;border:1px solid rgba(255,255,255,.1)}
+/* ── Itinerary Overview Rows ── */
+.ov-row{display:flex;align-items:flex-start;gap:10px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.07);flex-wrap:wrap}
+.ov-row:last-child{border-bottom:none}
+.ov-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:3px 10px 3px 5px;flex-shrink:0}
+.ov-badge svg{width:14px;height:14px;flex-shrink:0}
+.ov-zh{font-size:.75rem;font-weight:700;color:var(--tomato);font-style:italic}
+.ov-date{font-size:.7rem;color:rgba(255,255,255,.55);background:rgba(255,255,255,.07);border-radius:8px;padding:3px 9px;flex-shrink:0;align-self:center}
+.ov-spots{font-size:.8125rem;color:rgba(255,255,255,.80);line-height:1.6;flex:1;min-width:100%;margin-top:4px}
 /* ── Weather Section ── */
 .wx-scroll{overflow-x:auto;scrollbar-width:none;padding-bottom:4px}
 .wx-scroll::-webkit-scrollbar{display:none}
@@ -418,6 +428,8 @@ const LOGO='data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTE
 function od(){document.getElementById('db').classList.add('open')}
 function cd(){document.getElementById('db').classList.remove('open')}
 function s(v,f){return(v&&v!=='undefined'&&v!=='null')?v:(f||'')}
+// 將半形冒號與括號轉為全形（用於顯示使用者資料）
+function tw(v){return(v||'').replace(/:/g,'：').replace(/\(/g,'（').replace(/\)/g,'）')}
 function gp(k){return new URLSearchParams(location.search).get(k)}
 async function load(){
   const id=gp('id');
@@ -669,16 +681,17 @@ function render(d){
     const n=day.day||1;
     const zhNum=ZH_NUM[n-1]||n;
     const enOrd=(EN_ORD[n-1]||n+'th')+' Day';
-    const spots=(day.spots||[]).map(sp=>'<div class="spot"><div class="spot-dot"></div><div><h4>'+sp.name+'</h4><p>'+sp.desc+'</p></div></div>').join('');
+    const spots=(day.spots||[]).map(sp=>'<div class="spot"><div class="spot-dot"></div><div><h4>'+tw(sp.name)+'</h4><p>'+tw(sp.desc)+'</p></div></div>').join('');
     const meals=[
-      day.breakfast?'<div class="meal-row-item">'+li('coffee')+'<span class="mr-label">早餐</span><span class="mr-sep">⟡</span><span class="mr-val">'+day.breakfast+'</span></div>':'',
-      day.lunch?'<div class="meal-row-item">'+li('utensils')+'<span class="mr-label">午餐</span><span class="mr-sep">⟡</span><span class="mr-val">'+day.lunch+'</span></div>':'',
-      day.dinner?'<div class="meal-row-item">'+li('wine')+'<span class="mr-label">晚餐</span><span class="mr-sep">⟡</span><span class="mr-val">'+day.dinner+'</span></div>':'',
-      day.hotel?'<div class="meal-row-item">'+li('building-2')+'<span class="mr-label">住宿</span><span class="mr-sep">⟡</span><span class="mr-val">'+day.hotel+'</span></div>':''
+      day.breakfast?'<div class="meal-row-item">'+li('coffee')+'<span class="mr-label">早餐</span><span class="mr-sep">⟡</span><span class="mr-val">'+tw(day.breakfast)+'</span></div>':'',
+      day.lunch?'<div class="meal-row-item">'+li('utensils')+'<span class="mr-label">午餐</span><span class="mr-sep">⟡</span><span class="mr-val">'+tw(day.lunch)+'</span></div>':'',
+      day.dinner?'<div class="meal-row-item">'+li('wine')+'<span class="mr-label">晚餐</span><span class="mr-sep">⟡</span><span class="mr-val">'+tw(day.dinner)+'</span></div>':'',
+      day.hotel?'<div class="meal-row-item">'+li('building-2')+'<span class="mr-label">住宿</span><span class="mr-sep">⟡</span><span class="mr-val">'+tw(day.hotel)+'</span></div>':''
     ].filter(Boolean).join('');
-    // Format date: 2026-05-09 → 05 / 09
-    const dateParts=(s(day.date)||'').split('-');
-    const dateLbl=dateParts.length>=3?dateParts[1]+' / '+dateParts[2]:'';
+    // Format date: 2026-05-09 → 5月9日（週五）
+    const _WD=['日','一','二','三','四','五','六'];
+    const _dp=new Date((s(day.date)||'2000-01-01')+'T00:00:00');
+    const dateLbl=day.date?(_dp.getMonth()+1)+'月'+_dp.getDate()+'日（週'+_WD[_dp.getDay()]+'）':'';
     return `<div class="day-card">
   <div class="day-badge-row">
     <div class="day-badge">${DOT_SVG}<span class="day-badge-zh">第${zhNum}天</span><span class="day-badge-en">${enOrd}</span></div>
@@ -693,17 +706,17 @@ function render(d){
   const tipsG=[{i:'🌡️',t:'天氣穿著',v:tips.weather},{i:'💴',t:'匯率貨幣',v:tips.currency},{i:'🔌',t:'電壓插頭',v:tips.voltage},{i:'🕐',t:'時差',v:tips.timezone},{i:'🚰',t:'飲食注意',v:tips.drinking},{i:'🛁',t:'盥洗用品',v:tips.toiletries}].filter(x=>x.v).map(x=>'<div class="tip-card"><div class="ti">'+x.i+'</div><h4>'+x.t+'</h4><p>'+x.v+'</p></div>').join('');
 
   const imm=d.immigration||{};
-  const immS=(imm.steps||[]).map(s=>'<div class="step-item"><p>'+s+'</p></div>').join('');
+  const immS=(imm.steps||[]).map(st=>'<div class="step-item"><p>'+tw(st)+'</p></div>').join('');
   const tax=d.taxRefund||{};
-  const taxS=(tax.steps||[]).map(s=>'<div class="step-item"><p>'+s+'</p></div>').join('');
+  const taxS=(tax.steps||[]).map(st=>'<div class="step-item"><p>'+tw(st)+'</p></div>').join('');
   const chk=d.checklist||{};
-  const chkB=(chk.beforeDepart||[]).map(i=>'<div class="check-item">'+i+'</div>').join('');
-  const chkC=(chk.carry||[]).map(i=>'<div class="check-item">'+i+'</div>').join('');
+  const chkB=(chk.beforeDepart||[]).map(i=>'<div class="check-item">'+tw(i)+'</div>').join('');
+  const chkC=(chk.carry||[]).map(i=>'<div class="check-item">'+tw(i)+'</div>').join('');
   const dep=d.departure||{};
-  const depR=(dep.rules||[]).map(r=>'<div class="spot"><div class="spot-dot" style="background:var(--rose)"></div><div><p>'+r+'</p></div></div>').join('');
+  const depR=(dep.rules||[]).map(r=>'<div class="spot"><div class="spot-dot" style="background:var(--rose)"></div><div><p>'+tw(r)+'</p></div></div>').join('');
   const em=d.emergency||{};
   // 過濾掉來自 PDF 的領隊項目，避免與表單填入的領隊資訊重複
-  const emC=(em.contacts||[]).filter(c=>!/領隊|leader/i.test(c.label||'')).map(c=>'<div class="em-row"><span class="em-label">'+c.label+'</span><span class="em-val">'+c.value+'</span></div>').join('');
+  const emC=(em.contacts||[]).filter(c=>!/領隊|leader/i.test(c.label||'')).map(c=>'<div class="em-row"><span class="em-label">'+tw(c.label)+'</span><span class="em-val">'+tw(c.value)+'</span></div>').join('');
 
   const body=`
 ${nav}${cover}
@@ -714,7 +727,14 @@ ${nav}${cover}
 <div id="wxSection"></div>
 <div class="divider"></div>
 <section class="sec fade-up" id="it"><div class="sec-label"><div class="sec-icon">${li('map')}</div><div><h2>行程總覽</h2><p>${(d.days||[]).length} 天精華路線</p></div></div>
-<div class="card" style="background:var(--dk);color:#fff;border:none"><div style="display:flex;gap:14px;align-items:center;margin-bottom:14px">${li('building-2','li-icon-lg')}<div><div style="font-size:11px;color:rgba(255,255,255,.45);margin-bottom:3px">住宿</div><div style="font-weight:700;color:var(--aqua)">${s(m.hotel,'全程住宿')}</div></div></div>${(d.days||[]).map(day=>'<div style="background:rgba(255,255,255,.06);border-radius:11px;padding:11px;margin-bottom:7px"><div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:3px">第'+day.day+'天 '+s(day.date)+'</div><div style="font-size:13px;color:#fff">'+(day.spots||[]).map(sp=>sp.name).join('・')+'</div></div>').join('')}</div>
+${m.hotel?'<div class="card card-g" style="display:flex;gap:12px;align-items:center;margin-bottom:16px">'+li('building-2')+'<div><div style="font-size:.7rem;color:rgba(255,255,255,.5);margin-bottom:2px;letter-spacing:.06em">全程住宿</div><div style="font-weight:700;color:var(--aqua);font-size:.9375rem">'+s(m.hotel)+'</div></div></div>':''}
+${(d.days||[]).map(day=>{
+  const n2=day.day||1;
+  const zh2=ZH_NUM[n2-1]||n2;
+  const dp2=(s(day.date)||'').split('-');
+  const dl2=dp2.length>=3?dp2[1]+'月'+dp2[2]+'日':'';
+  return '<div class="ov-row"><div class="ov-badge">'+DOT_SVG+'<span class="ov-zh">第'+zh2+'天</span></div>'+(dl2?'<span class="ov-date">'+dl2+'</span>':'')+'<div class="ov-spots">'+(day.spots||[]).map(sp=>sp.name).join('・')+'</div></div>';
+}).join('')}
 </section><div class="divider"></div>
 <section class="sec fade-up" id="dy"><div class="sec-label"><div class="sec-icon">${li('calendar-days')}</div><div><h2>每日詳細行程</h2><p>景點介紹・餐食・住宿</p></div></div>${days}</section><div class="divider"></div>
 <div class="sec-tinted"><section class="sec fade-up" id="tp" style="max-width:100%;padding-left:20px;padding-right:20px"><div style="max-width:640px;margin:0 auto"><div class="sec-label"><div class="sec-icon">${li('lightbulb')}</div><div><h2>旅遊注意事項</h2><p>出發前請仔細閱讀</p></div></div><div class="tips-grid">${tipsG}</div></div></section></div><div class="divider"></div>
@@ -723,8 +743,8 @@ ${nav}${cover}
 <div class="sec-tinted"><section class="sec fade-up" id="ck" style="max-width:100%;padding-left:20px;padding-right:20px"><div style="max-width:640px;margin:0 auto"><div class="sec-label"><div class="sec-icon">${li('backpack')}</div><div><h2>行李攜帶清單</h2><p>出發前對照確認</p></div></div><p style="font-size:12px;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:9px">出發前必備</p><div class="checklist" style="margin-bottom:18px">${chkB}</div><p style="font-size:12px;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:9px">隨身行李</p><div class="checklist" style="margin-bottom:16px">${chkC}</div>${chk.forbidden?'<div class="card" style="background:var(--tomato);border:none;color:#fff"><p style="font-size:13px;font-weight:700;margin-bottom:5px;display:flex;align-items:center;gap:5px">'+li('triangle-alert')+'禁止攜帶</p><p style="font-size:13px;opacity:.9">'+chk.forbidden+'</p></div>':''}</div></section></div><div class="divider"></div>
 <section class="sec fade-up" id="dp"><div class="sec-label"><div class="sec-icon">${li('plane-takeoff')}</div><div><h2>出境集合須知</h2><p>${s(dep.assemblyTime)}</p></div></div><div class="card card-p">${depR}</div></section><div class="divider"></div>
 <section class="sec fade-up" id="em"><div class="sec-label"><div class="sec-icon">${li('phone')}</div><div><h2>緊急聯絡資訊</h2><p>截圖存起來備用</p></div></div>
-<div class="emergency"><h3>${li('siren')}重要電話</h3>${m.leaderName?'<div class="em-row"><span class="em-label">領隊 '+m.leaderName+'</span><span class="em-val">'+s(m.leaderPhone)+'</span></div>':''}${em.international?'<div class="em-row"><span class="em-label">國際救援</span><span class="em-val">'+em.international+'</span></div>':''}${em.overseas?'<div class="em-row"><span class="em-label">旅外急難</span><span class="em-val">'+em.overseas+'</span></div>':''}${emC}</div>
-${em.insurance?'<div class="card" style="margin-top:12px;background:var(--bg2)"><p style="font-size:13px;font-weight:700;margin-bottom:7px;display:flex;align-items:center;gap:5px">'+li('clipboard-list')+'保險說明</p><p style="font-size:13px;color:rgba(255,255,255,.75)">'+em.insurance+'</p></div>':''}
+<div class="emergency"><h3>${li('siren')}重要電話</h3>${m.leaderName?'<div class="em-row"><span class="em-label">領隊　'+m.leaderName+'</span><span class="em-val">'+tw(s(m.leaderPhone))+'</span></div>':''}${em.international?'<div class="em-row"><span class="em-label">國際救援</span><span class="em-val">'+tw(em.international)+'</span></div>':''}${em.overseas?'<div class="em-row"><span class="em-label">旅外急難</span><span class="em-val">'+tw(em.overseas)+'</span></div>':''}${emC}</div>
+${em.insurance?'<div class="emergency" style="margin-top:10px"><h3>'+li('clipboard-list')+'保險說明</h3><p style="font-size:.875rem;color:rgba(255,255,255,.80);line-height:1.8">'+em.insurance+'</p></div>':''}
 </section>
 <footer class="co-footer">
   <div class="co-logo-wrap"><img src="logo.png" alt="樂放旅遊 Le Fun Travel" class="co-logo"></div>

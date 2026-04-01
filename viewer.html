@@ -76,6 +76,11 @@ html.fs-4 .main,html.fs-5 .main{padding-left:12px;padding-right:12px}
 .fn-dot{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,0.2);transition:background .2s}
 .fn-dot.on{background:var(--aqua)}
 .nav-right{display:flex;align-items:center;gap:8px}
+/* ── Checklist tool button (in ck section) ── */
+.ck-tool-btn{margin-left:auto;flex-shrink:0;display:inline-flex;align-items:center;gap:5px;background:rgba(129,248,185,.12);border:1px solid rgba(129,248,185,.28);border-radius:20px;padding:6px 13px;font-size:.72rem;font-weight:600;color:var(--aqua);text-decoration:none;letter-spacing:.04em;transition:all .2s;white-space:nowrap}
+.ck-tool-btn:hover{background:rgba(129,248,185,.22)}
+.ck-tool-btn .ck-li{width:12px;height:12px;margin-right:3px}
+.ck-tool-btn .ck-li svg{stroke:var(--aqua)}
 .nav-checklist{background:rgba(129,248,185,0.12);backdrop-filter:blur(20px);border:1px solid rgba(129,248,185,0.25);box-shadow:inset 0 1.5px 0 rgba(255,255,255,0.20);border-radius:20px;padding:5px 12px;font-size:11px;font-weight:600;cursor:pointer;color:var(--aqua);font-family:inherit;display:inline-flex;align-items:center;gap:4px;transition:all .2s;text-decoration:none;letter-spacing:.04em}
 .nav-checklist:hover{background:rgba(129,248,185,0.22)}
 .nav-checklist .li-icon{width:13px;height:13px;margin-right:3px}
@@ -366,6 +371,21 @@ html.fs-4 .main,html.fs-5 .main{padding-left:12px;padding-right:12px}
 .emergency h3 .li-icon svg{stroke:var(--aqua)}
 .warn-icon-wrap .li-icon{width:14px;height:14px;margin-right:5px;vertical-align:middle}
 .ins-icon-wrap .li-icon{width:14px;height:14px;margin-right:5px;vertical-align:middle}
+/* ── Back to Top ── */
+.back-top{
+  position:fixed;right:20px;bottom:28px;z-index:500;
+  width:44px;height:44px;border-radius:50%;border:none;cursor:pointer;
+  background:rgba(10,22,16,0.72);
+  backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);
+  border:1px solid rgba(129,248,185,.32);
+  box-shadow:inset 0 1.5px 0 rgba(255,255,255,.18),0 6px 24px rgba(0,0,0,.35),0 0 0 0 rgba(129,248,185,0);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transform:translateY(12px);
+  transition:opacity .3s,transform .3s,box-shadow .25s;
+}
+.back-top.show{opacity:1;pointer-events:auto;transform:translateY(0)}
+.back-top:hover{box-shadow:inset 0 1.5px 0 rgba(255,255,255,.22),0 6px 24px rgba(0,0,0,.4),0 0 0 6px rgba(129,248,185,.10)}
+.back-top svg{width:18px;height:18px;stroke:var(--aqua);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
 /* ── Scroll Reveal ── */
 .fade-up{opacity:0;transform:translateY(32px);transition:opacity 650ms ease-out,transform 650ms ease-out}
 .fade-up.visible{opacity:1;transform:translateY(0)}
@@ -674,7 +694,7 @@ function render(d){
   document.title=s(m.tourName,'行前說明')+'｜樂放旅遊';
   const _clUrl=`checklist.html?dest=${encodeURIComponent(s(m.destination))}&depart=${encodeURIComponent(s(m.departDate))}&return=${encodeURIComponent(s(m.returnDate))}&tour=${encodeURIComponent(s(m.tourName))}&back=${encodeURIComponent(location.href)}`;
   const nav=`<nav class="nav"><div class="nav-logo"><img src="logo.png" alt="樂放旅遊" style="height:28px;object-fit:contain;"></div><div class="nav-right"><a href="${_clUrl}" class="nav-checklist" title="行李清單" target="_blank">${li('luggage')}清單</a><button class="nav-font" onclick="cycleFont()" id="fontBtn" title="字級"></button><button class="nav-toc" onclick="od()">目錄</button></div></nav>
-<div class="drawer-bg" id="db" onclick="cd()"><div class="drawer" onclick="event.stopPropagation()"><button class="drawer-close" onclick="cd()">✕</button><h3>行前說明目錄</h3><a href="#as" onclick="cd()">${li('plane')}集合與航班</a><a href="#it" onclick="cd()">${li('map')}行程總覽</a><a href="#dy" onclick="cd()">${li('calendar-days')}每日行程</a><a href="#tp" onclick="cd()">${li('lightbulb')}旅遊注意事項</a><a href="#im" onclick="cd()">${li('shield-check')}入境手續</a><a href="#tx" onclick="cd()">${li('receipt')}退稅說明</a><a href="#ck" onclick="cd()">${li('backpack')}行李清單</a><a href="#dp" onclick="cd()">${li('anchor')}出境集合</a><a href="#em" onclick="cd()">${li('phone')}緊急聯絡</a></div></div>`;
+<div class="drawer-bg" id="db" onclick="cd()"><div class="drawer" onclick="event.stopPropagation()"><button class="drawer-close" onclick="cd()">✕</button><h3>行前說明目錄</h3><a href="#as" onclick="cd()">${li('plane')}集合與航班</a><a href="#it" onclick="cd()">${li('map')}行程總覽</a><a href="#dy" onclick="cd()">${li('calendar-days')}每日行程</a><a href="#tp" onclick="cd()">${li('lightbulb')}旅遊注意事項</a><a href="#im" onclick="cd()">${li('shield-check')}入境手續</a><a href="#tx" onclick="cd()">${li('receipt')}退稅說明</a><a href="#ck" onclick="cd()">${li('backpack')}行李清單</a><a href="#em" onclick="cd()">${li('phone')}緊急聯絡</a></div></div>`;
 
   const hero=`<section class="hero"><div class="hero-logo"><img src="${LOGO}" alt="Le Fun"></div><div class="hero-tag">樂放旅遊 × 行前說明</div><h1>${s(m.tourName,'行前說明')}<br><em>${s(m.destination)}</em></h1><p class="hero-sub">${s(m.departDate)} — ${s(m.returnDate)}</p><div class="hero-pills">${m.flightOut?'<div class="pill">'+li('plane')+m.flightOut+'</div>':''}${m.hotel?'<div class="pill">'+li('building-2')+m.hotel+'</div>':''}${m.leaderName?'<div class="pill"><strong>領隊：</strong>'+m.leaderName+'</div>':''}</div><p class="scroll-hint">${li('chevron-down')}向下滑動閱覽</p></section>`;
 
@@ -764,7 +784,11 @@ function render(d){
   const body=`
 ${nav}${cover}
 <section class="sec fade-up" id="as"><div class="sec-label"><div class="sec-icon">${li('plane')}</div><div><h2>集合與航班資訊</h2><p>出發前請再確認</p></div></div>
-<div class="card card-g"><div class="info-row"><span class="ir-label">集合時間</span><span class="ir-val"><strong>${s(m.assemblyTime)}</strong></span></div><div class="info-row"><span class="ir-label">集合地點</span><span class="ir-val">${s(m.assemblyPlace)}</span></div></div>
+<div class="card card-g">
+<div class="info-row"><span class="ir-label">集合時間</span><span class="ir-val"><strong>${s(m.assemblyTime||dep.assemblyTime)}</strong></span></div>
+<div class="info-row"><span class="ir-label">集合地點</span><span class="ir-val">${s(m.assemblyPlace)}</span></div>
+${(dep.rules&&dep.rules.length)?'<div style="border-top:1px solid rgba(255,255,255,.10);margin-top:10px;padding-top:14px">'+dep.rules.map(r=>'<div class="spot" style="margin-bottom:10px"><i data-lucide="check-circle" style="width:14px;height:14px;stroke:var(--aqua);stroke-width:1.75;fill:none;flex-shrink:0;margin-top:2px"></i><p style="font-size:.8125rem;color:rgba(255,255,255,.80);line-height:1.75">'+tw(r)+'</p></div>').join('')+'</div>':''}
+</div>
 ${(()=>{
   /* ── flight card renderer ── */
   function mkCard(badge,badgeCls,airline,flightNo,depTime,depPort,depCode,arrTime,arrPort,arrCode){
@@ -831,8 +855,7 @@ ${(()=>{
 <div class="sec-tinted"><section class="sec fade-up" id="tp" style="max-width:100%;padding-left:20px;padding-right:20px"><div style="max-width:640px;margin:0 auto"><div class="sec-label"><div class="sec-icon">${li('lightbulb')}</div><div><h2>旅遊注意事項</h2><p>出發前請仔細閱讀</p></div></div><div class="tips-grid">${tipsG}</div></div></section></div><div class="divider"></div>
 <section class="sec fade-up" id="im"><div class="sec-label"><div class="sec-icon">${li('shield-check')}</div><div><h2>入境手續</h2><p>${s(imm.visa)}</p></div></div><div class="card card-b">${imm.qcode?'<p style="font-size:13px;color:rgba(255,255,255,.65);margin-bottom:14px">'+imm.qcode+'</p>':''}<div class="steps">${immS}</div></div></section><div class="divider"></div>
 <section class="sec fade-up" id="tx"><div class="sec-label"><div class="sec-icon">${li('receipt')}</div><div><h2>退稅說明</h2><p>滿 ${numFmt(s(tax.threshold,'30,000 韓圜'))} 即可退稅</p></div></div><div class="card card-y"><div class="steps">${taxS}</div></div></section><div class="divider"></div>
-<div class="sec-tinted"><section class="sec fade-up" id="ck" style="max-width:100%;padding-left:20px;padding-right:20px"><div style="max-width:640px;margin:0 auto"><div class="sec-label"><div class="sec-icon">${li('backpack')}</div><div><h2>行李攜帶清單</h2><p>出發前對照確認</p></div></div><p style="font-size:12px;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:9px">出發前必備</p><div class="checklist" style="margin-bottom:18px">${chkB}</div><p style="font-size:12px;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:9px">隨身行李</p><div class="checklist" style="margin-bottom:16px">${chkC}</div>${chk.forbidden?'<div class="card" style="background:var(--tomato);border:none;color:#fff"><p style="font-size:13px;font-weight:700;margin-bottom:5px;display:flex;align-items:center;gap:5px">'+li('triangle-alert')+'禁止攜帶</p><p style="font-size:13px;opacity:.9">'+chk.forbidden+'</p></div>':''}</div></section></div><div class="divider"></div>
-<section class="sec fade-up" id="dp"><div class="sec-label"><div class="sec-icon">${li('plane-takeoff')}</div><div><h2>出境集合須知</h2><p>${s(dep.assemblyTime)}</p></div></div><div class="card card-p">${depR}</div></section><div class="divider"></div>
+<div class="sec-tinted"><section class="sec fade-up" id="ck" style="max-width:100%;padding-left:20px;padding-right:20px"><div style="max-width:640px;margin:0 auto"><div class="sec-label"><div class="sec-icon">${li('backpack')}</div><div><h2>行李攜帶清單</h2><p>出發前對照確認</p></div><a href="${_clUrl}" target="_blank" class="ck-tool-btn">${li('external-link','ck-li')}互動清單</a></div><p style="font-size:12px;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:9px">出發前必備</p><div class="checklist" style="margin-bottom:18px">${chkB}</div><p style="font-size:12px;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:9px">隨身行李</p><div class="checklist" style="margin-bottom:16px">${chkC}</div>${chk.forbidden?'<div class="card" style="background:var(--tomato);border:none;color:#fff"><p style="font-size:13px;font-weight:700;margin-bottom:5px;display:flex;align-items:center;gap:5px">'+li('triangle-alert')+'禁止攜帶</p><p style="font-size:13px;opacity:.9">'+chk.forbidden+'</p></div>':''}</div></section></div><div class="divider"></div>
 <section class="sec fade-up" id="em"><div class="sec-label"><div class="sec-icon">${li('phone')}</div><div><h2>緊急聯絡資訊</h2><p>截圖存起來備用</p></div></div>
 <div class="emergency"><h3>${li('siren')}重要電話</h3>${m.leaderName?'<div class="em-row"><span class="em-label">領隊　'+m.leaderName+'</span><span class="em-val">'+tw(s(m.leaderPhone))+'</span></div>':''}${em.international?'<div class="em-row"><span class="em-label">國際救援</span><span class="em-val">'+tw(em.international)+'</span></div>':''}${em.overseas?'<div class="em-row"><span class="em-label">旅外急難</span><span class="em-val">'+tw(em.overseas)+'</span></div>':''}${emC}</div>
 ${em.insurance?'<div class="emergency" style="margin-top:10px"><h3>'+li('clipboard-list')+'保險說明</h3><p style="font-size:.875rem;color:rgba(255,255,255,.80);line-height:1.8">'+em.insurance+'</p></div>':''}
@@ -871,6 +894,17 @@ ${d.pdfUrl?'<a href="'+d.pdfUrl+'" target="_blank" rel="noopener" class="pdf-btn
 </footer>`;
 
   document.getElementById('app').innerHTML=body;
+
+  /* ── Back to top button ── */
+  const btBtn=document.createElement('button');
+  btBtn.className='back-top';btBtn.title='回到頂端';
+  btBtn.innerHTML='<svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>';
+  btBtn.onclick=()=>window.scrollTo({top:0,behavior:'smooth'});
+  document.body.appendChild(btBtn);
+  window.addEventListener('scroll',()=>{
+    btBtn.classList.toggle('show',window.scrollY>320);
+  },{passive:true});
+
   const obs=new IntersectionObserver(entries=>entries.forEach(e=>{
     if(e.isIntersecting){
       e.target.classList.add('visible');

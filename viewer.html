@@ -825,12 +825,12 @@ ${(()=>{
     <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px">
       <div style="flex:1">
         <div style="font-size:.68rem;color:rgba(255,255,255,.45);margin-bottom:4px;letter-spacing:.06em" id="cxLabelA">台幣 TWD</div>
-        <input id="cxInputA" type="number" inputmode="decimal" placeholder="0" style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:10px;padding:10px 12px;font-size:1.1rem;font-weight:700;color:#fff;outline:none;-moz-appearance:textfield">
+        <input id="cxInputA" type="text" inputmode="decimal" placeholder="0" style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:10px;padding:10px 12px;font-size:1.1rem;font-weight:700;color:#fff;outline:none">
       </div>
       <button id="cxSwapBtn" onclick="cxSwap()" style="flex-shrink:0;margin-top:18px;width:36px;height:36px;border-radius:50%;background:rgba(129,248,185,.10);border:1px solid rgba(129,248,185,.25);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s">${li('arrow-left-right')}</button>
       <div style="flex:1">
         <div style="font-size:.68rem;color:rgba(255,255,255,.45);margin-bottom:4px;letter-spacing:.06em" id="cxLabelB">外幣</div>
-        <input id="cxInputB" type="number" inputmode="decimal" placeholder="0" style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:10px;padding:10px 12px;font-size:1.1rem;font-weight:700;color:#fff;outline:none;-moz-appearance:textfield">
+        <input id="cxInputB" type="text" inputmode="decimal" placeholder="0" style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:10px;padding:10px 12px;font-size:1.1rem;font-weight:700;color:#fff;outline:none">
       </div>
     </div>
     <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px" id="cxPresets"></div>
@@ -965,26 +965,50 @@ ${d.pdfUrl?'<a href="'+d.pdfUrl+'" target="_blank" rel="noopener" class="pdf-btn
         btn.style.cssText='flex:1;min-width:60px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);border-radius:8px;padding:6px 4px;font-size:.72rem;color:rgba(255,255,255,.7);cursor:pointer;transition:all .18s';
         btn.onmouseenter=()=>{btn.style.background='rgba(129,248,185,.12)';btn.style.borderColor='rgba(129,248,185,.3)';btn.style.color='var(--aqua)';};
         btn.onmouseleave=()=>{btn.style.background='rgba(255,255,255,.07)';btn.style.borderColor='rgba(255,255,255,.13)';btn.style.color='rgba(255,255,255,.7)';};
-        btn.onclick=()=>{inputA.value=v;calcFromA();};
+        btn.onclick=()=>{inputA.value=cxFmt(v);calcFromA();};
         presetsEl.appendChild(btn);
       });
     }
+    function cxParse(s){return parseFloat((s||'').replace(/,/g,''))||0;}
+    function cxFmt(n){
+      if(isNaN(n)||n==='')return '';
+      return n%1===0
+        ? Math.round(n).toLocaleString()
+        : parseFloat(n.toFixed(2)).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+    }
     function calcFromA(){
       if(!_rate)return;
-      const a=parseFloat(inputA.value);
-      if(isNaN(a)||a===''){inputB.value='';return;}
+      const raw=inputA.value.replace(/,/g,'');
+      const a=parseFloat(raw);
+      if(isNaN(a)||raw===''){inputB.value='';return;}
       const b=_dir===1?a*_rate:a/_rate;
-      inputB.value=b%1===0?b.toFixed(0):b.toFixed(2);
+      inputB.value=cxFmt(b);
     }
     function calcFromB(){
       if(!_rate)return;
-      const b=parseFloat(inputB.value);
-      if(isNaN(b)||b===''){inputA.value='';return;}
+      const raw=inputB.value.replace(/,/g,'');
+      const b=parseFloat(raw);
+      if(isNaN(b)||raw===''){inputA.value='';return;}
       const a=_dir===1?b/_rate:b*_rate;
-      inputA.value=a%1===0?a.toFixed(0):a.toFixed(2);
+      inputA.value=cxFmt(a);
     }
-    inputA.addEventListener('input',calcFromA);
-    inputB.addEventListener('input',calcFromB);
+    function cxFormatOnBlur(el){
+      const n=parseFloat(el.value.replace(/,/g,''));
+      if(!isNaN(n))el.value=cxFmt(n);
+    }
+    inputA.addEventListener('input',()=>{
+      // allow typing freely; strip non-numeric except dot and minus
+      inputA.value=inputA.value.replace(/[^\d.]/g,'');
+      calcFromA();
+    });
+    inputA.addEventListener('blur',()=>cxFormatOnBlur(inputA));
+    inputA.addEventListener('focus',()=>inputA.select());
+    inputB.addEventListener('input',()=>{
+      inputB.value=inputB.value.replace(/[^\d.]/g,'');
+      calcFromB();
+    });
+    inputB.addEventListener('blur',()=>cxFormatOnBlur(inputB));
+    inputB.addEventListener('focus',()=>inputB.select());
     window.cxSwap=function(){
       _dir*=-1;
       const va=inputA.value,vb=inputB.value;
@@ -995,7 +1019,7 @@ ${d.pdfUrl?'<a href="'+d.pdfUrl+'" target="_blank" rel="noopener" class="pdf-btn
       _rate=rate;
       const rateStr=_dir===1?`1 TWD = ${rate.toFixed(rate>=1?2:4)} ${targetCurrency}`:`1 ${targetCurrency} = ${(1/rate).toFixed(2)} TWD`;
       rateInfo.textContent=`1 TWD = ${rate.toFixed(rate>=1?2:4)} ${targetCurrency}`;
-      disclaimer.textContent=`匯率來源：ECB / Frankfurter · 更新日期：${date} · 僅供參考，實際匯率以當地銀行為準`;
+      disclaimer.textContent=`匯率來源：Open Exchange Rates · 更新日期：${date} · 僅供參考，實際匯率以當地銀行為準`;
       buildPresets();setLabels();
       if(inputA.value)calcFromA();
     }

@@ -1002,10 +1002,12 @@ ${d.pdfUrl?'<a href="'+d.pdfUrl+'" target="_blank" rel="noopener" class="pdf-btn
     const CACHE_KEY='cx_rate_'+targetCurrency;
     const cached=localStorage.getItem(CACHE_KEY);
     if(cached){try{const c=JSON.parse(cached);if(Date.now()-c.ts<6*3600*1000){applyRate(c.rate,c.date);return;}}catch(e){}}
-    fetch(`https://api.frankfurter.app/latest?from=TWD&to=${targetCurrency}`)
+    const tcLow=targetCurrency.toLowerCase();
+    fetch(`https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/twd.json`)
       .then(r=>r.json())
       .then(data=>{
-        const rate=data.rates[targetCurrency];
+        const rate=data.twd[tcLow];
+        if(!rate) throw new Error('no rate');
         const date=data.date;
         localStorage.setItem(CACHE_KEY,JSON.stringify({rate,date,ts:Date.now()}));
         applyRate(rate,date);

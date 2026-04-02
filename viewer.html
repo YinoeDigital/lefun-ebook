@@ -818,6 +818,28 @@ ${(()=>{
   return `<div style="margin-top:10px">${cards}<p style="font-size:11px;color:rgba(255,255,255,.35);margin-top:6px;padding:0 2px">※ 航班時間以出發前說明會資料為準</p></div>`;
 })()}
 </section>
+<div class="divider"></div>
+<section class="sec fade-up" id="cx"><div class="sec-label"><div class="sec-icon">${li('coins')}</div><div><h2>匯率換算</h2><p id="cxRateInfo">載入中…</p></div></div>
+<div class="card card-g" style="padding:18px 16px">
+  <div id="cxBody">
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px">
+      <div style="flex:1">
+        <div style="font-size:.68rem;color:rgba(255,255,255,.45);margin-bottom:4px;letter-spacing:.06em" id="cxLabelA">台幣 TWD</div>
+        <input id="cxInputA" type="number" inputmode="decimal" placeholder="0" style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:10px;padding:10px 12px;font-size:1.1rem;font-weight:700;color:#fff;outline:none;-moz-appearance:textfield">
+      </div>
+      <button id="cxSwapBtn" onclick="cxSwap()" style="flex-shrink:0;margin-top:18px;width:36px;height:36px;border-radius:50%;background:rgba(129,248,185,.10);border:1px solid rgba(129,248,185,.25);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s">${li('arrow-left-right')}</button>
+      <div style="flex:1">
+        <div style="font-size:.68rem;color:rgba(255,255,255,.45);margin-bottom:4px;letter-spacing:.06em" id="cxLabelB">外幣</div>
+        <input id="cxInputB" type="number" inputmode="decimal" placeholder="0" style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:10px;padding:10px 12px;font-size:1.1rem;font-weight:700;color:#fff;outline:none;-moz-appearance:textfield">
+      </div>
+    </div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px" id="cxPresets"></div>
+    <p style="font-size:.7rem;color:rgba(255,255,255,.28);margin-top:10px;line-height:1.6" id="cxDisclaimer"></p>
+  </div>
+  <div id="cxError" style="display:none;text-align:center;padding:16px 0;color:rgba(255,255,255,.4);font-size:.8rem"></div>
+</div>
+</section>
+<div class="divider"></div>
 <div id="wxSection"></div>
 <div class="divider"></div>
 <section class="sec fade-up" id="it"><div class="sec-label"><div class="sec-icon">${li('map')}</div><div><h2>行程總覽</h2><p>${(d.days||[]).length} 天精華路線</p></div></div>
@@ -894,6 +916,109 @@ ${d.pdfUrl?'<a href="'+d.pdfUrl+'" target="_blank" rel="noopener" class="pdf-btn
 </footer>`;
 
   document.getElementById('app').innerHTML=body;
+
+  /* ── Currency converter init ── */
+  (()=>{
+    const dest=(m.destination||'').toLowerCase();
+    const DEST_MAP={
+      '日本':'JPY','japan':'JPY','osaka':'JPY','tokyo':'JPY','kyoto':'JPY','沖繩':'JPY','北海道':'JPY',
+      '韓國':'KRW','korea':'KRW','首爾':'KRW','釜山':'KRW','濟州':'KRW','jeju':'KRW',
+      '泰國':'THB','thailand':'THB','曼谷':'THB','清邁':'THB','普吉':'THB','bangkok':'THB',
+      '越南':'VND','vietnam':'VND','河內':'VND','胡志明':'VND','峴港':'VND',
+      '印尼':'IDR','indonesia':'IDR','峇里':'IDR','bali':'IDR',
+      '馬來西亞':'MYR','malaysia':'MYR','吉隆坡':'MYR','kuala lumpur':'MYR',
+      '新加坡':'SGD','singapore':'SGD',
+      '菲律賓':'PHP','philippines':'PHP','宿霧':'PHP','馬尼拉':'PHP',
+      '香港':'HKD','hong kong':'HKD',
+      '土耳其':'TRY','turkey':'TRY','伊斯坦堡':'TRY',
+      '埃及':'EGP','egypt':'EGP','開羅':'EGP',
+      '歐洲':'EUR','europe':'EUR','法國':'EUR','義大利':'EUR','西班牙':'EUR','德國':'EUR',
+      '英國':'GBP','london':'GBP','倫敦':'GBP',
+      '美國':'USD','usa':'USD','紐約':'USD','洛杉磯':'USD','夏威夷':'USD',
+      '澳洲':'AUD','australia':'AUD','雪梨':'AUD','墨爾本':'AUD'
+    };
+    const CX_NAMES={JPY:'日圓 JPY',KRW:'韓元 KRW',THB:'泰銖 THB',VND:'越盾 VND',IDR:'印尼盾 IDR',MYR:'馬幣 MYR',SGD:'新幣 SGD',PHP:'比索 PHP',HKD:'港幣 HKD',TRY:'土耳其里拉 TRY',EGP:'埃及鎊 EGP',EUR:'歐元 EUR',GBP:'英鎊 GBP',USD:'美元 USD',AUD:'澳幣 AUD'};
+    const CX_PRESETS={JPY:[1000,5000,10000,50000],KRW:[10000,50000,100000,500000],VND:[100000,500000,1000000,5000000],IDR:[100000,500000,1000000,5000000],default:[100,500,1000,5000]};
+    let targetCurrency=m.currency||'';
+    if(!targetCurrency){for(const[k,v]of Object.entries(DEST_MAP)){if(dest.includes(k)){targetCurrency=v;break;}}}
+    if(!targetCurrency){document.getElementById('cx').style.display='none';return;}
+    let _rate=null,_dir=1; // 1=TWD→foreign, -1=foreign→TWD
+    const labelA=document.getElementById('cxLabelA');
+    const labelB=document.getElementById('cxLabelB');
+    const inputA=document.getElementById('cxInputA');
+    const inputB=document.getElementById('cxInputB');
+    const rateInfo=document.getElementById('cxRateInfo');
+    const disclaimer=document.getElementById('cxDisclaimer');
+    const presetsEl=document.getElementById('cxPresets');
+    const errorEl=document.getElementById('cxError');
+    const FNAME=CX_NAMES[targetCurrency]||targetCurrency;
+    function setLabels(){
+      if(_dir===1){labelA.textContent='台幣 TWD';labelB.textContent=FNAME;}
+      else{labelA.textContent=FNAME;labelB.textContent='台幣 TWD';}
+    }
+    function buildPresets(){
+      presetsEl.innerHTML='';
+      const vals=CX_PRESETS[_dir===1?'TWD':targetCurrency]||CX_PRESETS.default;
+      vals.forEach(v=>{
+        const btn=document.createElement('button');
+        btn.textContent=v.toLocaleString();
+        btn.style.cssText='flex:1;min-width:60px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);border-radius:8px;padding:6px 4px;font-size:.72rem;color:rgba(255,255,255,.7);cursor:pointer;transition:all .18s';
+        btn.onmouseenter=()=>{btn.style.background='rgba(129,248,185,.12)';btn.style.borderColor='rgba(129,248,185,.3)';btn.style.color='var(--aqua)';};
+        btn.onmouseleave=()=>{btn.style.background='rgba(255,255,255,.07)';btn.style.borderColor='rgba(255,255,255,.13)';btn.style.color='rgba(255,255,255,.7)';};
+        btn.onclick=()=>{inputA.value=v;calcFromA();};
+        presetsEl.appendChild(btn);
+      });
+    }
+    function calcFromA(){
+      if(!_rate)return;
+      const a=parseFloat(inputA.value);
+      if(isNaN(a)||a===''){inputB.value='';return;}
+      const b=_dir===1?a*_rate:a/_rate;
+      inputB.value=b%1===0?b.toFixed(0):b.toFixed(2);
+    }
+    function calcFromB(){
+      if(!_rate)return;
+      const b=parseFloat(inputB.value);
+      if(isNaN(b)||b===''){inputA.value='';return;}
+      const a=_dir===1?b/_rate:b*_rate;
+      inputA.value=a%1===0?a.toFixed(0):a.toFixed(2);
+    }
+    inputA.addEventListener('input',calcFromA);
+    inputB.addEventListener('input',calcFromB);
+    window.cxSwap=function(){
+      _dir*=-1;
+      const va=inputA.value,vb=inputB.value;
+      inputA.value=vb;inputB.value=va;
+      setLabels();buildPresets();
+    };
+    function applyRate(rate,date){
+      _rate=rate;
+      const rateStr=_dir===1?`1 TWD = ${rate.toFixed(rate>=1?2:4)} ${targetCurrency}`:`1 ${targetCurrency} = ${(1/rate).toFixed(2)} TWD`;
+      rateInfo.textContent=`1 TWD = ${rate.toFixed(rate>=1?2:4)} ${targetCurrency}`;
+      disclaimer.textContent=`匯率來源：ECB / Frankfurter · 更新日期：${date} · 僅供參考，實際匯率以當地銀行為準`;
+      buildPresets();setLabels();
+      if(inputA.value)calcFromA();
+    }
+    const CACHE_KEY='cx_rate_'+targetCurrency;
+    const cached=localStorage.getItem(CACHE_KEY);
+    if(cached){try{const c=JSON.parse(cached);if(Date.now()-c.ts<6*3600*1000){applyRate(c.rate,c.date);return;}}catch(e){}}
+    fetch(`https://api.frankfurter.app/latest?from=TWD&to=${targetCurrency}`)
+      .then(r=>r.json())
+      .then(data=>{
+        const rate=data.rates[targetCurrency];
+        const date=data.date;
+        localStorage.setItem(CACHE_KEY,JSON.stringify({rate,date,ts:Date.now()}));
+        applyRate(rate,date);
+        errorEl.style.display='none';
+        document.getElementById('cxBody').style.display='';
+      })
+      .catch(()=>{
+        rateInfo.textContent='無法載入匯率';
+        errorEl.textContent='匯率資料載入失敗，請稍後再試';
+        errorEl.style.display='block';
+        document.getElementById('cxBody').style.display='none';
+      });
+  })();
 
   /* ── Back to top button ── */
   const btBtn=document.createElement('button');

@@ -293,6 +293,27 @@ header{
         <label>領隊手機</label>
         <input type="text" id="leaderPhone">
       </div>
+      <div class="field">
+        <label>目的地幣別</label>
+        <select id="currency">
+          <option value="">自動偵測（依目的地）</option>
+          <option value="JPY">🇯🇵 日本 JPY</option>
+          <option value="KRW">🇰🇷 韓國 KRW</option>
+          <option value="THB">🇹🇭 泰國 THB</option>
+          <option value="VND">🇻🇳 越南 VND</option>
+          <option value="IDR">🇮🇩 印尼 IDR</option>
+          <option value="MYR">🇲🇾 馬來西亞 MYR</option>
+          <option value="SGD">🇸🇬 新加坡 SGD</option>
+          <option value="PHP">🇵🇭 菲律賓 PHP</option>
+          <option value="HKD">🇭🇰 香港 HKD</option>
+          <option value="EUR">🇪🇺 歐元 EUR</option>
+          <option value="GBP">🇬🇧 英國 GBP</option>
+          <option value="USD">🇺🇸 美國 USD</option>
+          <option value="AUD">🇦🇺 澳洲 AUD</option>
+          <option value="TRY">🇹🇷 土耳其 TRY</option>
+          <option value="EGP">🇪🇬 埃及 EGP</option>
+        </select>
+      </div>
     </div>
   </div>
 
@@ -576,6 +597,8 @@ async function generate() {
     if (returnDate)  ebookData.meta.returnDate  = returnDate;
     if (leaderName)  ebookData.meta.leaderName  = leaderName;
     if (leaderPhone) ebookData.meta.leaderPhone = leaderPhone;
+    const currency = document.getElementById('currency').value;
+    if (currency) ebookData.meta.currency = currency;
     ebookData.id = ebookId;
     ebookData.generatedAt = new Date().toISOString();
 

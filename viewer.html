@@ -1002,13 +1002,13 @@ ${d.pdfUrl?'<a href="'+d.pdfUrl+'" target="_blank" rel="noopener" class="pdf-btn
       calcFromA();
     });
     inputA.addEventListener('blur',()=>cxFormatOnBlur(inputA));
-    inputA.addEventListener('focus',()=>inputA.select());
+    inputA.addEventListener('focus',()=>setTimeout(()=>inputA.select(),0));
     inputB.addEventListener('input',()=>{
       inputB.value=inputB.value.replace(/[^\d.]/g,'');
       calcFromB();
     });
     inputB.addEventListener('blur',()=>cxFormatOnBlur(inputB));
-    inputB.addEventListener('focus',()=>inputB.select());
+    inputB.addEventListener('focus',()=>setTimeout(()=>inputB.select(),0));
     window.cxSwap=function(){
       _dir*=-1;
       const va=inputA.value,vb=inputB.value;

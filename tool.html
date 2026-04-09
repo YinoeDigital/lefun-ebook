@@ -694,7 +694,24 @@ async function generate() {
     await fetch(shareApiUrl, {method:'PUT', headers:{'Authorization':'token '+githubToken,'Content-Type':'application/json'}, body:JSON.stringify(shareBody)});
 
     setStep(4);
-    await new Promise(r => setTimeout(r, 700));
+    document.getElementById('progFill').style.width = '90%';
+
+    // 輪詢 GitHub Pages，確認資料已建置完成再顯示網址
+    const checkUrl = `${baseUrl}/data/${ebookId}.json?_=${Date.now()}`;
+    const ps4el = document.getElementById('ps4');
+    ps4el.querySelector('.pdot') && (ps4el.querySelector('.pdot').style.animation = 'spin 1s linear infinite');
+    let deployed = false;
+    for (let i = 0; i < 30; i++) {
+      try {
+        const res = await fetch(checkUrl, {method:'HEAD', cache:'no-store'});
+        if (res.ok) { deployed = true; break; }
+      } catch(e) {}
+      const dots = '.'.repeat((i % 3) + 1);
+      ps4el.childNodes[ps4el.childNodes.length - 1].textContent = `等待 GitHub Pages 建置${dots}（約需 1-2 分鐘）`;
+      await new Promise(r => setTimeout(r, 4000));
+    }
+    ps4el.childNodes[ps4el.childNodes.length - 1].textContent = deployed ? '產生分享連結' : '產生分享連結（建置可能仍在進行）';
+
     document.getElementById('progFill').style.width = '100%';
     const shareUrl = `${baseUrl}/share/${ebookId}.html`;
     document.getElementById('resultUrl').textContent = shareUrl;

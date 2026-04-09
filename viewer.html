@@ -940,6 +940,7 @@ ${d.pdfUrl?'<a href="'+d.pdfUrl+'" target="_blank" rel="noopener" class="pdf-btn
     const CX_NAMES={JPY:'日圓 JPY',KRW:'韓元 KRW',THB:'泰銖 THB',VND:'越盾 VND',IDR:'印尼盾 IDR',MYR:'馬幣 MYR',SGD:'新幣 SGD',PHP:'比索 PHP',HKD:'港幣 HKD',TRY:'土耳其里拉 TRY',EGP:'埃及鎊 EGP',EUR:'歐元 EUR',GBP:'英鎊 GBP',USD:'美元 USD',AUD:'澳幣 AUD'};
     const CX_PRESETS={JPY:[1000,5000,10000,50000],KRW:[10000,50000,100000,500000],VND:[100000,500000,1000000,5000000],IDR:[100000,500000,1000000,5000000],default:[100,500,1000,5000]};
     let targetCurrency=m.currency||'';
+    if(targetCurrency==='NONE'){document.getElementById('cx').style.display='none';return;}
     if(!targetCurrency){for(const[k,v]of Object.entries(DEST_MAP)){if(dest.includes(k)){targetCurrency=v;break;}}}
     if(!targetCurrency){document.getElementById('cx').style.display='none';return;}
     let _rate=null,_dir=1; // 1=TWD→foreign, -1=foreign→TWD

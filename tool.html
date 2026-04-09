@@ -546,7 +546,7 @@ async function generate() {
 
     setStep(2);
     const systemPrompt = `你是樂放旅遊的旅遊達人助手。請將行前說明文件以輕鬆友善口語化的繁體中文整理成 JSON。只回傳 JSON，不要任何說明文字或 markdown。
-欄位說明：flightOutDepTime/flightOutArrTime 為 HH:MM 格式起飛/落地時間，flightOutDepPort/flightOutArrPort 為機場中文名稱（如「桃園國際機場」），flightOutFromCode/flightOutToCode 為 IATA 3字機場代碼（如「TPE」、「ICN」），flightReturn* 同理填回程資料。
+欄位說明：flightOutDepTime/flightOutArrTime 為 HH:MM 格式起飛/落地時間，flightOutDepPort/flightOutArrPort 為機場中文名稱（如「桃園國際機場」），flightOutFromCode/flightOutToCode 為 IATA 3字機場代碼（如「TPE」、「ICN」），flightReturn* 同理填回程資料。taxRefund.threshold 為退稅門檻金額（含幣別，如「30,000 韓圜」），taxRefund.notes 為退稅的補充說明或注意事項（從原始資料中完整擷取，保留原文重點），taxRefund.steps 為退稅操作步驟（每步驟為一個字串，從原始資料中逐步擷取）。
 
 格式：
 {
@@ -563,7 +563,7 @@ async function generate() {
   ],
   "tips": {"weather":"","currency":"","voltage":"","timezone":"","drinking":"","toiletries":""},
   "immigration": {"visa":"","qcode":"","steps":[]},
-  "taxRefund": {"threshold":"","steps":[]},
+  "taxRefund": {"threshold":"","notes":"","steps":[]},
   "checklist": {"beforeDepart":[],"carry":[],"forbidden":""},
   "departure": {"assemblyTime":"","rules":[]},
   "emergency": {"international":"","overseas":"","insurance":"","contacts":[{"label":"","value":""}]}

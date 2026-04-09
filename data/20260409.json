@@ -1,0 +1,142 @@
+{
+  "meta": {
+    "tourName": "111",
+    "destination": "111",
+    "departDate": "2026-04-09",
+    "returnDate": "2026/05/02",
+    "leaderName": "",
+    "leaderPhone": "",
+    "hotel": "日月潭秘境民宿包棟",
+    "hotelPhone": "",
+    "flightOut": "",
+    "flightOutAirline": "",
+    "flightOutNo": "",
+    "flightOutDepTime": "",
+    "flightOutDepPort": "",
+    "flightOutFromCode": "",
+    "flightOutArrTime": "",
+    "flightOutArrPort": "",
+    "flightOutToCode": "",
+    "flightReturn": "",
+    "flightReturnAirline": "",
+    "flightReturnNo": "",
+    "flightReturnDepTime": "",
+    "flightReturnDepPort": "",
+    "flightReturnFromCode": "",
+    "flightReturnArrTime": "",
+    "flightReturnArrPort": "",
+    "flightReturnToCode": "",
+    "assemblyTime": "07:30",
+    "assemblyPlace": "高雄小港"
+  },
+  "days": [
+    {
+      "day": 1,
+      "date": "2026/05/01",
+      "title": "啟程",
+      "spots": [
+        {
+          "name": "高雄小港",
+          "desc": "07:30集合出發"
+        },
+        {
+          "name": "屏東崁頂",
+          "desc": "停靠點"
+        },
+        {
+          "name": "清境農場青青草原",
+          "desc": "半日遊，14:30綿羊秀"
+        },
+        {
+          "name": "鹿篙咖啡莊園",
+          "desc": "下午茶時光"
+        }
+      ],
+      "breakfast": "溫暖的家",
+      "lunch": "七彩屋餐廳",
+      "dinner": "包棟民宿烤肉DIY",
+      "hotel": "日月潭秘境民宿包棟"
+    },
+    {
+      "day": 2,
+      "date": "2026/05/02",
+      "title": "賦歸",
+      "spots": [
+        {
+          "name": "HOHOCHA 喝喝茶",
+          "desc": "奉茶品嘗體驗"
+        },
+        {
+          "name": "日月潭遊湖",
+          "desc": "11:30搭船遊湖"
+        },
+        {
+          "name": "伊達邵老街",
+          "desc": "午餐自理"
+        },
+        {
+          "name": "竹山紫南宮",
+          "desc": "14:30抵達，停留一小時"
+        }
+      ],
+      "breakfast": "飯店提供",
+      "lunch": "伊達邵老街（自理）",
+      "dinner": "賦歸自理",
+      "hotel": "溫暖的家"
+    }
+  ],
+  "tips": {
+    "weather": "出發前請留意天氣預報，並準備適當防護用品如雨傘或雨衣",
+    "currency": "",
+    "voltage": "",
+    "timezone": "",
+    "drinking": "",
+    "toiletries": "因應政府環保政策，自2025年起旅宿業不主動提供一次性備品（如牙刷、牙膏、刮鬍刀、浴帽等），請旅客自行攜帶個人盥洗用品"
+  },
+  "immigration": {
+    "visa": "",
+    "qcode": "",
+    "steps": []
+  },
+  "taxRefund": {
+    "threshold": "",
+    "steps": []
+  },
+  "checklist": {
+    "beforeDepart": [
+      "個人盥洗用品",
+      "長期用藥及醫療器材",
+      "防護用品（雨傘或雨衣）",
+      "防滑鞋"
+    ],
+    "carry": [
+      "個人財物",
+      "貴重物品",
+      "必要藥品"
+    ],
+    "forbidden": ""
+  },
+  "departure": {
+    "assemblyTime": "07:30",
+    "rules": [
+      "本行程途經山區道路，及遊船活動，容易暈車、暈船者請自備暈車藥並提前服用",
+      "清境農場青青草原草地坡度較陡，請穿著防滑鞋",
+      "綿羊秀為戶外活動，請提早入場卡位並注意天氣變化",
+      "日月潭遊湖搭船請遵守安全規定並全程配戴救生衣，避免站立或移動"
+    ]
+  },
+  "emergency": {
+    "international": "",
+    "overseas": "",
+    "insurance": "",
+    "contacts": [
+      {
+        "label": "眾恆旅行社",
+        "value": "高雄市仁武區永昌二街110巷6號4樓"
+      }
+    ]
+  },
+  "id": "20260409",
+  "generatedAt": "2026-04-09T13:15:19.740Z",
+  "pdfUrl": "https://YinoeDigital.github.io/lefun-ebook/pdfs/20260409.pdf"
+}

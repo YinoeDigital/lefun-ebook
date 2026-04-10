@@ -152,6 +152,8 @@ header{
 .btn-hcopy.done{background:var(--aqua);color:#1a1a1a;border-color:var(--aqua)}
 .btn-hopen{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);color:rgba(255,255,255,.55);font-size:13px;padding:5px 10px;border-radius:8px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;transition:all .2s}
 .btn-hopen:hover{background:rgba(255,255,255,.14);color:#fff}
+.btn-hedit{background:rgba(153,235,247,.08);border:1px solid rgba(153,235,247,.22);color:rgba(153,235,247,.8);font-size:11px;padding:6px 11px;border-radius:8px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:4px;transition:all .2s;white-space:nowrap}
+.btn-hedit:hover{background:rgba(153,235,247,.18);color:#99EBF7}
 .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
 .modal-bg.open{display:flex}
 .modal{
@@ -697,19 +699,22 @@ async function generate() {
     setStep(4);
     document.getElementById('progFill').style.width = '90%';
 
-    // 輪詢 GitHub Pages，確認資料已建置完成再顯示網址
-    const checkUrl = `${baseUrl}/data/${ebookId}.json?_=${Date.now()}`;
+    // 輪詢 GitHub Pages，比對 generatedAt 確認是本次新資料已建置完成
+    const generatedAt = ebookData.generatedAt;
     const ps4el = document.getElementById('ps4');
     ps4el.querySelector('.pdot') && (ps4el.querySelector('.pdot').style.animation = 'spin 1s linear infinite');
     let deployed = false;
     for (let i = 0; i < 30; i++) {
-      try {
-        const res = await fetch(checkUrl, {method:'HEAD', cache:'no-store'});
-        if (res.ok) { deployed = true; break; }
-      } catch(e) {}
       const dots = '.'.repeat((i % 3) + 1);
       ps4el.childNodes[ps4el.childNodes.length - 1].textContent = `等待 GitHub Pages 建置${dots}（約需 1-2 分鐘）`;
       await new Promise(r => setTimeout(r, 4000));
+      try {
+        const res = await fetch(`${baseUrl}/data/${ebookId}.json?_=${Date.now()}`, {cache:'no-store'});
+        if (res.ok) {
+          const json = await res.json();
+          if (json.generatedAt === generatedAt) { deployed = true; break; }
+        }
+      } catch(e) {}
     }
     ps4el.childNodes[ps4el.childNodes.length - 1].textContent = deployed ? '產生分享連結' : '產生分享連結（建置可能仍在進行）';
 
@@ -785,6 +790,7 @@ function renderHistory(){
       </div>
       <div class="hist-btns">
         <button class="btn-hcopy" onclick="copyHistLink('${safeUrl}',this)">複製連結</button>
+        <a class="btn-hedit" href="viewer.html?id=${h.id}&edit=1" target="_blank" title="編輯電子書內容">✏️ 編輯</a>
         <a class="btn-hopen" href="${h.shareUrl}" target="_blank" title="開啟電子書">↗</a>
       </div>
     </div>`;

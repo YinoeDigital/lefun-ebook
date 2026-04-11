@@ -428,6 +428,22 @@ html.fs-4 .main,html.fs-5 .main{padding-left:12px;padding-right:12px}
 .cover-strip-item{flex-shrink:0;width:68px;height:50px;border-radius:7px;background-size:cover;background-position:center;cursor:pointer;opacity:.42;border:2px solid transparent;transition:opacity .3s,border-color .3s,transform .3s}
 .cover-strip-item.active{opacity:1;border-color:var(--aqua);transform:scaleY(1.08);box-shadow:0 0 0 1px rgba(129,248,185,.25),0 6px 18px rgba(0,0,0,.45)}
 .cover-strip-item:hover:not(.active){opacity:.72;transform:scaleY(1.04)}
+.csw{position:relative;flex-shrink:0}
+.csdel{position:absolute;top:-5px;right:-5px;width:18px;height:18px;border-radius:50%;background:rgba(238,101,67,.88);border:1.5px solid rgba(255,255,255,.22);cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:20;padding:0;transition:transform .15s,background .15s}
+.csdel:hover{background:var(--tomato);transform:scale(1.18)}
+.csdel svg{width:9px;height:9px;stroke:#fff;stroke-width:2.8;pointer-events:none}
+.csadd{flex-shrink:0;width:68px;height:50px;border-radius:7px;background:rgba(129,248,185,.07);border:1.5px dashed rgba(129,248,185,.38);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;padding:0}
+.csadd:hover{background:rgba(129,248,185,.16);border-color:var(--aqua)}
+.csadd svg{width:22px;height:22px;stroke:var(--aqua);stroke-width:1.5;pointer-events:none}
+.tips-add-btn{grid-column:1/-1;display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:11px;border-radius:10px;background:rgba(129,248,185,.06);border:1.5px dashed rgba(129,248,185,.35);color:var(--aqua);font-size:.8125rem;font-weight:600;cursor:pointer;transition:all .2s;letter-spacing:.04em}
+.tips-add-btn:hover{background:rgba(129,248,185,.14);border-color:var(--aqua)}
+.tips-add-btn svg{width:15px;height:15px;stroke:var(--aqua);stroke-width:2;flex-shrink:0}
+.tip-del-btn{position:absolute;top:6px;right:6px;width:20px;height:20px;border-radius:50%;background:rgba(238,101,67,.18);border:1px solid rgba(238,101,67,.35);color:rgba(238,101,67,.9);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;transition:all .2s}
+.tip-del-btn:hover{background:rgba(238,101,67,.4)}
+.tip-del-btn svg{width:11px;height:11px;stroke:currentColor;stroke-width:2.5;pointer-events:none}
+.em-add-btn{display:flex;align-items:center;gap:6px;margin-top:10px;padding:9px 12px;width:100%;border-radius:8px;background:rgba(129,248,185,.06);border:1.5px dashed rgba(129,248,185,.35);color:var(--aqua);font-size:.8125rem;font-weight:600;cursor:pointer;transition:all .2s;letter-spacing:.04em}
+.em-add-btn:hover{background:rgba(129,248,185,.14);border-color:var(--aqua)}
+.em-add-btn svg{width:14px;height:14px;stroke:var(--aqua);stroke-width:2;flex-shrink:0}
 .cover-arrow{position:absolute;top:42%;transform:translateY(-50%);z-index:15;background:rgba(255,255,255,.08);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.16);border-radius:50%;width:38px;height:38px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;box-shadow:inset 0 1.5px 0 rgba(255,255,255,.22)}
 .cover-arrow:hover{background:rgba(255,255,255,.2)}
 .cover-arrow svg{width:15px;height:15px;stroke:#fff;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
@@ -735,7 +751,7 @@ function render(d){
     <div class="cover-dates">${eps('meta.departDate',m.departDate)} — ${eps('meta.returnDate',m.returnDate)}</div>
     <div class="cover-pills">${m.flightOut?'<div class="cover-pill">'+li('plane')+m.flightOut+'</div>':''}${m.leaderName?'<a href="#em" class="cover-pill" style="text-decoration:none">'+li('user')+m.leaderName+'</a>':''}</div>
   </div>
-  <div class="cover-strip" id="coverStrip">${cPhotos.map((p,i)=>'<div class="cover-strip-item'+(i===0?' active':'')+'" style="background-image:url(\''+p+'\')" onclick="coverGoTo('+i+')" title="第'+(i+1)+'張"></div>').join('')}</div>
+  <div class="cover-strip" id="coverStrip">${cPhotos.map((p,i)=>{const item='<div class="cover-strip-item'+(i===0?' active':'')+'" style="background-image:url(\''+p+'\')" onclick="coverGoTo('+i+')" title="第'+(i+1)+'張"></div>';return _em?'<div class="csw">'+item+'<button class="csdel" onclick="deleteCoverPhoto('+i+')" title="刪除此張"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>':item;}).join('')}${_em?'<button class="csadd" onclick="addCoverPhotos()" title="增加圖片"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>':''}</div>
 </section>` : hero;
 
   const ZH_NUM=['一','二','三','四','五','六','七','八','九','十','十一','十二','十三','十四'];
@@ -784,7 +800,11 @@ function render(d){
   }).join('');
 
   const tips=d.tips||{};
-  const tipsG=[{i:'🌡️',t:'天氣穿著',v:tips.weather,k:'weather'},{i:'💴',t:'匯率貨幣',v:tips.currency,k:'currency'},{i:'🔌',t:'電壓插頭',v:tips.voltage,k:'voltage'},{i:'🕐',t:'時差',v:tips.timezone,k:'timezone'},{i:'🚰',t:'飲食注意',v:tips.drinking,k:'drinking'},{i:'🛁',t:'盥洗用品',v:tips.toiletries,k:'toiletries'}].filter(x=>x.v).map(x=>'<div class="tip-card"><div class="ti">'+x.i+'</div><h4>'+x.t+'</h4><p>'+ep('tips.'+x.k,x.v)+'</p></div>').join('');
+  const _CUST_COLORS=['#81F8B9','#EE6543','#FFD166','#A8DAFF','#C8B1F3','#7EC8E3'];
+  const _CUST_ICONS=['star','heart','flag','bookmark','award','zap','sun','leaf','coffee','camera'];
+  const _customTipCards=(tips.custom||[]).map((ct,ci)=>{const color=_CUST_COLORS[ci%_CUST_COLORS.length];const icon=ct.icon||_CUST_ICONS[ci%_CUST_ICONS.length];return '<div class="tip-card tip-card-custom" style="position:relative"><div class="ti" style="color:'+color+'">'+li(icon)+'</div><h4>'+(_em?'<span data-epath="tips.custom.'+ci+'.title" contenteditable="true" spellcheck="false">'+(ct.title||'&#8203;')+'</span>':s(ct.title))+'</h4><p>'+(_em?'<span data-epath="tips.custom.'+ci+'.content" contenteditable="true" spellcheck="false">'+(ct.content||'&#8203;')+'</span>':s(ct.content))+'</p>'+(_em?'<button class="tip-del-btn" onclick="deleteCustomTip('+ci+',this)" title="刪除">'+li('x')+'</button>':'')+'</div>';}).join('');
+  const _addTipBtn=_em?'<button class="tips-add-btn" onclick="addCustomTip()">'+li('plus')+'新增注意事項</button>':'';
+  const tipsG=[{i:'🌡️',t:'天氣穿著',v:tips.weather,k:'weather'},{i:'💴',t:'匯率貨幣',v:tips.currency,k:'currency'},{i:'🔌',t:'電壓插頭',v:tips.voltage,k:'voltage'},{i:'🕐',t:'時差',v:tips.timezone,k:'timezone'},{i:'🚰',t:'飲食注意',v:tips.drinking,k:'drinking'},{i:'🛁',t:'盥洗用品',v:tips.toiletries,k:'toiletries'}].filter(x=>x.v).map(x=>'<div class="tip-card"><div class="ti">'+x.i+'</div><h4>'+x.t+'</h4><p>'+ep('tips.'+x.k,x.v)+'</p></div>').join('')+_customTipCards+_addTipBtn;
 
   const imm=d.immigration||{};
   const immS=(imm.steps||[]).map((st,si)=>'<div class="step-item"><p>'+ep('immigration.steps.'+si,st)+'</p></div>').join('');
@@ -803,7 +823,7 @@ function render(d){
 <section class="sec fade-up" id="tx"><div class="sec-label"><div class="sec-icon">${li('receipt')}</div><div><h2>退稅說明</h2><p>滿 ${eps('taxRefund.threshold',tax.threshold,'—')} 即可退稅</p></div></div><div class="card card-y">${tax.notes?'<p style="font-size:.8125rem;color:rgba(255,255,255,.78);line-height:1.85;margin-bottom:'+(taxS?'16px':'4px')+'">'+ep('taxRefund.notes',tax.notes)+'</p>':''}${taxS?'<div class="steps">'+taxS+'</div>':''}</div></section><div class="divider"></div>`;
   const body=`
 ${nav}${cover}
-<section class="sec fade-up" id="as"><div class="sec-label"><div class="sec-icon">${li('plane')}</div><div><h2>集合與航班資訊</h2><p>出發前請再確認</p></div></div>
+<section class="sec fade-up" id="as"><div class="sec-label"><div class="sec-icon">${li('plane')}</div><div><h2>集合與航班資訊</h2></div></div>
 <div class="card card-g">
 <div class="info-row"><span class="ir-label">集合時間</span><span class="ir-val"><strong>${eps('meta.assemblyTime',m.assemblyTime||dep.assemblyTime)}</strong></span></div>
 <div class="info-row"><span class="ir-label">集合地點</span><span class="ir-val">${eps('meta.assemblyPlace',m.assemblyPlace)}</span></div>
@@ -862,13 +882,13 @@ ${(()=>{
 <div class="divider"></div>
 <div id="wxSection"></div>
 <div class="divider"></div>
-<section class="sec fade-up" id="it"><div class="sec-label"><div class="sec-icon">${li('map')}</div><div><h2>行程總覽</h2><p>${(d.days||[]).length} 天精華路線</p></div></div>
+<section class="sec fade-up" id="it"><div class="sec-label"><div class="sec-icon">${li('map')}</div><div><h2>行程總覽</h2></div></div>
 <div class="card" style="padding:8px 16px">
 ${m.hotel?'<div style="display:flex;gap:10px;align-items:center;padding:10px 0 14px;border-bottom:1px solid rgba(255,255,255,.08)">'+li('building-2')+'<div><div style="font-size:.68rem;color:rgba(255,255,255,.5);margin-bottom:2px;letter-spacing:.06em">全程住宿</div><div style="font-weight:700;color:var(--aqua);font-size:.9375rem">'+eps('meta.hotel',m.hotel)+'</div></div></div>':''}
 ${(()=>{
   const allDays=d.days||[];
   const total=allDays.length;
-  return allDays.map(day=>{
+  return allDays.map((day,di2)=>{
     const n2=day.day||1;
     const zh2=ZH_NUM[n2-1]||n2;
     const _WD2=['日','一','二','三','四','五','六'];
@@ -887,18 +907,18 @@ ${(()=>{
       const route=(m.flightReturnDepPort&&m.flightReturnArrPort)?'　'+m.flightReturnDepPort+'→'+m.flightReturnArrPort:'';
       flightChip='<span class="ov-flight">'+li('plane-takeoff')+fn+ft+route+'</span>';
     }
-    return '<div class="ov-row"><div class="ov-badge">'+DOT_SVG+'<span class="ov-zh">第'+zh2+'天</span></div>'+(dl2?'<span class="ov-date">'+dl2+'</span>':'')+'<div class="ov-spots">'+(day.spots||[]).map(sp=>sp.name).join('・')+flightChip+'</div></div>';
+    return '<div class="ov-row"><div class="ov-badge">'+DOT_SVG+'<span class="ov-zh">第'+zh2+'天</span></div>'+(dl2?'<span class="ov-date">'+dl2+'</span>':'')+'<div class="ov-spots">'+(day.spots||[]).map((sp,si)=>ep('days.'+di2+'.spots.'+si+'.name',sp.name)).join('・')+flightChip+'</div></div>';
   }).join('');
 })()}
 <p class="ov-disclaimer">※ 行程內容、次序、班次時間及住宿飯店，本公司保留變更的權利 ※</p>
 </div>
 </section><div class="divider"></div>
-<section class="sec fade-up" id="dy"><div class="sec-label"><div class="sec-icon">${li('calendar-days')}</div><div><h2>每日詳細行程</h2><p>景點介紹・餐食・住宿</p></div></div>${days}</section><div class="divider"></div>
-<div class="sec-tinted"><section class="sec fade-up" id="tp" style="max-width:100%;padding-left:20px;padding-right:20px"><div style="max-width:640px;margin:0 auto"><div class="sec-label"><div class="sec-icon">${li('lightbulb')}</div><div><h2>旅遊注意事項</h2><p>出發前請仔細閱讀</p></div></div><div class="tips-grid">${tipsG}</div></div></section></div><div class="divider"></div>
+<section class="sec fade-up" id="dy"><div class="sec-label"><div class="sec-icon">${li('calendar-days')}</div><div><h2>每日詳細行程</h2></div></div>${days}</section><div class="divider"></div>
+<div class="sec-tinted"><section class="sec fade-up" id="tp" style="max-width:100%;padding-left:20px;padding-right:20px"><div style="max-width:640px;margin:0 auto"><div class="sec-label"><div class="sec-icon">${li('lightbulb')}</div><div><h2>旅遊注意事項</h2></div></div><div class="tips-grid">${tipsG}</div></div></section></div><div class="divider"></div>
 ${immTaxHtml}
-<div class="sec-tinted"><section class="sec fade-up" id="ck" style="max-width:100%;padding-left:20px;padding-right:20px"><div style="max-width:640px;margin:0 auto"><div class="sec-label"><div class="sec-icon">${li('backpack')}</div><div><h2>行李攜帶清單</h2><p>出發前對照確認</p></div><a href="${_clUrl}" target="_blank" class="ck-tool-btn">${li('external-link','ck-li')}點我 開始準備行李 .ᐟ</a></div><p style="font-size:12px;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:9px">出發前必備</p><div class="checklist" style="margin-bottom:18px">${chkB}</div><p style="font-size:12px;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:9px">隨身行李</p><div class="checklist" style="margin-bottom:16px">${chkC}</div>${chk.forbidden?'<div class="card" style="background:var(--tomato);border:none;color:#fff"><p style="font-size:13px;font-weight:700;margin-bottom:5px;display:flex;align-items:center;gap:5px">'+li('triangle-alert')+'禁止攜帶</p><p style="font-size:13px;opacity:.9">'+ep('checklist.forbidden',chk.forbidden)+'</p></div>':''}</div></section></div><div class="divider"></div>
-<section class="sec fade-up" id="em"><div class="sec-label"><div class="sec-icon">${li('phone')}</div><div><h2>緊急聯絡資訊</h2><p>截圖存起來備用</p></div></div>
-<div class="emergency"><h3>${li('siren')}重要電話</h3>${m.leaderName?'<div class="em-row"><span class="em-label">領隊　'+m.leaderName+'</span><span class="em-val">'+eps('meta.leaderPhone',m.leaderPhone)+'</span></div>':''}${em.international?'<div class="em-row"><span class="em-label">國際救援</span><span class="em-val">'+ep('emergency.international',em.international)+'</span></div>':''}${em.overseas?'<div class="em-row"><span class="em-label">旅外急難</span><span class="em-val">'+ep('emergency.overseas',em.overseas)+'</span></div>':''}${emC}</div>
+<div class="sec-tinted"><section class="sec fade-up" id="ck" style="max-width:100%;padding-left:20px;padding-right:20px"><div style="max-width:640px;margin:0 auto"><div class="sec-label"><div class="sec-icon">${li('backpack')}</div><div><h2>行李攜帶清單</h2></div><a href="${_clUrl}" target="_blank" class="ck-tool-btn">${li('external-link','ck-li')}點我 開始準備行李 .ᐟ</a></div><p style="font-size:12px;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:9px">出發前必備</p><div class="checklist" style="margin-bottom:18px">${chkB}</div><p style="font-size:12px;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:9px">隨身行李</p><div class="checklist" style="margin-bottom:16px">${chkC}</div>${chk.forbidden?'<div class="card" style="background:var(--tomato);border:none;color:#fff"><p style="font-size:13px;font-weight:700;margin-bottom:5px;display:flex;align-items:center;gap:5px">'+li('triangle-alert')+'禁止攜帶</p><p style="font-size:13px;opacity:.9">'+ep('checklist.forbidden',chk.forbidden)+'</p></div>':''}</div></section></div><div class="divider"></div>
+<section class="sec fade-up" id="em"><div class="sec-label"><div class="sec-icon">${li('phone')}</div><div><h2>緊急聯絡資訊</h2></div></div>
+<div class="emergency" id="emContacts"><h3>${li('siren')}重要電話</h3>${m.leaderName?'<div class="em-row"><span class="em-label">領隊　'+m.leaderName+'</span><span class="em-val">'+eps('meta.leaderPhone',m.leaderPhone)+'</span></div>':''}${em.international?'<div class="em-row"><span class="em-label">國際救援</span><span class="em-val">'+ep('emergency.international',em.international)+'</span></div>':''}${em.overseas?'<div class="em-row"><span class="em-label">旅外急難</span><span class="em-val">'+ep('emergency.overseas',em.overseas)+'</span></div>':''}${emC}${_em?'<button class="em-add-btn" onclick="addEmContact()">'+li('plus')+'新增資料</button>':''}</div>
 ${em.insurance?'<div class="emergency" style="margin-top:10px"><h3>'+li('clipboard-list')+'保險說明</h3><p style="font-size:.875rem;color:rgba(255,255,255,.80);line-height:1.8">'+ep('emergency.insurance',em.insurance)+'</p></div>':''}
 ${d.pdfUrl?'<a href="'+d.pdfUrl+'" target="_blank" rel="noopener" class="pdf-btn">'+li('file-text')+'點擊閱覽詳細行前說明資料</a>':''}
 </section>
@@ -1102,6 +1122,94 @@ ${d.pdfUrl?'<a href="'+d.pdfUrl+'" target="_blank" rel="noopener" class="pdf-btn
   }),{threshold:0.12,rootMargin:'0px 0px -60px 0px'});
   document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
   window._wxObs=obs;
+}
+/* ── Cover Photo Edit ── */
+function _rebuildCoverStrip(){
+  const strip=document.getElementById('coverStrip');
+  if(!strip)return;
+  const DEL_SVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+  const ADD_SVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>';
+  strip.innerHTML=_cPhotos.map((p,i)=>
+    '<div class="csw"><div class="cover-strip-item'+(i===_cIdx?' active':'')+'" style="background-image:url(\''+p+'\')" onclick="coverGoTo('+i+')" title="第'+(i+1)+'張"></div><button class="csdel" onclick="deleteCoverPhoto('+i+')" title="刪除此張">'+DEL_SVG+'</button></div>'
+  ).join('')+'<button class="csadd" onclick="addCoverPhotos()" title="增加圖片">'+ADD_SVG+'</button>';
+  const counter=document.getElementById('coverCounter');
+  if(counter)counter.textContent=(_cIdx+1)+' / '+_cPhotos.length;
+}
+function deleteCoverPhoto(idx){
+  if(!window._ebookData||!window._ebookData.coverPhotos)return;
+  window._ebookData.coverPhotos.splice(idx,1);
+  _cPhotos=window._ebookData.coverPhotos;
+  if(!_cPhotos.length){
+    const cs=document.getElementById('coverSection');
+    if(cs)cs.style.display='none';
+    return;
+  }
+  const newIdx=Math.min(idx,_cPhotos.length-1);
+  _cIdx=newIdx;
+  const bg=document.getElementById('coverBgMain');
+  if(bg)bg.style.backgroundImage=`url('${_cPhotos[newIdx]}')`;
+  _rebuildCoverStrip();
+  if(_cPhotos.length>1)_startCoverTimer();else clearInterval(_cTimer);
+}
+function addCoverPhotos(){
+  const inp=document.createElement('input');
+  inp.type='file';inp.accept='image/*';inp.multiple=true;
+  inp.onchange=async()=>{
+    if(!inp.files.length)return;
+    for(const file of Array.from(inp.files)){
+      const url=await new Promise(res=>{const r=new FileReader();r.onload=e=>res(e.target.result);r.readAsDataURL(file);});
+      if(!window._ebookData.coverPhotos)window._ebookData.coverPhotos=[];
+      window._ebookData.coverPhotos.push(url);
+    }
+    _cPhotos=window._ebookData.coverPhotos;
+    _rebuildCoverStrip();
+    if(_cPhotos.length>1)_startCoverTimer();
+  };
+  inp.click();
+}
+/* ── Custom Tips ── */
+const _CUST_COLORS=['#81F8B9','#EE6543','#FFD166','#A8DAFF','#C8B1F3','#7EC8E3'];
+const _CUST_ICONS=['star','heart','flag','bookmark','award','zap','sun','coffee','camera','compass'];
+function addCustomTip(){
+  if(!window._ebookData.tips)window._ebookData.tips={};
+  if(!window._ebookData.tips.custom)window._ebookData.tips.custom=[];
+  const idx=window._ebookData.tips.custom.length;
+  window._ebookData.tips.custom.push({title:'標題',content:'內容'});
+  const color=_CUST_COLORS[idx%_CUST_COLORS.length];
+  const iconName=_CUST_ICONS[idx%_CUST_ICONS.length];
+  const grid=document.querySelector('#tp .tips-grid');
+  const addBtn=grid.querySelector('.tips-add-btn');
+  const card=document.createElement('div');
+  card.className='tip-card tip-card-custom';card.style.position='relative';
+  card.innerHTML='<div class="ti" style="color:'+color+'">'+li(iconName)+'</div><h4><span data-epath="tips.custom.'+idx+'.title" contenteditable="true" spellcheck="false">標題</span></h4><p><span data-epath="tips.custom.'+idx+'.content" contenteditable="true" spellcheck="false">內容</span></p><button class="tip-del-btn" onclick="deleteCustomTip('+idx+',this)" title="刪除">'+li('x')+'</button>';
+  grid.insertBefore(card,addBtn);
+  lucide.createIcons({nodes:[card]});
+}
+function deleteCustomTip(idx,btn){
+  const card=btn.closest('.tip-card-custom');
+  if(card)card.remove();
+  if(window._ebookData.tips&&window._ebookData.tips.custom)window._ebookData.tips.custom.splice(idx,1);
+  // re-index remaining cards so data-epath stays consistent with array
+  document.querySelectorAll('#tp .tip-card-custom').forEach((c,ni)=>{
+    c.querySelectorAll('[data-epath]').forEach(el=>{
+      el.dataset.epath=el.dataset.epath.replace(/tips\.custom\.\d+\./,'tips.custom.'+ni+'.');
+    });
+    const db=c.querySelector('.tip-del-btn');
+    if(db)db.setAttribute('onclick','deleteCustomTip('+ni+',this)');
+  });
+}
+/* ── Emergency Contacts Add ── */
+function addEmContact(){
+  if(!window._ebookData.emergency)window._ebookData.emergency={};
+  if(!window._ebookData.emergency.contacts)window._ebookData.emergency.contacts=[];
+  const idx=window._ebookData.emergency.contacts.length;
+  window._ebookData.emergency.contacts.push({label:'聯絡單位',value:'電話號碼'});
+  const container=document.getElementById('emContacts');
+  const addBtn=container.querySelector('.em-add-btn');
+  const row=document.createElement('div');
+  row.className='em-row';
+  row.innerHTML='<span class="em-label" data-epath="emergency.contacts.'+idx+'.label" contenteditable="true" spellcheck="false">聯絡單位</span><span class="em-val" data-epath="emergency.contacts.'+idx+'.value" contenteditable="true" spellcheck="false">電話號碼</span>';
+  container.insertBefore(row,addBtn);
 }
 /* ── WYSIWYG Edit Save ── */
 function setEPath(obj,path,value){

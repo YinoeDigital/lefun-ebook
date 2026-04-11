@@ -435,6 +435,12 @@ html.fs-4 .main,html.fs-5 .main{padding-left:12px;padding-right:12px}
 .csadd{flex-shrink:0;width:68px;height:50px;border-radius:7px;background:rgba(129,248,185,.07);border:1.5px dashed rgba(129,248,185,.38);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;padding:0}
 .csadd:hover{background:rgba(129,248,185,.16);border-color:var(--aqua)}
 .csadd svg{width:22px;height:22px;stroke:var(--aqua);stroke-width:1.5;pointer-events:none}
+.spot-add-btn{display:flex;align-items:center;gap:7px;width:100%;padding:10px 0 10px 2px;background:none;border:none;border-top:1px dashed rgba(129,248,185,.25);color:var(--aqua);font-size:.8125rem;font-weight:600;cursor:pointer;letter-spacing:.04em;margin-top:4px;transition:opacity .2s}
+.spot-add-btn:hover{opacity:.7}
+.spot-add-btn .spot-pin{width:14px;height:14px;stroke:var(--aqua);stroke-width:1.75;fill:none;flex-shrink:0}
+.chk-add-btn{display:flex;align-items:center;gap:6px;width:100%;padding:10px 14px;border-radius:8px;background:rgba(129,248,185,.05);border:1.5px dashed rgba(129,248,185,.30);color:var(--aqua);font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s;letter-spacing:.04em;margin-top:4px}
+.chk-add-btn:hover{background:rgba(129,248,185,.12);border-color:var(--aqua)}
+.chk-add-btn svg{width:13px;height:13px;stroke:var(--aqua);stroke-width:2;flex-shrink:0}
 .tips-add-btn{grid-column:1/-1;display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:11px;border-radius:10px;background:rgba(129,248,185,.06);border:1.5px dashed rgba(129,248,185,.35);color:var(--aqua);font-size:.8125rem;font-weight:600;cursor:pointer;transition:all .2s;letter-spacing:.04em}
 .tips-add-btn:hover{background:rgba(129,248,185,.14);border-color:var(--aqua)}
 .tips-add-btn svg{width:15px;height:15px;stroke:var(--aqua);stroke-width:2;flex-shrink:0}
@@ -722,7 +728,9 @@ function render(d){
   window._ebookData=d;
   const _em=new URLSearchParams(location.search).get('edit')==='1';
   function ep(path,val){const t=tw(s(val));return _em?`<span data-epath="${path}" contenteditable="true" spellcheck="false">${t||'&#8203;'}</span>`:t;}
-  function eps(path,val,fb=''){const t=s(val,fb);return _em?`<span data-epath="${path}" contenteditable="true" spellcheck="false">${t||'&#8203;'}</span>`:t;}
+  function eps(path,val,fb=''){const t=tw(s(val,fb));return _em?`<span data-epath="${path}" contenteditable="true" spellcheck="false">${t||'&#8203;'}</span>`:t;}
+  function fmtPhone(v){if(!v)return v;const t=(v+'').trim();const clean=t.replace(/[\s\-\(\)]/g,'');if(!/^\+?\d{8,15}$/.test(clean))return tw(t);const hasPlus=clean.startsWith('+');const nums=clean.replace(/^\+/,'');const p1=nums.slice(0,4),p2=nums.slice(4,7),p3=nums.slice(7);return (hasPlus?'+':'')+p1+(p2?'-'+p2:'')+(p3?'-'+p3:'');}
+  function epPhone(path,val){const t=fmtPhone(s(val));return _em?`<span data-epath="${path}" contenteditable="true" spellcheck="false">${t||'&#8203;'}</span>`:t;}
   const m=d.meta||{};
   const TW_KW=['台灣','台北','台中','台南','高雄','花蓮','台東','宜蘭','南投','苗栗','彰化','雲林','嘉義','屏東','澎湖','金門','馬祖','基隆','新北','桃園','新竹','日月潭','墾丁','阿里山','太魯閣','九份','清境','綠島','小琉球','蘭嶼','合歡山','奮起湖','鹿港','三峽','烏來','礁溪'];
   const isTwDomestic=!!(m.destination&&TW_KW.some(k=>m.destination.includes(k)));
@@ -772,7 +780,7 @@ function render(d){
     const n=day.day||1;
     const zhNum=ZH_NUM[n-1]||n;
     const enOrd=(EN_ORD[n-1]||n+'th')+' Day';
-    const spots=(day.spots||[]).map((sp,si)=>'<div class="spot"><i data-lucide="map-pin" class="spot-pin"></i><div><h4>'+ep('days.'+di+'.spots.'+si+'.name',sp.name)+'</h4><p>'+ep('days.'+di+'.spots.'+si+'.desc',sp.desc)+'</p></div></div>').join('');
+    const spots=(day.spots||[]).map((sp,si)=>'<div class="spot"><i data-lucide="map-pin" class="spot-pin"></i><div><h4>'+ep('days.'+di+'.spots.'+si+'.name',sp.name)+'</h4><p>'+ep('days.'+di+'.spots.'+si+'.desc',sp.desc)+'</p></div></div>').join('')+(_em?'<button class="spot-add-btn" data-di="'+di+'" onclick="addDaySpot('+di+')"><i data-lucide="map-pin" class="spot-pin" style="stroke:var(--aqua);flex-shrink:0"></i>新增景點</button>':'');
     const meals=[
       day.breakfast?'<div class="meal-row-item">'+li('coffee')+'<span class="mr-label">早餐</span><span class="mr-sep">⟡</span><span class="mr-val">'+ep('days.'+di+'.breakfast',day.breakfast)+'</span></div>':'',
       day.lunch?'<div class="meal-row-item">'+li('utensils')+'<span class="mr-label">午餐</span><span class="mr-sep">⟡</span><span class="mr-val">'+ep('days.'+di+'.lunch',day.lunch)+'</span></div>':'',
@@ -811,13 +819,13 @@ function render(d){
   const tax=d.taxRefund||{};
   const taxS=(tax.steps||[]).map((st,si)=>'<div class="step-item"><p>'+ep('taxRefund.steps.'+si,st)+'</p></div>').join('');
   const chk=d.checklist||{};
-  const chkB=(chk.beforeDepart||[]).map((i,idx)=>'<div class="check-item">'+ep('checklist.beforeDepart.'+idx,i)+'</div>').join('');
-  const chkC=(chk.carry||[]).map((i,idx)=>'<div class="check-item">'+ep('checklist.carry.'+idx,i)+'</div>').join('');
+  const chkB=(chk.beforeDepart||[]).map((i,idx)=>'<div class="check-item">'+ep('checklist.beforeDepart.'+idx,i)+'</div>').join('')+(_em?'<button class="chk-add-btn" data-field="beforeDepart" onclick="addCheckItem(\'beforeDepart\')">'+li('plus')+'新增物品</button>':'');
+  const chkC=(chk.carry||[]).map((i,idx)=>'<div class="check-item">'+ep('checklist.carry.'+idx,i)+'</div>').join('')+(_em?'<button class="chk-add-btn" data-field="carry" onclick="addCheckItem(\'carry\')">'+li('plus')+'新增物品</button>':'');
   const dep=d.departure||{};
   const depR=(dep.rules||[]).map(r=>'<div class="spot"><div class="spot-dot" style="background:var(--rose)"></div><div><p>'+tw(r)+'</p></div></div>').join('');
   const em=d.emergency||{};
   // 過濾掉來自 PDF 的領隊項目，避免與表單填入的領隊資訊重複
-  const emC=(em.contacts||[]).map((c,ci)=>({c,ci})).filter(({c})=>!/領隊|leader/i.test(c.label||'')).map(({c,ci})=>'<div class="em-row"><span class="em-label">'+ep('emergency.contacts.'+ci+'.label',c.label)+'</span><span class="em-val">'+ep('emergency.contacts.'+ci+'.value',c.value)+'</span></div>').join('');
+  const emC=(em.contacts||[]).map((c,ci)=>({c,ci})).filter(({c})=>!/領隊|leader/i.test(c.label||'')).map(({c,ci})=>'<div class="em-row"><span class="em-label">'+ep('emergency.contacts.'+ci+'.label',c.label)+'</span><span class="em-val">'+epPhone('emergency.contacts.'+ci+'.value',c.value)+'</span></div>').join('');
 
   const immTaxHtml=isTwDomestic?'':`<section class="sec fade-up" id="im"><div class="sec-label"><div class="sec-icon">${li('shield-check')}</div><div><h2>入境手續</h2><p>${eps('immigration.visa',imm.visa)}</p></div></div><div class="card card-b">${imm.qcode?'<p style="font-size:13px;color:rgba(255,255,255,.65);margin-bottom:14px">'+ep('immigration.qcode',imm.qcode)+'</p>':''}<div class="steps">${immS}</div></div></section><div class="divider"></div>
 <section class="sec fade-up" id="tx"><div class="sec-label"><div class="sec-icon">${li('receipt')}</div><div><h2>退稅說明</h2><p>滿 ${eps('taxRefund.threshold',tax.threshold,'—')} 即可退稅</p></div></div><div class="card card-y">${tax.notes?'<p style="font-size:.8125rem;color:rgba(255,255,255,.78);line-height:1.85;margin-bottom:'+(taxS?'16px':'4px')+'">'+ep('taxRefund.notes',tax.notes)+'</p>':''}${taxS?'<div class="steps">'+taxS+'</div>':''}</div></section><div class="divider"></div>`;
@@ -907,7 +915,9 @@ ${(()=>{
       const route=(m.flightReturnDepPort&&m.flightReturnArrPort)?'　'+m.flightReturnDepPort+'→'+m.flightReturnArrPort:'';
       flightChip='<span class="ov-flight">'+li('plane-takeoff')+fn+ft+route+'</span>';
     }
-    return '<div class="ov-row"><div class="ov-badge">'+DOT_SVG+'<span class="ov-zh">第'+zh2+'天</span></div>'+(dl2?'<span class="ov-date">'+dl2+'</span>':'')+'<div class="ov-spots">'+(day.spots||[]).map((sp,si)=>ep('days.'+di2+'.spots.'+si+'.name',sp.name)).join('・')+flightChip+'</div></div>';
+    const spotsText=(day.spots||[]).map(sp=>sp.name).join('・');
+    const spotsHtml=_em?'<span data-epath="days.'+di2+'._spotsText" contenteditable="true" spellcheck="false">'+(spotsText||'&#8203;')+'</span>':spotsText;
+    return '<div class="ov-row"><div class="ov-badge">'+DOT_SVG+'<span class="ov-zh">第'+zh2+'天</span></div>'+(dl2?'<span class="ov-date">'+dl2+'</span>':'')+'<div class="ov-spots">'+spotsHtml+flightChip+'</div></div>';
   }).join('');
 })()}
 <p class="ov-disclaimer">※ 行程內容、次序、班次時間及住宿飯店，本公司保留變更的權利 ※</p>
@@ -918,7 +928,7 @@ ${(()=>{
 ${immTaxHtml}
 <div class="sec-tinted"><section class="sec fade-up" id="ck" style="max-width:100%;padding-left:20px;padding-right:20px"><div style="max-width:640px;margin:0 auto"><div class="sec-label"><div class="sec-icon">${li('backpack')}</div><div><h2>行李攜帶清單</h2></div><a href="${_clUrl}" target="_blank" class="ck-tool-btn">${li('external-link','ck-li')}點我 開始準備行李 .ᐟ</a></div><p style="font-size:12px;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:9px">出發前必備</p><div class="checklist" style="margin-bottom:18px">${chkB}</div><p style="font-size:12px;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:9px">隨身行李</p><div class="checklist" style="margin-bottom:16px">${chkC}</div>${chk.forbidden?'<div class="card" style="background:var(--tomato);border:none;color:#fff"><p style="font-size:13px;font-weight:700;margin-bottom:5px;display:flex;align-items:center;gap:5px">'+li('triangle-alert')+'禁止攜帶</p><p style="font-size:13px;opacity:.9">'+ep('checklist.forbidden',chk.forbidden)+'</p></div>':''}</div></section></div><div class="divider"></div>
 <section class="sec fade-up" id="em"><div class="sec-label"><div class="sec-icon">${li('phone')}</div><div><h2>緊急聯絡資訊</h2></div></div>
-<div class="emergency" id="emContacts"><h3>${li('siren')}重要電話</h3>${m.leaderName?'<div class="em-row"><span class="em-label">領隊　'+m.leaderName+'</span><span class="em-val">'+eps('meta.leaderPhone',m.leaderPhone)+'</span></div>':''}${em.international?'<div class="em-row"><span class="em-label">國際救援</span><span class="em-val">'+ep('emergency.international',em.international)+'</span></div>':''}${em.overseas?'<div class="em-row"><span class="em-label">旅外急難</span><span class="em-val">'+ep('emergency.overseas',em.overseas)+'</span></div>':''}${emC}${_em?'<button class="em-add-btn" onclick="addEmContact()">'+li('plus')+'新增資料</button>':''}</div>
+<div class="emergency" id="emContacts"><h3>${li('siren')}重要電話</h3>${m.leaderName?'<div class="em-row"><span class="em-label">領隊　'+m.leaderName+'</span><span class="em-val">'+epPhone('meta.leaderPhone',m.leaderPhone)+'</span></div>':''}${em.international?'<div class="em-row"><span class="em-label">國際救援</span><span class="em-val">'+epPhone('emergency.international',em.international)+'</span></div>':''}${em.overseas?'<div class="em-row"><span class="em-label">旅外急難</span><span class="em-val">'+epPhone('emergency.overseas',em.overseas)+'</span></div>':''}${emC}${_em?'<button class="em-add-btn" onclick="addEmContact()">'+li('plus')+'新增資料</button>':''}</div>
 ${em.insurance?'<div class="emergency" style="margin-top:10px"><h3>'+li('clipboard-list')+'保險說明</h3><p style="font-size:.875rem;color:rgba(255,255,255,.80);line-height:1.8">'+ep('emergency.insurance',em.insurance)+'</p></div>':''}
 ${d.pdfUrl?'<a href="'+d.pdfUrl+'" target="_blank" rel="noopener" class="pdf-btn">'+li('file-text')+'點擊閱覽詳細行前說明資料</a>':''}
 </section>
@@ -1167,6 +1177,33 @@ function addCoverPhotos(){
   };
   inp.click();
 }
+/* ── Add Day Spot ── */
+function addDaySpot(di){
+  if(!window._ebookData.days||!window._ebookData.days[di])return;
+  if(!window._ebookData.days[di].spots)window._ebookData.days[di].spots=[];
+  const si=window._ebookData.days[di].spots.length;
+  window._ebookData.days[di].spots.push({name:'景點名稱',desc:''});
+  const btn=document.querySelector('.spot-add-btn[data-di="'+di+'"]');
+  if(!btn)return;
+  const spotDiv=document.createElement('div');
+  spotDiv.className='spot';
+  spotDiv.innerHTML='<i data-lucide="map-pin" class="spot-pin"></i><div><h4 data-epath="days.'+di+'.spots.'+si+'.name" contenteditable="true" spellcheck="false">景點名稱</h4><p data-epath="days.'+di+'.spots.'+si+'.desc" contenteditable="true" spellcheck="false">景點說明</p></div>';
+  btn.parentNode.insertBefore(spotDiv,btn);
+  lucide.createIcons({nodes:[spotDiv]});
+}
+/* ── Add Checklist Item ── */
+function addCheckItem(field){
+  if(!window._ebookData.checklist)window._ebookData.checklist={};
+  if(!window._ebookData.checklist[field])window._ebookData.checklist[field]=[];
+  const idx=window._ebookData.checklist[field].length;
+  window._ebookData.checklist[field].push('新增物品');
+  const btn=document.querySelector('.chk-add-btn[data-field="'+field+'"]');
+  if(!btn)return;
+  const item=document.createElement('div');
+  item.className='check-item';
+  item.innerHTML='<span data-epath="checklist.'+field+'.'+idx+'" contenteditable="true" spellcheck="false">新增物品</span>';
+  btn.parentNode.insertBefore(item,btn);
+}
 /* ── Custom Tips ── */
 const _CUST_COLORS=['#81F8B9','#EE6543','#FFD166','#A8DAFF','#C8B1F3','#7EC8E3'];
 const _CUST_ICONS=['star','heart','flag','bookmark','award','zap','sun','coffee','camera','compass'];
@@ -1238,6 +1275,15 @@ async function saveEbookEdits(){
     const newData=JSON.parse(JSON.stringify(window._ebookData));
     document.querySelectorAll('[data-epath]').forEach(el=>{
       setEPath(newData,el.dataset.epath,el.innerText.trim());
+    });
+    // Convert _spotsText back into spots array
+    (newData.days||[]).forEach((day,i)=>{
+      if(day._spotsText!==undefined){
+        const names=day._spotsText.split('・').map(n=>n.trim()).filter(n=>n);
+        const origSpots=(window._ebookData.days||[])[i]?.spots||[];
+        day.spots=names.map((name,si)=>Object.assign({},origSpots[si]||{},{name}));
+        delete day._spotsText;
+      }
     });
     newData.generatedAt=new Date().toISOString();
     const ebookId=newData.id;

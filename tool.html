@@ -164,10 +164,12 @@ header{
   box-shadow:inset 0 1.5px 0 rgba(255,255,255,0.80),inset 0 -0.5px 0 rgba(0,0,0,0.06),0 20px 60px rgba(0,0,0,0.30),0 1px 3px rgba(0,0,0,0.12);
   border-radius:20px;padding:28px;width:min(480px,100%)
 }
-.modal h3{font-size:1.0625rem;font-weight:500;margin-bottom:6px;color:var(--text)}
-.modal-desc{font-size:.8125rem;color:var(--soft);margin-bottom:22px;line-height:1.85}
+.modal h3{font-size:1.0625rem;font-weight:600;margin-bottom:6px;color:#1a1a1a}
+.modal-desc{font-size:.8125rem;color:#555;margin-bottom:22px;line-height:1.85}
 .modal .field{margin-bottom:14px}
-.modal-hint{font-size:.6875rem;color:var(--soft);margin-top:5px}
+.modal .field label{color:#333;font-size:.6875rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+.modal-hint{font-size:.6875rem;color:#777;margin-top:5px}
+.modal h3 svg{stroke:#333!important}
 .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:22px}
 .status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px}
 .dot-ok{background:#52c41a}.dot-no{background:#ff4d4f}
@@ -384,6 +386,15 @@ header{
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 const GITHUB_USER = 'YinoeDigital';
 const GITHUB_REPO = 'lefun-ebook';
+
+// ── 預設 API Keys（員工開啟時自動帶入，無需手動設定）──
+// 填入後上傳即可，員工第一次開啟會自動儲存至 localStorage
+const _DEFAULT_ANTHROPIC_KEY = '';  // 填入 Anthropic API Key
+const _DEFAULT_GITHUB_TOKEN  = '';  // 填入 GitHub Personal Access Token
+if(_DEFAULT_ANTHROPIC_KEY && !localStorage.getItem('lf_anthropic_key'))
+  localStorage.setItem('lf_anthropic_key', _DEFAULT_ANTHROPIC_KEY);
+if(_DEFAULT_GITHUB_TOKEN && !localStorage.getItem('lf_github_token'))
+  localStorage.setItem('lf_github_token', _DEFAULT_GITHUB_TOKEN);
 let pdfFile = null;
 let bgFile = null, bgDataUrl = null;
 let coverFiles = [], coverDataUrls = [];
@@ -822,10 +833,7 @@ updateDots();
 document.getElementById('departDate').value = new Date().toISOString().slice(0,10);
 // Render Lucide icons on page load
 if (typeof lucide !== 'undefined') lucide.createIcons();
-// 首次使用：若 API Keys 尚未設定，自動彈出設定視窗
-if (!localStorage.getItem('lf_anthropic_key') || !localStorage.getItem('lf_github_token')) {
-  openSettings();
-}
+// API Keys 已透過預設值自動帶入，無需自動彈出設定視窗
 </script>
 </body>
 </html>

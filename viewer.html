@@ -389,6 +389,14 @@ html.fs-4 .main,html.fs-5 .main{padding-left:12px;padding-right:12px}
 .edit-bar-cancel{background:transparent;color:rgba(255,255,255,.45);border:1px solid rgba(255,255,255,.16);border-radius:20px;padding:7px 14px;font-size:.8125rem;cursor:pointer;font-family:inherit;transition:all .2s}
 .edit-bar-cancel:hover{color:rgba(255,255,255,.75);border-color:rgba(255,255,255,.3)}
 .edit-bar-saving{opacity:.55;pointer-events:none}
+.save-loading{display:none;position:fixed;inset:0;z-index:1000;background:rgba(5,12,9,.92);backdrop-filter:blur(24px);flex-direction:column;align-items:center;justify-content:center;gap:24px}
+.save-loading.show{display:flex}
+.save-loading-logo{height:36px;opacity:.9}
+.save-loading-msg{font-size:.875rem;color:rgba(255,255,255,.65);letter-spacing:.04em}
+.save-loading-pct{font-size:2rem;font-weight:700;color:var(--aqua);line-height:1}
+.save-loading-bar-wrap{width:220px;height:4px;border-radius:4px;background:rgba(129,248,185,.12);overflow:hidden}
+.save-loading-bar{height:100%;width:0%;border-radius:4px;background:linear-gradient(90deg,var(--aqua),#99EBF7);transition:width .4s ease}
+.save-loading-sub{font-size:.75rem;color:rgba(255,255,255,.35);margin-top:4px}
 .elm-overlay{display:none;position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:20px}
 .elm-box{background:#0e1e17;border:1px solid rgba(238,101,67,.35);border-radius:18px;padding:28px 24px 22px;max-width:320px;width:100%;text-align:center;box-shadow:0 16px 48px rgba(0,0,0,.55)}
 .elm-icon svg{width:36px;height:36px;stroke:#EE6543;margin-bottom:14px}
@@ -1146,6 +1154,31 @@ ${d.pdfUrl?'<a href="'+d.pdfUrl+'" target="_blank" rel="noopener" class="pdf-btn
   btBtn.innerHTML='<svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>';
   btBtn.onclick=()=>window.scrollTo({top:0,behavior:'smooth'});
   document.body.appendChild(btBtn);
+
+  /* ── Background edit button (edit mode only) ── */
+  const bgBtn=document.createElement('button');
+  bgBtn.className='bg-edit-btn';bgBtn.title='更換背景圖片';
+  bgBtn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>';
+  bgBtn.onclick=()=>{
+    const inp=document.createElement('input');
+    inp.type='file';inp.accept='image/*';
+    inp.onchange=async()=>{
+      if(!inp.files.length)return;
+      const url=await new Promise(res=>{const r=new FileReader();r.onload=e=>res(e.target.result);r.readAsDataURL(inp.files[0]);});
+      window._ebookData.backgroundImage=url;
+      const bg=document.querySelector('.parallax-bg');
+      if(bg){bg.style.backgroundImage=`url('${url}')`;bg.style.backgroundSize='cover';bg.style.backgroundPosition='center';}
+      window._editDirty=true;
+    };
+    inp.click();
+  };
+  document.body.appendChild(bgBtn);
+
+  /* ── Save loading overlay ── */
+  const slOverlay=document.createElement('div');
+  slOverlay.id='saveLoadingOverlay';slOverlay.className='save-loading';
+  slOverlay.innerHTML='<img src="logo.png" class="save-loading-logo" alt="樂放旅遊"><div class="save-loading-pct" id="slPct">0%</div><div class="save-loading-bar-wrap"><div class="save-loading-bar" id="slBar"></div></div><div class="save-loading-msg" id="slMsg">正在儲存變更…</div><div class="save-loading-sub" id="slSub"></div>';
+  document.body.appendChild(slOverlay);
   window.addEventListener('scroll',()=>{
     btBtn.classList.toggle('show',window.scrollY>320);
   },{passive:true});
@@ -1358,8 +1391,20 @@ async function saveEbookEdits(){
   if(!token){alert('請先在製作工具頁面設定 GitHub Token（設定 API Keys）');return;}
   const bar=document.getElementById('editBar');
   const saveBtn=bar.querySelector('.edit-bar-save');
-  saveBtn.textContent='儲存中…';bar.classList.add('edit-bar-saving');
+  // Show loading overlay
+  function slSet(pct,msg,sub=''){
+    const ov=document.getElementById('saveLoadingOverlay');
+    if(!ov)return;
+    ov.classList.add('show');
+    document.getElementById('slPct').textContent=Math.round(pct)+'%';
+    document.getElementById('slBar').style.width=pct+'%';
+    document.getElementById('slMsg').textContent=msg;
+    document.getElementById('slSub').textContent=sub;
+  }
+  function slHide(){const ov=document.getElementById('saveLoadingOverlay');if(ov)ov.classList.remove('show');}
+  bar.classList.add('edit-bar-saving');
   try{
+    slSet(5,'正在整理資料…');
     const newData=JSON.parse(JSON.stringify(window._ebookData));
     document.querySelectorAll('[data-epath]').forEach(el=>{
       setEPath(newData,el.dataset.epath,el.innerText.trim());
@@ -1376,40 +1421,46 @@ async function saveEbookEdits(){
     newData.generatedAt=new Date().toISOString();
     const ebookId=newData.id;
     const apiUrl=`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/data/${ebookId}.json`;
+    slSet(15,'正在上傳資料…');
     const encoded=btoa(unescape(encodeURIComponent(JSON.stringify(newData,null,2))));
     let sha='';
     try{const r=await fetch(apiUrl,{headers:{'Authorization':'token '+token}});if(r.ok)sha=(await r.json()).sha;}catch(e){}
+    slSet(30,'正在儲存至 GitHub…');
     const body={message:`edit: update ${ebookId}`,content:encoded,branch:'main'};
     if(sha)body.sha=sha;
     const res=await fetch(apiUrl,{method:'PUT',headers:{'Authorization':'token '+token,'Content-Type':'application/json'},body:JSON.stringify(body)});
     if(res.ok){
-      saveBtn.textContent='等待部署…';
-      bar.classList.add('edit-bar-saving');
       const generatedAt=newData.generatedAt;
       const baseUrl=`https://${GITHUB_USER}.github.io/${GITHUB_REPO}`;
       const jsonUrl=`${baseUrl}/data/${ebookId}.json`;
       let deployed=false;
-      for(let i=0;i<30;i++){
+      const TOTAL=30;
+      for(let i=0;i<TOTAL;i++){
+        const pct=40+Math.round((i/TOTAL)*55);
+        const remaining=Math.round((TOTAL-i)*4);
+        slSet(pct,'等待網站部署完成…','約還需 '+remaining+' 秒');
         await new Promise(r=>setTimeout(r,4000));
         try{
           const r2=await fetch(jsonUrl+'?_='+Date.now(),{cache:'no-store'});
           if(r2.ok){const j=await r2.json();if(j.generatedAt===generatedAt){deployed=true;break;}}
         }catch(e){}
-        saveBtn.textContent='等待部署… '+(i+1)+'/30';
       }
-      saveBtn.textContent=deployed?'✓ 已發布！':'✓ 已儲存';
+      slSet(100,deployed?'✓ 發布完成！':'✓ 儲存完成',deployed?'即將跳轉至電子書…':'即將返回電子書…');
       window._editDirty=false;
       setTimeout(()=>{
+        slHide();
         const url=new URL(location.href);
         url.searchParams.delete('edit');
         location.href=url.toString();
-      },1000);
+      },1200);
     }else{
+      slHide();
       const e=await res.json();
       alert('儲存失敗：'+(e.message||res.status));
       saveBtn.textContent='儲存變更';bar.classList.remove('edit-bar-saving');
     }
   }catch(e){
+    slHide();
     alert('儲存失敗：'+e.message);
     saveBtn.textContent='儲存變更';bar.classList.remove('edit-bar-saving');
   }

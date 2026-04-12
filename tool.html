@@ -155,6 +155,14 @@ header{
 .hist-time-label{color:rgba(255,255,255,.25)}
 .hist-time-dim{color:rgba(255,255,255,.18)}
 .hist-btns{display:flex;gap:6px;flex-shrink:0}
+@media(max-width:600px){
+  .hist-item{flex-wrap:wrap;gap:6px 10px;align-items:flex-start}
+  .hist-info{flex:1 1 100%;min-width:0}
+  .hist-name{white-space:normal;word-break:break-all}
+  .hist-times{flex:1 1 auto;text-align:left;flex-direction:row;flex-wrap:wrap;gap:4px 14px;align-items:center}
+  .hist-time-row{font-size:10px}
+  .hist-btns{flex:0 0 auto;width:100%;justify-content:flex-end;margin-top:2px}
+}
 .btn-hcopy{background:rgba(129,248,185,.1);border:1px solid rgba(129,248,185,.22);color:var(--aqua);font-size:11px;padding:6px 12px;border-radius:8px;cursor:pointer;font-family:inherit;transition:all .2s;white-space:nowrap}
 .btn-hcopy:hover{background:rgba(129,248,185,.2)}
 .btn-hcopy.done{background:var(--aqua);color:#1a1a1a;border-color:var(--aqua)}

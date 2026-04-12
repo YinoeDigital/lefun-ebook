@@ -137,6 +137,10 @@ header{
 .hist-badge{background:rgba(129,248,185,.15);color:var(--aqua);font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;letter-spacing:0}
 .btn-hist-clear{background:none;border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.3);font-size:10px;padding:4px 10px;border-radius:8px;cursor:pointer;font-family:inherit;transition:all .2s}
 .btn-hist-clear:hover{border-color:rgba(238,101,67,.45);color:var(--tomato)}
+.btn-hist-refresh{background:none;border:1px solid rgba(129,248,185,.2);color:rgba(129,248,185,.5);font-size:13px;width:26px;height:26px;border-radius:8px;cursor:pointer;font-family:inherit;transition:all .2s;line-height:1;padding:0}
+.btn-hist-refresh:hover{border-color:var(--aqua);color:var(--aqua)}
+.btn-hist-refresh.spinning{animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 .hist-empty{text-align:center;padding:26px 0;color:rgba(255,255,255,.22);font-size:12px;letter-spacing:.06em}
 .hist-item{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.06)}
 .hist-item:first-child{padding-top:4px}
@@ -356,6 +360,7 @@ header{
         發布紀錄
         <span class="hist-badge" id="histBadge">0</span>
       </div>
+      <button class="btn-hist-refresh" onclick="refreshHistory()" id="histRefreshBtn" title="從雲端重新整理">↻</button>
       <button class="btn-hist-clear" onclick="clearHistory()">清除全部</button>
     </div>
     <div id="histList"><div class="hist-empty">尚無發布紀錄</div></div>
@@ -762,13 +767,13 @@ async function copyLink() {
 /* ── 發布紀錄 ── */
 const HIST_KEY = 'lf_history';
 const HIST_API = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/data/history.json`;
-const HIST_URL = `https://${GITHUB_USER}.github.io/${GITHUB_REPO}/data/history.json`;
+const HIST_RAW = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/main/data/history.json`;
 
 function getLocalHistory(){ try{return JSON.parse(localStorage.getItem(HIST_KEY)||'[]');}catch(e){return[];} }
 
 async function loadSharedHistory(){
   try{
-    const r=await fetch(HIST_URL+'?_='+Date.now(),{cache:'no-store'});
+    const r=await fetch(HIST_RAW+'?_='+Date.now(),{cache:'no-store'});
     if(r.ok){const data=await r.json();localStorage.setItem(HIST_KEY,JSON.stringify(data));return data;}
   }catch(e){}
   return getLocalHistory();
@@ -834,8 +839,15 @@ function renderHistory(hist){
     </div>`;
   }).join('');
 }
-renderHistory(getLocalHistory()); // 先顯示本機快取
-loadSharedHistory().then(h=>renderHistory(h)); // 再從 GitHub 更新
+renderHistory(getLocalHistory());
+loadSharedHistory().then(h=>renderHistory(h));
+async function refreshHistory(){
+  const btn=document.getElementById('histRefreshBtn');
+  if(btn)btn.classList.add('spinning');
+  const h=await loadSharedHistory();
+  renderHistory(h);
+  if(btn)btn.classList.remove('spinning');
+}
 
 function openSettings() {
   document.getElementById('inputAnthropic').value = localStorage.getItem('lf_anthropic_key') || '';

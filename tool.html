@@ -216,8 +216,7 @@ header{
 <header>
   <img src="logo.png" alt="樂放旅遊" style="height:30px;object-fit:contain;filter:brightness(0) invert(1)">
   <div class="hdr-right">
-    <span class="hdr-title">電子書產生器</span>
-    <button class="btn-settings" onclick="openSettings()"><i data-lucide="settings-2" style="width:13px;height:13px;display:inline-block;vertical-align:middle;margin-right:5px"></i>設定 API Keys</button>
+    <button class="btn-settings" onclick="openSettings()"><i data-lucide="settings-2" style="width:13px;height:13px;display:inline-block;vertical-align:middle;margin-right:5px"></i>API Keys</button>
   </div>
 </header>
 
@@ -737,7 +736,7 @@ async function generate() {
     document.getElementById('resultUrl').textContent = shareUrl;
     document.getElementById('previewLink').href = shareUrl;
     document.getElementById('resultPanel').classList.add('show');
-    saveHistory({
+    await saveHistory({
       id: ebookId,
       tourName: document.getElementById('tourName').value.trim(),
       destination: document.getElementById('destination').value.trim(),
@@ -762,18 +761,43 @@ async function copyLink() {
 
 /* ── 發布紀錄 ── */
 const HIST_KEY = 'lf_history';
-function getHistory(){ try{return JSON.parse(localStorage.getItem(HIST_KEY)||'[]');}catch(e){return[];} }
-function saveHistory(item){
-  let h = getHistory().filter(x=>x.id!==item.id);
-  h.unshift(item);
-  if(h.length>100) h=h.slice(0,100);
-  localStorage.setItem(HIST_KEY, JSON.stringify(h));
-  renderHistory();
+const HIST_API = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/data/history.json`;
+const HIST_URL = `https://${GITHUB_USER}.github.io/${GITHUB_REPO}/data/history.json`;
+
+function getLocalHistory(){ try{return JSON.parse(localStorage.getItem(HIST_KEY)||'[]');}catch(e){return[];} }
+
+async function loadSharedHistory(){
+  try{
+    const r=await fetch(HIST_URL+'?_='+Date.now(),{cache:'no-store'});
+    if(r.ok){const data=await r.json();localStorage.setItem(HIST_KEY,JSON.stringify(data));return data;}
+  }catch(e){}
+  return getLocalHistory();
 }
-function clearHistory(){
-  if(!confirm('確定清除所有發布紀錄？此操作無法復原。')) return;
-  localStorage.removeItem(HIST_KEY);
-  renderHistory();
+
+async function pushHistory(items){
+  localStorage.setItem(HIST_KEY,JSON.stringify(items));
+  const token=localStorage.getItem('lf_github_token');
+  if(!token)return;
+  const encoded=btoa(unescape(encodeURIComponent(JSON.stringify(items,null,2))));
+  let sha='';
+  try{const r=await fetch(HIST_API,{headers:{'Authorization':'token '+token}});if(r.ok)sha=(await r.json()).sha;}catch(e){}
+  const body={message:'update history',content:encoded,branch:'main'};
+  if(sha)body.sha=sha;
+  try{await fetch(HIST_API,{method:'PUT',headers:{'Authorization':'token '+token,'Content-Type':'application/json'},body:JSON.stringify(body)});}catch(e){}
+}
+
+async function saveHistory(item){
+  let h=getLocalHistory().filter(x=>x.id!==item.id);
+  h.unshift(item);
+  if(h.length>100)h=h.slice(0,100);
+  await pushHistory(h);
+  renderHistory(h);
+}
+
+async function clearHistory(){
+  if(!confirm('確定清除所有發布紀錄？此操作無法復原。'))return;
+  await pushHistory([]);
+  renderHistory([]);
 }
 function copyHistLink(url, btn){
   navigator.clipboard.writeText(url).then(()=>{
@@ -782,8 +806,8 @@ function copyHistLink(url, btn){
     setTimeout(()=>{ btn.textContent='複製連結'; btn.classList.remove('done'); }, 2000);
   });
 }
-function renderHistory(){
-  const hist = getHistory();
+function renderHistory(hist){
+  if(!hist) hist=getLocalHistory();
   const listEl = document.getElementById('histList');
   const badge = document.getElementById('histBadge');
   if(!listEl) return;
@@ -810,7 +834,8 @@ function renderHistory(){
     </div>`;
   }).join('');
 }
-renderHistory();
+renderHistory(getLocalHistory()); // 先顯示本機快取
+loadSharedHistory().then(h=>renderHistory(h)); // 再從 GitHub 更新
 
 function openSettings() {
   document.getElementById('inputAnthropic').value = localStorage.getItem('lf_anthropic_key') || '';

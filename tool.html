@@ -360,8 +360,10 @@ header{
         發布紀錄
         <span class="hist-badge" id="histBadge">0</span>
       </div>
-      <button class="btn-hist-refresh" onclick="refreshHistory()" id="histRefreshBtn" title="從雲端重新整理">↻</button>
-      <button class="btn-hist-clear" onclick="clearHistory()">清除全部</button>
+      <div style="display:flex;gap:6px;align-items:center">
+        <button class="btn-hist-refresh" onclick="refreshHistory()" id="histRefreshBtn" title="從雲端重新整理">↻</button>
+        <button class="btn-hist-clear" onclick="clearHistory()">清除全部</button>
+      </div>
     </div>
     <div id="histList"><div class="hist-empty">尚無發布紀錄</div></div>
   </div>
@@ -741,7 +743,7 @@ async function generate() {
     document.getElementById('resultUrl').textContent = shareUrl;
     document.getElementById('previewLink').href = shareUrl;
     document.getElementById('resultPanel').classList.add('show');
-    await saveHistory({
+    saveHistory({
       id: ebookId,
       tourName: document.getElementById('tourName').value.trim(),
       destination: document.getElementById('destination').value.trim(),
@@ -791,18 +793,46 @@ async function pushHistory(items){
   try{await fetch(HIST_API,{method:'PUT',headers:{'Authorization':'token '+token,'Content-Type':'application/json'},body:JSON.stringify(body)});}catch(e){}
 }
 
-async function saveHistory(item){
+function saveHistory(item){
   let h=getLocalHistory().filter(x=>x.id!==item.id);
   h.unshift(item);
   if(h.length>100)h=h.slice(0,100);
-  await pushHistory(h);
+  localStorage.setItem(HIST_KEY,JSON.stringify(h));
   renderHistory(h);
+  pushHistory(h); // 背景執行，不等待、不阻塞主流程
 }
 
-async function clearHistory(){
-  if(!confirm('確定清除所有發布紀錄？此操作無法復原。'))return;
-  await pushHistory([]);
+function clearHistory(){
+  // 嚴格確認機制
+  let modal=document.getElementById('clearConfirmModal');
+  if(!modal){
+    modal=document.createElement('div');
+    modal.id='clearConfirmModal';
+    modal.className='modal-bg';
+    modal.innerHTML=`<div class="modal" style="max-width:360px;text-align:center">
+      <h3 style="color:#1a1a1a;margin-bottom:8px">確定清除所有發布紀錄？</h3>
+      <p style="font-size:.8125rem;color:#555;margin-bottom:20px;line-height:1.7">此操作無法復原，所有紀錄將從雲端永久刪除。<br>請輸入「確認清除」以繼續。</p>
+      <input id="clearConfirmInput" type="text" placeholder="確認清除" style="width:100%;border:1px solid rgba(0,0,0,.2);border-radius:8px;padding:9px 12px;font-size:.875rem;font-family:inherit;color:#1a1a1a;margin-bottom:16px">
+      <div style="display:flex;gap:10px;justify-content:flex-end">
+        <button class="btn btn-ghost" onclick="document.getElementById('clearConfirmModal').classList.remove('open')" style="color:#333;border-color:rgba(0,0,0,.2);background:rgba(0,0,0,.06)">取消</button>
+        <button class="btn" onclick="confirmClearHistory()" style="background:#EE6543;color:#fff;border:none">確認清除</button>
+      </div>
+    </div>`;
+    document.body.appendChild(modal);
+  }
+  document.getElementById('clearConfirmInput').value='';
+  modal.classList.add('open');
+}
+function confirmClearHistory(){
+  const val=document.getElementById('clearConfirmInput').value.trim();
+  if(val!=='確認清除'){
+    document.getElementById('clearConfirmInput').style.border='1.5px solid #EE6543';
+    return;
+  }
+  document.getElementById('clearConfirmModal').classList.remove('open');
+  localStorage.removeItem(HIST_KEY);
   renderHistory([]);
+  pushHistory([]); // 背景執行
 }
 function copyHistLink(url, btn){
   navigator.clipboard.writeText(url).then(()=>{

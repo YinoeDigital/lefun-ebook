@@ -1,0 +1,135 @@
+{
+  "meta": {
+    "tourName": "湖光山色．日月漫遊二日遊",
+    "destination": "日月潭",
+    "departDate": "2026-05-01",
+    "returnDate": "2026-05-02",
+    "leaderName": "",
+    "leaderPhone": "",
+    "hotel": "日月潭秘境民宿包棟",
+    "hotelPhone": "",
+    "flightOut": "",
+    "flightOutAirline": "",
+    "flightOutNo": "",
+    "flightOutDepTime": "",
+    "flightOutDepPort": "",
+    "flightOutFromCode": "",
+    "flightOutArrTime": "",
+    "flightOutArrPort": "",
+    "flightOutToCode": "",
+    "flightReturn": "",
+    "flightReturnAirline": "",
+    "flightReturnNo": "",
+    "flightReturnDepTime": "",
+    "flightReturnDepPort": "",
+    "flightReturnFromCode": "",
+    "flightReturnArrTime": "",
+    "flightReturnArrPort": "",
+    "flightReturnToCode": "",
+    "assemblyTime": "07:30",
+    "assemblyPlace": "高雄市鳳山區鳳頂路181號（全家便利商店鳳山鳳庄店）",
+    "currency": "NONE"
+  },
+  "days": [
+    {
+      "day": 1,
+      "date": "2026/05/01",
+      "title": "清境農場青青草原之旅",
+      "spots": [
+        {
+          "name": "清境農場青青草原",
+          "desc": "半日遊，14:30綿羊秀"
+        },
+        {
+          "name": "鹿篙咖啡莊園",
+          "desc": "下午茶時光"
+        }
+      ],
+      "breakfast": "溫暖的家",
+      "lunch": "七彩屋餐廳",
+      "dinner": "包棟民宿烤肉DIY（附烤肉食材）",
+      "hotel": "日月潭秘境民宿包棟"
+    },
+    {
+      "day": 2,
+      "date": "2026/05/02",
+      "title": "日月潭遊湖與紫南宮參拜",
+      "spots": [
+        {
+          "name": "HOHOCHA喝喝茶",
+          "desc": "奉茶品嘗體驗"
+        },
+        {
+          "name": "日月潭遊湖",
+          "desc": "11:30遊船體驗"
+        },
+        {
+          "name": "伊達邵老街",
+          "desc": "自由用餐時間"
+        },
+        {
+          "name": "竹山紫南宮",
+          "desc": "14:30前往，停留一小時"
+        }
+      ],
+      "breakfast": "飯店提供",
+      "lunch": "伊達邵老街（自理）",
+      "dinner": "賦歸自理",
+      "hotel": "溫暖的家"
+    }
+  ],
+  "tips": {
+    "weather": "出發前請留意天氣預報，並準備適當防護用品如雨傘或雨衣",
+    "currency": "",
+    "voltage": "",
+    "timezone": "",
+    "drinking": "",
+    "toiletries": "因應政府環保政策，自2025年起旅宿業不主動提供一次性備品（如牙刷、牙膏、刮鬍刀、浴帽等），請旅客自行攜帶個人盥洗用品"
+  },
+  "immigration": {
+    "visa": "",
+    "qcode": "",
+    "steps": []
+  },
+  "taxRefund": {
+    "threshold": "",
+    "notes": "",
+    "steps": []
+  },
+  "checklist": {
+    "beforeDepart": [
+      "容易暈車、暈船者請自備暈車藥並提前服用",
+      "自行攜帶個人盥洗用品",
+      "若有長期用藥或特殊醫療需求，請自行攜帶必要藥品及器材",
+      "準備防護用品如雨傘或雨衣"
+    ],
+    "carry": [
+      "個人盥洗用品",
+      "暈車藥",
+      "必要藥品及器材",
+      "雨傘或雨衣"
+    ],
+    "forbidden": ""
+  },
+  "departure": {
+    "assemblyTime": "07:30",
+    "rules": [
+      "07:30於高雄市鳳山區鳳頂路181號（全家便利商店鳳山鳳庄店）集合出發",
+      "07:50於屏東縣崁頂交流道口（3號交流道往北上方向路邊）停靠點接人"
+    ]
+  },
+  "emergency": {
+    "international": "",
+    "overseas": "",
+    "insurance": "",
+    "contacts": [
+      {
+        "label": "眾恆旅行社",
+        "value": "高雄市仁武區永昌二街110巷6號4樓"
+      }
+    ]
+  },
+  "id": "KHH02TB26MAY01B",
+  "generatedAt": "2026-04-12T13:47:48.627Z",
+  "pdfUrl": "https://YinoeDigital.github.io/lefun-ebook/pdfs/KHH02TB26MAY01B.pdf"
+}

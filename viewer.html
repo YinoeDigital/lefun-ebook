@@ -389,8 +389,9 @@ html.fs-4 .main,html.fs-5 .main{padding-left:12px;padding-right:12px}
 .edit-bar-cancel{background:transparent;color:rgba(255,255,255,.45);border:1px solid rgba(255,255,255,.16);border-radius:20px;padding:7px 14px;font-size:.8125rem;cursor:pointer;font-family:inherit;transition:all .2s}
 .edit-bar-cancel:hover{color:rgba(255,255,255,.75);border-color:rgba(255,255,255,.3)}
 .edit-bar-saving{opacity:.55;pointer-events:none}
-.save-loading{display:none;position:fixed;inset:0;z-index:1000;background:rgba(5,12,9,.92);backdrop-filter:blur(24px);flex-direction:column;align-items:center;justify-content:center;gap:24px}
-.save-loading.show{display:flex}
+.save-loading{position:fixed;inset:0;z-index:1000;background:rgba(5,12,9,.92);backdrop-filter:blur(24px);flex-direction:column;align-items:center;justify-content:center;gap:24px;display:flex;opacity:0;pointer-events:none;transition:opacity .35s ease}
+.save-loading.show{opacity:1;pointer-events:auto}
+.save-loading.hide{opacity:0;pointer-events:none}
 .save-loading-logo{height:36px;opacity:.9}
 .save-loading-msg{font-size:.875rem;color:rgba(255,255,255,.65);letter-spacing:.04em}
 .save-loading-pct{font-size:2rem;font-weight:700;color:var(--aqua);line-height:1}
@@ -1401,7 +1402,7 @@ async function saveEbookEdits(){
     document.getElementById('slMsg').textContent=msg;
     document.getElementById('slSub').textContent=sub;
   }
-  function slHide(){const ov=document.getElementById('saveLoadingOverlay');if(ov)ov.classList.remove('show');}
+  function slHide(){const ov=document.getElementById('saveLoadingOverlay');if(!ov)return;ov.classList.remove('show');}
   bar.classList.add('edit-bar-saving');
   try{
     slSet(5,'正在整理資料…');
@@ -1448,10 +1449,12 @@ async function saveEbookEdits(){
       slSet(100,deployed?'✓ 發布完成！':'✓ 儲存完成',deployed?'即將跳轉至電子書…':'即將返回電子書…');
       window._editDirty=false;
       setTimeout(()=>{
-        slHide();
-        const url=new URL(location.href);
-        url.searchParams.delete('edit');
-        location.href=url.toString();
+        slHide(); // fade out starts
+        setTimeout(()=>{
+          const url=new URL(location.href);
+          url.searchParams.delete('edit');
+          location.href=url.toString();
+        },400); // wait for fade out to finish
       },1200);
     }else{
       slHide();

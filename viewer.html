@@ -271,12 +271,16 @@ html.fs-4 .main,html.fs-5 .main{padding-left:12px;padding-right:12px}
 .step-item p{font-size:.875rem;color:rgba(255,255,255,0.85);line-height:1.85}
 .checklist{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .check-item{
-  display:flex;align-items:center;gap:8px;
+  position:relative;display:flex;align-items:center;gap:8px;
   background:rgba(255,255,255,.12);backdrop-filter:blur(8px);
   border:1px solid var(--glass-b);border-radius:9px;
-  padding:8px 12px;font-size:.8125rem;color:rgba(255,255,255,0.85)
+  padding:8px 28px 8px 12px;font-size:.8125rem;color:rgba(255,255,255,0.85)
 }
 .check-item::before{content:"○";color:var(--aqua);font-size:12px;flex-shrink:0}
+.chk-del-btn{position:absolute;top:50%;right:6px;transform:translateY(-50%);display:none;background:none;border:none;padding:3px;cursor:pointer;color:rgba(255,255,255,.3);line-height:1;border-radius:4px;transition:color .15s}
+.chk-del-btn:hover{color:rgba(239,100,80,.9)}
+.chk-del-btn svg{width:13px;height:13px;stroke:currentColor;stroke-width:2.5;display:block}
+.edit-mode .chk-del-btn{display:block}
 .emergency{
   background:rgba(8,18,14,0.72);
   backdrop-filter:blur(52px) saturate(200%) brightness(1.05);
@@ -382,6 +386,8 @@ html.fs-4 .main,html.fs-5 .main{padding-left:12px;padding-right:12px}
 .edit-mode [data-epath]{outline:1px dashed rgba(129,248,185,.32);border-radius:3px;cursor:text;display:inline}
 .edit-mode [data-epath]:hover{background:rgba(129,248,185,.07)}
 .edit-mode [data-epath]:focus{outline:2px solid var(--aqua)!important;background:rgba(129,248,185,.10);border-radius:3px}
+.edit-mode [data-epath]:empty{min-width:48px;min-height:1.1em;display:inline-block;background:rgba(129,248,185,.06)}
+.edit-mode [data-epath]:empty::before{content:'點擊編輯';color:rgba(129,248,185,.35);font-size:.75em;font-style:italic;pointer-events:none}
 .edit-bar{position:fixed;bottom:82px;left:50%;transform:translateX(-50%);z-index:600;display:flex;gap:8px;align-items:center;background:rgba(8,18,12,.92);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);border:1px solid rgba(129,248,185,.30);border-radius:28px;padding:8px 8px 8px 18px;box-shadow:0 8px 32px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.10);white-space:nowrap}
 .edit-bar-label{font-size:.75rem;color:rgba(255,255,255,.45);margin-right:2px}
 .edit-bar-save{background:var(--aqua);color:#0a1610;border:none;border-radius:20px;padding:7px 18px;font-size:.8125rem;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .2s}
@@ -846,8 +852,9 @@ function render(d){
   const tax=d.taxRefund||{};
   const taxS=(tax.steps||[]).map((st,si)=>'<div class="step-item"><p>'+ep('taxRefund.steps.'+si,st)+'</p></div>').join('');
   const chk=d.checklist||{};
-  const chkB=(chk.beforeDepart||[]).map((i,idx)=>'<div class="check-item">'+ep('checklist.beforeDepart.'+idx,i)+'</div>').join('')+(_em?'<button class="chk-add-btn" data-field="beforeDepart" onclick="addCheckItem(\'beforeDepart\')">'+li('plus')+'新增物品</button>':'');
-  const chkC=(chk.carry||[]).map((i,idx)=>'<div class="check-item">'+ep('checklist.carry.'+idx,i)+'</div>').join('')+(_em?'<button class="chk-add-btn" data-field="carry" onclick="addCheckItem(\'carry\')">'+li('plus')+'新增物品</button>':'');
+  const _chkDelBtn=(field,idx)=>_em?'<button class="chk-del-btn" onclick="deleteCheckItem(\''+field+'\','+idx+',this)" title="刪除"><svg viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>':'';
+  const chkB=(chk.beforeDepart||[]).map((i,idx)=>'<div class="check-item">'+ep('checklist.beforeDepart.'+idx,i)+_chkDelBtn('beforeDepart',idx)+'</div>').join('')+(_em?'<button class="chk-add-btn" data-field="beforeDepart" onclick="addCheckItem(\'beforeDepart\')">'+li('plus')+'新增物品</button>':'');
+  const chkC=(chk.carry||[]).map((i,idx)=>'<div class="check-item">'+ep('checklist.carry.'+idx,i)+_chkDelBtn('carry',idx)+'</div>').join('')+(_em?'<button class="chk-add-btn" data-field="carry" onclick="addCheckItem(\'carry\')">'+li('plus')+'新增物品</button>':'');
   const dep=d.departure||{};
   const depR=(dep.rules||[]).map(r=>'<div class="spot"><div class="spot-dot" style="background:var(--rose)"></div><div><p>'+tw(r)+'</p></div></div>').join('');
   const em=d.emergency||{};
@@ -862,7 +869,7 @@ ${nav}${cover}
 <div class="card card-g">
 <div class="info-row"><span class="ir-label">集合時間</span><span class="ir-val"><strong>${eps('meta.assemblyTime',m.assemblyTime||dep.assemblyTime)}</strong></span></div>
 <div class="info-row"><span class="ir-label">集合地點</span><span class="ir-val">${eps('meta.assemblyPlace',m.assemblyPlace)}</span></div>
-${(dep.rules&&dep.rules.length)?'<div style="border-top:1px solid rgba(255,255,255,.10);margin-top:10px;padding-top:14px">'+dep.rules.map((r,ri)=>'<div class="spot" style="margin-bottom:10px"><i data-lucide="check-circle" style="width:14px;height:14px;stroke:var(--aqua);stroke-width:1.75;fill:none;flex-shrink:0;margin-top:2px"></i><p style="font-size:.8125rem;color:rgba(255,255,255,.80);line-height:1.75">'+ep('departure.rules.'+ri,r)+'</p></div>').join('')+'</div>':''}
+${((dep.rules&&dep.rules.length)||_em)?'<div id="depRulesWrap" style="border-top:1px solid rgba(255,255,255,.10);margin-top:10px;padding-top:14px">'+(dep.rules||[]).map((r,ri)=>'<div class="spot" style="margin-bottom:10px"><i data-lucide="check-circle" style="width:14px;height:14px;stroke:var(--aqua);stroke-width:1.75;fill:none;flex-shrink:0;margin-top:2px"></i><p style="font-size:.8125rem;color:rgba(255,255,255,.80);line-height:1.75">'+ep('departure.rules.'+ri,r)+'</p></div>').join('')+(_em?'<button class="em-add-btn" style="margin-top:4px" onclick="addDepartureRule()">'+li('plus')+'新增資料</button>':'')+'</div>':''}
 </div>
 ${(()=>{
   /* ── flight card renderer ── */
@@ -955,7 +962,7 @@ ${(()=>{
 ${immTaxHtml}
 <div class="sec-tinted"><section class="sec fade-up" id="ck" style="max-width:100%;padding-left:20px;padding-right:20px"><div style="max-width:640px;margin:0 auto"><div class="sec-label"><div class="sec-icon">${li('backpack')}</div><div><h2>行李攜帶清單</h2></div><a href="${_clUrl}" target="_blank" class="ck-tool-btn">${li('external-link','ck-li')}點我 開始準備行李 .ᐟ</a></div><p style="font-size:12px;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:9px">出發前必備</p><div class="checklist" style="margin-bottom:18px">${chkB}</div><p style="font-size:12px;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:9px">隨身行李</p><div class="checklist" style="margin-bottom:16px">${chkC}</div>${chk.forbidden?'<div class="card" style="background:var(--tomato);border:none;color:#fff"><p style="font-size:13px;font-weight:700;margin-bottom:5px;display:flex;align-items:center;gap:5px">'+li('triangle-alert')+'禁止攜帶</p><p style="font-size:13px;opacity:.9">'+ep('checklist.forbidden',chk.forbidden)+'</p></div>':''}</div></section></div><div class="divider"></div>
 <section class="sec fade-up" id="em"><div class="sec-label"><div class="sec-icon">${li('phone')}</div><div><h2>緊急聯絡資訊</h2></div></div>
-<div class="emergency" id="emContacts"><h3>${li('siren')}重要電話</h3>${m.leaderName?'<div class="em-row"><span class="em-label">領隊　'+m.leaderName+'</span><span class="em-val">'+epPhone('meta.leaderPhone',m.leaderPhone)+'</span></div>':''}${em.international?'<div class="em-row"><span class="em-label">國際救援</span><span class="em-val">'+epPhone('emergency.international',em.international)+'</span></div>':''}${em.overseas?'<div class="em-row"><span class="em-label">旅外急難</span><span class="em-val">'+epPhone('emergency.overseas',em.overseas)+'</span></div>':''}${emC}${_em?'<button class="em-add-btn" onclick="addEmContact()">'+li('plus')+'新增資料</button>':''}</div>
+<div class="emergency" id="emContacts"><h3>${li('siren')}重要電話</h3>${(m.leaderName||_em)?'<div class="em-row"><span class="em-label">領隊　'+ep('meta.leaderName',m.leaderName)+'</span><span class="em-val">'+epPhone('meta.leaderPhone',m.leaderPhone)+'</span></div>':''}${em.international?'<div class="em-row"><span class="em-label">國際救援</span><span class="em-val">'+epPhone('emergency.international',em.international)+'</span></div>':''}${em.overseas?'<div class="em-row"><span class="em-label">旅外急難</span><span class="em-val">'+epPhone('emergency.overseas',em.overseas)+'</span></div>':''}${emC}${_em?'<button class="em-add-btn" onclick="addEmContact()">'+li('plus')+'新增資料</button>':''}</div>
 ${em.insurance?'<div class="emergency" style="margin-top:10px"><h3>'+li('clipboard-list')+'保險說明</h3><p style="font-size:.875rem;color:rgba(255,255,255,.80);line-height:1.8">'+ep('emergency.insurance',em.insurance)+'</p></div>':''}
 ${d.pdfUrl?'<a href="'+d.pdfUrl+'" target="_blank" rel="noopener" class="pdf-btn">'+li('file-text')+'點擊閱覽詳細行前說明資料</a>':''}
 </section>
@@ -1292,8 +1299,9 @@ function addDaySpot(di){
   const btn=document.querySelector('.spot-add-btn[data-di="'+di+'"]');
   if(!btn)return;
   const spotDiv=document.createElement('div');
-  spotDiv.className='spot';
-  spotDiv.innerHTML='<i data-lucide="map-pin" class="spot-pin"></i><div><h4 data-epath="days.'+di+'.spots.'+si+'.name" contenteditable="true" spellcheck="false">景點名稱</h4><p data-epath="days.'+di+'.spots.'+si+'.desc" contenteditable="true" spellcheck="false">景點說明</p></div>';
+  spotDiv.className='spot spot-draggable';
+  spotDiv.setAttribute('draggable','true');
+  spotDiv.innerHTML='<i data-lucide="map-pin" class="spot-pin spot-drag-handle"></i><div><h4 data-epath="days.'+di+'.spots.'+si+'.name" contenteditable="true" spellcheck="false">景點名稱</h4><p data-epath="days.'+di+'.spots.'+si+'.desc" contenteditable="true" spellcheck="false">景點說明</p></div>';
   btn.parentNode.insertBefore(spotDiv,btn);
   lucide.createIcons({nodes:[spotDiv]});
 }
@@ -1307,8 +1315,39 @@ function addCheckItem(field){
   if(!btn)return;
   const item=document.createElement('div');
   item.className='check-item';
-  item.innerHTML='<span data-epath="checklist.'+field+'.'+idx+'" contenteditable="true" spellcheck="false">新增物品</span>';
+  item.innerHTML='<span data-epath="checklist.'+field+'.'+idx+'" contenteditable="true" spellcheck="false">新增物品</span><button class="chk-del-btn" onclick="deleteCheckItem(\''+field+'\','+idx+',this)" title="刪除"><svg viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>';
   btn.parentNode.insertBefore(item,btn);
+}
+/* ── Delete Checklist Item ── */
+function deleteCheckItem(field,idx,btn){
+  const item=btn.closest('.check-item');
+  if(!item)return;
+  if(window._ebookData.checklist&&window._ebookData.checklist[field])
+    window._ebookData.checklist[field].splice(idx,1);
+  item.remove();
+  const addBtn=document.querySelector('.chk-add-btn[data-field="'+field+'"]');
+  if(!addBtn)return;
+  addBtn.parentNode.querySelectorAll('.check-item').forEach((el,ni)=>{
+    const span=el.querySelector('[data-epath]');
+    if(span)span.dataset.epath='checklist.'+field+'.'+ni;
+    const db=el.querySelector('.chk-del-btn');
+    if(db)db.setAttribute('onclick','deleteCheckItem(\''+field+'\','+ni+',this)');
+  });
+}
+/* ── Add Departure Rule ── */
+function addDepartureRule(){
+  if(!window._ebookData.departure)window._ebookData.departure={};
+  if(!window._ebookData.departure.rules)window._ebookData.departure.rules=[];
+  const idx=window._ebookData.departure.rules.length;
+  window._ebookData.departure.rules.push('新增資訊');
+  const wrap=document.getElementById('depRulesWrap');
+  const addBtn=wrap.querySelector('.em-add-btn');
+  const row=document.createElement('div');
+  row.className='spot';row.style.marginBottom='10px';
+  row.innerHTML='<i data-lucide="check-circle" style="width:14px;height:14px;stroke:var(--aqua);stroke-width:1.75;fill:none;flex-shrink:0;margin-top:2px"></i><p style="font-size:.8125rem;color:rgba(255,255,255,.80);line-height:1.75" data-epath="departure.rules.'+idx+'" contenteditable="true" spellcheck="false">新增資訊</p>';
+  wrap.insertBefore(row,addBtn);
+  lucide.createIcons({nodes:[row]});
+  row.querySelector('p').focus();
 }
 /* ── Custom Tips ── */
 const _CUST_COLORS=['#81F8B9','#EE6543','#FFD166','#A8DAFF','#C8B1F3','#7EC8E3'];
@@ -1406,12 +1445,19 @@ async function saveEbookEdits(){
     document.querySelectorAll('[data-epath]').forEach(el=>{
       setEPath(newData,el.dataset.epath,el.innerText.trim());
     });
-    // Convert _spotsText back into spots array
+    // Convert _spotsText back into spots array (merge with detailed section edits)
     (newData.days||[]).forEach((day,i)=>{
       if(day._spotsText!==undefined){
         const names=day._spotsText.split('・').map(n=>n.trim()).filter(n=>n);
-        const origSpots=(window._ebookData.days||[])[i]?.spots||[];
-        day.spots=names.map((name,si)=>Object.assign({},origSpots[si]||{},{name}));
+        const curSpots=day.spots||[];
+        // Update names from overview text; keep extra spots from detailed section
+        const maxLen=Math.max(names.length,curSpots.length);
+        const merged=[];
+        for(let si=0;si<maxLen;si++){
+          if(si<names.length){merged.push(Object.assign({},curSpots[si]||{},{name:names[si]}));}
+          else{merged.push(curSpots[si]);}
+        }
+        day.spots=merged;
         delete day._spotsText;
       }
     });

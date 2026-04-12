@@ -867,12 +867,17 @@ function deleteHistItem(id, name, btn){
     document.body.appendChild(modal);
   }
   document.getElementById('deleteHistName').textContent=name;
-  document.getElementById('deleteHistConfirmBtn').onclick=()=>{
-    document.getElementById('deleteHistModal').classList.remove('open');
+  document.getElementById('deleteHistConfirmBtn').onclick=async()=>{
+    const confirmBtn=document.getElementById('deleteHistConfirmBtn');
+    confirmBtn.textContent='刪除中…';
+    confirmBtn.disabled=true;
     let h=getLocalHistory().filter(x=>x.id!==id);
     localStorage.setItem(HIST_KEY,JSON.stringify(h));
     renderHistory(h);
-    pushHistory(h);
+    await pushHistory(h);  // 等待 GitHub 寫入完成再關閉
+    confirmBtn.textContent='確認刪除';
+    confirmBtn.disabled=false;
+    document.getElementById('deleteHistModal').classList.remove('open');
   };
   modal.classList.add('open');
 }

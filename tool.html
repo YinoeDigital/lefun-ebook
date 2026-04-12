@@ -170,9 +170,9 @@ header{
 .modal .field label{color:#333;font-size:.6875rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
 .modal-hint{font-size:.6875rem;color:#777;margin-top:5px}
 .modal h3 svg{stroke:#333!important}
-.modal .field input{color:#1a1a1a;background:rgba(0,0,0,.06);border-color:rgba(0,0,0,.15)}
-.modal .field input::placeholder{color:rgba(0,0,0,.3)}
-.modal .field input:focus{background:rgba(0,0,0,.08);border-color:#333}
+.modal .field input{color:#1a1a1a!important;background:rgba(0,0,0,.06)!important;border-color:rgba(0,0,0,.15)!important;-webkit-text-fill-color:#1a1a1a!important}
+.modal .field input::placeholder{color:rgba(0,0,0,.3)!important}
+.modal .field input:focus{background:rgba(0,0,0,.08)!important;border-color:#333!important}
 .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:22px}
 .status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px}
 .dot-ok{background:#52c41a}.dot-no{background:#ff4d4f}
@@ -366,7 +366,7 @@ header{
 
 <div class="modal-bg" id="settingsModal">
   <div class="modal">
-    <h3><i data-lucide="settings-2" style="width:17px;height:17px;display:inline-block;vertical-align:middle;margin-right:6px"></i>API Keys 設定</h3>
+    <h3>API Keys 設定</h3>
     <p class="modal-desc">Keys 存於瀏覽器 localStorage，不會上傳至任何伺服器。一次設定，之後免輸入。</p>
     <div class="field">
       <label>Anthropic API Key <span class="status-dot" id="dotAnthropic"></span></label>
@@ -379,7 +379,7 @@ header{
       <div class="modal-hint">需要 repo 讀寫權限：github.com/settings/tokens</div>
     </div>
     <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeSettings()">取消</button>
+      <button class="btn btn-ghost" onclick="closeSettings()" style="color:#333;border-color:rgba(0,0,0,.2);background:rgba(0,0,0,.06)">取消</button>
       <button class="btn btn-dark" onclick="saveSettings()">儲存</button>
     </div>
   </div>

@@ -159,10 +159,17 @@ html.fs-4 .main,html.fs-5 .main{padding-left:12px;padding-right:12px}
 .card-t{border-left:3px solid var(--tomato);background:rgba(238,101,67,0.10);backdrop-filter:blur(52px) saturate(200%) brightness(1.08);-webkit-backdrop-filter:blur(52px) saturate(200%) brightness(1.08);box-shadow:inset 0 1.5px 0 rgba(255,255,255,0.35),inset 0 -0.5px 0 rgba(0,0,0,0.1),0 8px 40px rgba(0,0,0,0.2)}
 .card-b{border-left:3px solid var(--blue);background:rgba(153,235,247,0.12);backdrop-filter:blur(52px) saturate(200%) brightness(1.08);-webkit-backdrop-filter:blur(52px) saturate(200%) brightness(1.08);box-shadow:inset 0 1.5px 0 rgba(255,255,255,0.35),inset 0 -0.5px 0 rgba(0,0,0,0.1),0 8px 40px rgba(0,0,0,0.2)}
 .card-y{border-left:3px solid #E3FF85;background:rgba(227,255,133,0.10);backdrop-filter:blur(52px) saturate(200%) brightness(1.08);-webkit-backdrop-filter:blur(52px) saturate(200%) brightness(1.08);box-shadow:inset 0 1.5px 0 rgba(255,255,255,0.35),inset 0 -0.5px 0 rgba(0,0,0,0.1),0 8px 40px rgba(0,0,0,0.2)}
-.info-row{display:flex;gap:10px;margin-bottom:10px;align-items:flex-start}
+.info-row{display:flex;gap:10px;margin-bottom:10px;align-items:flex-start;position:relative}
+.edit-mode .info-row{padding-right:26px}
 .ir-label{font-size:.75rem;font-weight:400;letter-spacing:.08em;color:rgba(255,255,255,0.5);min-width:72px;padding-top:2px;text-transform:uppercase}
 .ir-val{font-size:.875rem;color:rgba(255,255,255,0.90);flex:1}
 .ir-val strong{color:var(--aqua);font-weight:700}
+.as-del-btn{display:none;position:absolute;right:0;top:50%;transform:translateY(-50%);background:none;border:none;padding:3px;cursor:pointer;color:rgba(255,255,255,.28);line-height:1;border-radius:4px;transition:color .15s;flex-shrink:0}
+.as-del-btn svg{width:14px;height:14px;stroke:currentColor;stroke-width:2;display:block}
+.as-del-btn:hover{color:rgba(239,100,80,.85)}
+.edit-mode .as-del-btn{display:flex;align-items:center;justify-content:center}
+.dep-rule{position:relative}
+.edit-mode .dep-rule{padding-right:22px}
 /* ── Flight Cards ── */
 .fbadge{background:var(--aqua);color:#0f1f16;font-size:10px;font-weight:800;padding:3px 10px;border-radius:20px;letter-spacing:.06em}
 .fbadge-p{background:var(--rose);color:#2a1215}
@@ -388,12 +395,12 @@ html.fs-4 .main,html.fs-5 .main{padding-left:12px;padding-right:12px}
 .edit-mode [data-epath]:focus{outline:2px solid var(--aqua)!important;background:rgba(129,248,185,.10);border-radius:3px}
 .edit-mode [data-epath]:empty{min-width:48px;min-height:1.1em;display:inline-block;background:rgba(129,248,185,.06)}
 .edit-mode [data-epath]:empty::before{content:'點擊編輯';color:rgba(129,248,185,.35);font-size:.75em;font-style:italic;pointer-events:none}
-.edit-bar{position:fixed;bottom:82px;left:50%;transform:translateX(-50%);z-index:600;display:flex;gap:8px;align-items:center;background:rgba(8,18,12,.92);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);border:1px solid rgba(129,248,185,.30);border-radius:28px;padding:8px 8px 8px 18px;box-shadow:0 8px 32px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.10);white-space:nowrap}
-.edit-bar-label{font-size:.75rem;color:rgba(255,255,255,.45);margin-right:2px}
-.edit-bar-save{background:var(--aqua);color:#0a1610;border:none;border-radius:20px;padding:7px 18px;font-size:.8125rem;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .2s}
+.edit-bar{position:fixed;bottom:82px;left:50%;transform:translateX(-50%);z-index:600;display:flex;gap:14px;align-items:center;background:rgba(8,18,12,.92);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);border:1px solid rgba(129,248,185,.30);border-radius:28px;padding:6px 8px 6px 16px;box-shadow:0 8px 32px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.10);white-space:nowrap}
+.edit-bar-label{font-size:.6875rem;color:rgba(255,255,255,.38);letter-spacing:.06em}
+.edit-bar-save{background:var(--aqua);color:#0a1610;border:none;border-radius:20px;padding:6px 16px;font-size:.75rem;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .2s;letter-spacing:.02em}
 .edit-bar-save:hover{opacity:.85}
-.edit-bar-cancel{background:transparent;color:rgba(255,255,255,.45);border:1px solid rgba(255,255,255,.16);border-radius:20px;padding:7px 14px;font-size:.8125rem;cursor:pointer;font-family:inherit;transition:all .2s}
-.edit-bar-cancel:hover{color:rgba(255,255,255,.75);border-color:rgba(255,255,255,.3)}
+.edit-bar-cancel{background:transparent;color:rgba(255,255,255,.4);border:1px solid rgba(255,255,255,.14);border-radius:20px;padding:6px 13px;font-size:.75rem;cursor:pointer;font-family:inherit;transition:all .2s;letter-spacing:.02em}
+.edit-bar-cancel:hover{color:rgba(255,255,255,.72);border-color:rgba(255,255,255,.28)}
 .edit-bar-saving{opacity:.55;pointer-events:none}
 .save-loading{position:fixed;inset:0;z-index:1000;background:rgba(5,12,9,.92);backdrop-filter:blur(24px);flex-direction:column;align-items:center;justify-content:center;gap:12px;display:flex;opacity:0;pointer-events:none;transition:opacity .35s ease}
 .save-loading.show{opacity:1;pointer-events:auto}
@@ -403,14 +410,14 @@ html.fs-4 .main,html.fs-5 .main{padding-left:12px;padding-right:12px}
 .save-loading-bar-wrap{width:110px;height:2px;border-radius:2px;background:rgba(129,248,185,.12);overflow:hidden}
 .save-loading-bar{height:100%;width:0%;border-radius:2px;background:linear-gradient(90deg,var(--aqua),#99EBF7);transition:width .4s ease}
 .elm-overlay{display:none;position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:20px}
-.elm-box{background:#0e1e17;border:1px solid rgba(238,101,67,.35);border-radius:18px;padding:28px 24px 22px;max-width:320px;width:100%;text-align:center;box-shadow:0 16px 48px rgba(0,0,0,.55)}
-.elm-icon svg{width:36px;height:36px;stroke:#EE6543;margin-bottom:14px}
-.elm-title{font-size:1rem;font-weight:700;color:#fff;margin-bottom:8px}
-.elm-desc{font-size:.8125rem;color:rgba(255,255,255,.55);line-height:1.7;margin-bottom:22px}
-.elm-btns{display:flex;gap:10px}
-.elm-btn-keep{flex:1;padding:10px;border-radius:20px;background:rgba(129,248,185,.12);border:1px solid rgba(129,248,185,.28);color:var(--aqua);font-size:.8125rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s}
+.elm-box{background:#0e1e17;border:1px solid rgba(238,101,67,.35);border-radius:18px;padding:22px 22px 18px;max-width:300px;width:100%;text-align:center;box-shadow:0 16px 48px rgba(0,0,0,.55)}
+.elm-icon svg{width:28px;height:28px;stroke:#EE6543;margin-bottom:10px}
+.elm-title{font-size:.875rem;font-weight:700;color:#fff;margin-bottom:6px;white-space:nowrap}
+.elm-desc{font-size:.75rem;color:rgba(255,255,255,.50);line-height:1.65;margin-bottom:18px}
+.elm-btns{display:flex;gap:8px}
+.elm-btn-keep{flex:1;padding:8px 12px;border-radius:20px;background:rgba(129,248,185,.12);border:1px solid rgba(129,248,185,.28);color:var(--aqua);font-size:.75rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;white-space:nowrap}
 .elm-btn-keep:hover{background:rgba(129,248,185,.22)}
-.elm-btn-discard{flex:1;padding:10px;border-radius:20px;background:rgba(238,101,67,.15);border:1px solid rgba(238,101,67,.35);color:#EE6543;font-size:.8125rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s}
+.elm-btn-discard{flex:1;padding:8px 12px;border-radius:20px;background:rgba(238,101,67,.15);border:1px solid rgba(238,101,67,.35);color:#EE6543;font-size:.75rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;white-space:nowrap}
 .elm-btn-discard:hover{background:rgba(238,101,67,.28)}
 /* ── Back to Top ── */
 .back-top{
@@ -867,9 +874,9 @@ function render(d){
 ${nav}${cover}
 <section class="sec fade-up" id="as"><div class="sec-label"><div class="sec-icon">${li('plane')}</div><div><h2>集合與航班資訊</h2></div></div>
 <div class="card card-g">
-<div class="info-row"><span class="ir-label">集合時間</span><span class="ir-val"><strong>${eps('meta.assemblyTime',m.assemblyTime||dep.assemblyTime)}</strong></span></div>
-<div class="info-row"><span class="ir-label">集合地點</span><span class="ir-val">${eps('meta.assemblyPlace',m.assemblyPlace)}</span></div>
-${((dep.rules&&dep.rules.length)||_em)?'<div id="depRulesWrap" style="border-top:1px solid rgba(255,255,255,.10);margin-top:10px;padding-top:14px">'+(dep.rules||[]).map((r,ri)=>'<div class="spot" style="margin-bottom:10px"><i data-lucide="check-circle" style="width:14px;height:14px;stroke:var(--aqua);stroke-width:1.75;fill:none;flex-shrink:0;margin-top:2px"></i><p style="font-size:.8125rem;color:rgba(255,255,255,.80);line-height:1.75">'+ep('departure.rules.'+ri,r)+'</p></div>').join('')+(_em?'<button class="em-add-btn" style="margin-top:4px" onclick="addDepartureRule()">'+li('plus')+'新增資料</button>':'')+'</div>':''}
+<div class="info-row">${_em?'<button class="as-del-btn" onclick="deleteAssemblyRow(\'meta.assemblyTime\',this)" title="刪除"><svg viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>':''}<span class="ir-label">集合時間</span><span class="ir-val"><strong>${eps('meta.assemblyTime',m.assemblyTime||dep.assemblyTime)}</strong></span></div>
+<div class="info-row">${_em?'<button class="as-del-btn" onclick="deleteAssemblyRow(\'meta.assemblyPlace\',this)" title="刪除"><svg viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>':''}<span class="ir-label">集合地點</span><span class="ir-val">${eps('meta.assemblyPlace',m.assemblyPlace)}</span></div>
+${((dep.rules&&dep.rules.length)||_em)?'<div id="depRulesWrap" style="border-top:1px solid rgba(255,255,255,.10);margin-top:10px;padding-top:14px">'+(dep.rules||[]).map((r,ri)=>'<div class="spot dep-rule" style="margin-bottom:10px">'+(_em?'<button class="as-del-btn" style="position:absolute;right:0;top:4px;transform:none" onclick="deleteDepRule('+ri+',this)" title="刪除"><svg viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>':'')+' <i data-lucide="check-circle" style="width:14px;height:14px;stroke:var(--aqua);stroke-width:1.75;fill:none;flex-shrink:0;margin-top:2px"></i><p style="font-size:.8125rem;color:rgba(255,255,255,.80);line-height:1.75">'+ep('departure.rules.'+ri,r)+'</p></div>').join('')+(_em?'<button class="em-add-btn" style="margin-top:4px" onclick="addDepartureRule()">'+li('plus')+'新增資料</button>':'')+'</div>':''}
 </div>
 ${(()=>{
   /* ── flight card renderer ── */
@@ -1333,6 +1340,29 @@ function deleteCheckItem(field,idx,btn){
     const db=el.querySelector('.chk-del-btn');
     if(db)db.setAttribute('onclick','deleteCheckItem(\''+field+'\','+ni+',this)');
   });
+}
+/* ── Delete Assembly Row ── */
+function deleteAssemblyRow(path,btn){
+  const row=btn.closest('.info-row');
+  if(row)row.remove();
+  setEPath(window._ebookData,path,'');
+  window._editDirty=true;
+}
+/* ── Delete Departure Rule ── */
+function deleteDepRule(ri,btn){
+  const row=btn.closest('.dep-rule');
+  if(row)row.remove();
+  if(window._ebookData.departure&&window._ebookData.departure.rules)
+    window._ebookData.departure.rules.splice(ri,1);
+  // Re-index remaining rule data-epath
+  const wrap=document.getElementById('depRulesWrap');
+  if(wrap)wrap.querySelectorAll('.dep-rule p[data-epath]').forEach((el,ni)=>{
+    el.dataset.epath='departure.rules.'+ni;
+  });
+  if(wrap)wrap.querySelectorAll('.dep-rule .as-del-btn').forEach((db,ni)=>{
+    db.setAttribute('onclick','deleteDepRule('+ni+',this)');
+  });
+  window._editDirty=true;
 }
 /* ── Add Departure Rule ── */
 function addDepartureRule(){

@@ -1444,6 +1444,24 @@ async function saveEbookEdits(){
       }
       slSet(100);
       window._editDirty=false;
+      // Update editedAt in shared history (background, fire-and-forget)
+      (async()=>{
+        try{
+          const HIST_API=`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/data/history.json`;
+          const HIST_RAW=`https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/main/data/history.json`;
+          const hr=await fetch(HIST_RAW+'?_='+Date.now(),{cache:'no-store'});
+          if(!hr.ok)return;
+          const hist=await hr.json();
+          const idx=hist.findIndex(x=>x.id===ebookId);
+          if(idx===-1)return;
+          hist[idx].editedAt=new Date().toISOString();
+          const sr=await fetch(HIST_API,{headers:{'Authorization':'token '+token}});
+          if(!sr.ok)return;
+          const meta=await sr.json();
+          const enc=btoa(unescape(encodeURIComponent(JSON.stringify(hist,null,2))));
+          await fetch(HIST_API,{method:'PUT',headers:{'Authorization':'token '+token,'Content-Type':'application/json'},body:JSON.stringify({message:'edit: update history editedAt for '+ebookId,content:enc,sha:meta.sha,branch:'main'})});
+        }catch(e){}
+      })();
       setTimeout(()=>{
         slHide(); // fade out starts
         setTimeout(()=>{
@@ -1455,7 +1473,11 @@ async function saveEbookEdits(){
     }else{
       slHide();
       const e=await res.json();
-      alert('儲存失敗：'+(e.message||res.status));
+      const msg=e.message||''+res.status;
+      const isCred=/bad credentials|401|unauthorized/i.test(msg);
+      alert(isCred
+        ? 'GitHub Token 已過期或無效，請至製作工具頁面重新設定 API Keys（GitHub Personal Access Token）。'
+        : '儲存失敗：'+msg);
       saveBtn.textContent='儲存變更';bar.classList.remove('edit-bar-saving');
     }
   }catch(e){

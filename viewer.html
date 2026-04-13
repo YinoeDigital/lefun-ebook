@@ -1475,22 +1475,34 @@ async function saveEbookEdits(){
     document.querySelectorAll('[data-epath]').forEach(el=>{
       setEPath(newData,el.dataset.epath,el.innerText.trim());
     });
-    // Convert _spotsText back into spots array (merge with detailed section edits)
-    (newData.days||[]).forEach((day,i)=>{
-      if(day._spotsText!==undefined){
-        const names=day._spotsText.split('・').map(n=>n.trim()).filter(n=>n);
-        const curSpots=day.spots||[];
-        // Update names from overview text; keep extra spots from detailed section
-        const maxLen=Math.max(names.length,curSpots.length);
-        const merged=[];
-        for(let si=0;si<maxLen;si++){
-          if(si<names.length){merged.push(Object.assign({},curSpots[si]||{},{name:names[si]}));}
-          else{merged.push(curSpots[si]);}
-        }
-        day.spots=merged;
-        delete day._spotsText;
-      }
+    // Rebuild day spots from DOM (authoritative — handles add/delete/reorder)
+    const _clean=t=>t.replace(/\u200B/g,'').trim();
+    document.querySelectorAll('.day-card').forEach((card,di)=>{
+      if(!newData.days||!newData.days[di])return;
+      const origSpots=((window._ebookData.days||[])[di]||{}).spots||[];
+      const nameEls=Array.from(card.querySelectorAll('[data-epath]'))
+        .filter(el=>/^days\.\d+\.spots\.\d+\.name$/.test(el.dataset.epath));
+      if(nameEls.length===0)return;
+      newData.days[di].spots=nameEls.map((nameEl,si)=>{
+        const spotRoot=nameEl.closest('.spot')||nameEl.parentElement;
+        const descEl=spotRoot?spotRoot.querySelector('[data-epath$=".desc"]'):null;
+        return Object.assign({},origSpots[si]||{},{
+          name:_clean(nameEl.innerText),
+          desc:descEl?_clean(descEl.innerText):(origSpots[si]&&origSpots[si].desc||'')
+        });
+      });
     });
+    // Rebuild checklist arrays from DOM (authoritative — handles add/delete)
+    ['beforeDepart','carry'].forEach(field=>{
+      const container=document.querySelector('.chk-add-btn[data-field="'+field+'"]')?.parentNode;
+      if(!container)return;
+      const items=Array.from(container.querySelectorAll('.check-item [data-epath]'))
+        .map(span=>_clean(span.innerText)).filter(v=>v);
+      if(!newData.checklist)newData.checklist={};
+      newData.checklist[field]=items;
+    });
+    // Clean up _spotsText virtual fields
+    (newData.days||[]).forEach(day=>{delete day._spotsText;});
     newData.generatedAt=new Date().toISOString();
     const ebookId=newData.id;
     const apiUrl=`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/data/${ebookId}.json`;

@@ -238,7 +238,12 @@ html.fs-4 .main,html.fs-5 .main{padding-left:12px;padding-right:12px}
   border-bottom:1px solid rgba(255,255,255,.07)
 }
 .day-body{padding:16px 18px 18px}
-.spot{display:flex;gap:12px;margin-bottom:14px;align-items:flex-start}
+.spot{position:relative;display:flex;gap:12px;margin-bottom:14px;align-items:flex-start}
+.spot-del-btn{display:none;position:absolute;top:0;right:0;background:none;border:none;padding:3px;cursor:pointer;color:rgba(255,255,255,.28);line-height:1;border-radius:4px;transition:color .15s}
+.spot-del-btn svg{width:13px;height:13px;stroke:currentColor;stroke-width:2.2;display:block}
+.spot-del-btn:hover{color:rgba(239,100,80,.85)}
+.edit-mode .spot-del-btn{display:block}
+.edit-mode .spot>div{padding-right:18px}
 .spot-pin{width:15px;height:15px;flex-shrink:0;margin-top:2px;color:var(--aqua)}
 .spot h4{font-size:.875rem;font-weight:500;margin-bottom:3px;color:rgba(255,255,255,0.92)}
 .spot p{font-size:.8125rem;color:rgba(255,255,255,0.70);line-height:1.7}
@@ -820,7 +825,8 @@ function render(d){
     const n=day.day||1;
     const zhNum=ZH_NUM[n-1]||n;
     const enOrd=(EN_ORD[n-1]||n+'th')+' Day';
-    const spots=(day.spots||[]).map((sp,si)=>(_em?'<div class="spot spot-draggable" draggable="true">':'<div class="spot">')+'<i data-lucide="map-pin" class="spot-pin'+(_em?' spot-drag-handle':'')+'"></i><div><h4>'+ep('days.'+di+'.spots.'+si+'.name',sp.name)+'</h4><p>'+ep('days.'+di+'.spots.'+si+'.desc',sp.desc)+'</p></div></div>').join('')+(_em?'<button class="spot-add-btn" data-di="'+di+'" onclick="addDaySpot('+di+')"><i data-lucide="map-pin" class="spot-pin" style="stroke:var(--aqua);flex-shrink:0"></i>新增景點</button>':'');
+    const _sdb=(di2,si2)=>'<button class="spot-del-btn" onclick="deleteSpot('+di2+','+si2+',this)" title="刪除景點"><svg viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>';
+    const spots=(day.spots||[]).map((sp,si)=>(_em?'<div class="spot spot-draggable" draggable="true">':'<div class="spot">')+'<i data-lucide="map-pin" class="spot-pin'+(_em?' spot-drag-handle':'')+'"></i><div><h4>'+ep('days.'+di+'.spots.'+si+'.name',sp.name)+'</h4><p>'+ep('days.'+di+'.spots.'+si+'.desc',sp.desc)+'</p></div>'+(_em?_sdb(di,si):'')+'</div>').join('')+(_em?'<button class="spot-add-btn" data-di="'+di+'" onclick="addDaySpot('+di+')"><i data-lucide="map-pin" class="spot-pin" style="stroke:var(--aqua);flex-shrink:0"></i>新增景點</button>':'');
     const meals=[
       day.breakfast?'<div class="meal-row-item">'+li('coffee')+'<span class="mr-label">早餐</span><span class="mr-sep">⟡</span><span class="mr-val">'+ep('days.'+di+'.breakfast',day.breakfast)+'</span></div>':'',
       day.lunch?'<div class="meal-row-item">'+li('utensils')+'<span class="mr-label">午餐</span><span class="mr-sep">⟡</span><span class="mr-val">'+ep('days.'+di+'.lunch',day.lunch)+'</span></div>':'',
@@ -1297,6 +1303,22 @@ function initSpotDrag(){
     });
   });
 }
+/* ── Delete Day Spot ── */
+function deleteSpot(di,si,btn){
+  const spotDiv=btn.closest('.spot');
+  if(spotDiv)spotDiv.remove();
+  // Re-index remaining spots
+  const addBtn=document.querySelector('.spot-add-btn[data-di="'+di+'"]');
+  if(!addBtn)return;
+  addBtn.parentNode.querySelectorAll('.spot').forEach((sp,ni)=>{
+    sp.querySelectorAll('[data-epath]').forEach(el=>{
+      el.dataset.epath=el.dataset.epath.replace(/days\.\d+\.spots\.\d+\./,'days.'+di+'.spots.'+ni+'.');
+    });
+    const db=sp.querySelector('.spot-del-btn');
+    if(db)db.setAttribute('onclick','deleteSpot('+di+','+ni+',this)');
+  });
+  window._editDirty=true;
+}
 /* ── Add Day Spot ── */
 function addDaySpot(di){
   if(!window._ebookData.days||!window._ebookData.days[di])return;
@@ -1308,7 +1330,7 @@ function addDaySpot(di){
   const spotDiv=document.createElement('div');
   spotDiv.className='spot spot-draggable';
   spotDiv.setAttribute('draggable','true');
-  spotDiv.innerHTML='<i data-lucide="map-pin" class="spot-pin spot-drag-handle"></i><div><h4 data-epath="days.'+di+'.spots.'+si+'.name" contenteditable="true" spellcheck="false">景點名稱</h4><p data-epath="days.'+di+'.spots.'+si+'.desc" contenteditable="true" spellcheck="false">景點說明</p></div>';
+  spotDiv.innerHTML='<i data-lucide="map-pin" class="spot-pin spot-drag-handle"></i><div><h4 data-epath="days.'+di+'.spots.'+si+'.name" contenteditable="true" spellcheck="false">景點名稱</h4><p data-epath="days.'+di+'.spots.'+si+'.desc" contenteditable="true" spellcheck="false">景點說明</p></div><button class="spot-del-btn" onclick="deleteSpot('+di+','+si+',this)" title="刪除景點"><svg viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>';
   btn.parentNode.insertBefore(spotDiv,btn);
   lucide.createIcons({nodes:[spotDiv]});
 }

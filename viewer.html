@@ -1306,17 +1306,27 @@ function initSpotDrag(){
 /* ── Delete Day Spot ── */
 function deleteSpot(di,si,btn){
   const spotDiv=btn.closest('.spot');
-  if(spotDiv)spotDiv.remove();
+  if(!spotDiv)return;
+  spotDiv.remove();
   // Re-index remaining spots
   const addBtn=document.querySelector('.spot-add-btn[data-di="'+di+'"]');
   if(!addBtn)return;
-  addBtn.parentNode.querySelectorAll('.spot').forEach((sp,ni)=>{
+  const allSpots=Array.from(addBtn.parentNode.querySelectorAll('.spot'));
+  allSpots.forEach((sp,ni)=>{
     sp.querySelectorAll('[data-epath]').forEach(el=>{
       el.dataset.epath=el.dataset.epath.replace(/days\.\d+\.spots\.\d+\./,'days.'+di+'.spots.'+ni+'.');
     });
     const db=sp.querySelector('.spot-del-btn');
     if(db)db.setAttribute('onclick','deleteSpot('+di+','+ni+',this)');
   });
+  // Sync window._ebookData immediately so save() reads correct state
+  if(window._ebookData.days&&window._ebookData.days[di]){
+    window._ebookData.days[di].spots=allSpots.map(sp=>{
+      const n=sp.querySelector('[data-epath$=".name"]');
+      const d=sp.querySelector('[data-epath$=".desc"]');
+      return {name:n?(n.innerText.replace(/\u200B/g,'').trim()):'',desc:d?(d.innerText.replace(/\u200B/g,'').trim()):''};
+    });
+  }
   window._editDirty=true;
 }
 /* ── Add Day Spot ── */
@@ -1351,17 +1361,22 @@ function addCheckItem(field){
 function deleteCheckItem(field,idx,btn){
   const item=btn.closest('.check-item');
   if(!item)return;
-  if(window._ebookData.checklist&&window._ebookData.checklist[field])
-    window._ebookData.checklist[field].splice(idx,1);
   item.remove();
   const addBtn=document.querySelector('.chk-add-btn[data-field="'+field+'"]');
   if(!addBtn)return;
-  addBtn.parentNode.querySelectorAll('.check-item').forEach((el,ni)=>{
+  const allItems=Array.from(addBtn.parentNode.querySelectorAll('.check-item'));
+  allItems.forEach((el,ni)=>{
     const span=el.querySelector('[data-epath]');
     if(span)span.dataset.epath='checklist.'+field+'.'+ni;
     const db=el.querySelector('.chk-del-btn');
     if(db)db.setAttribute('onclick','deleteCheckItem(\''+field+'\','+ni+',this)');
   });
+  // Sync window._ebookData immediately so save() reads correct state
+  if(!window._ebookData.checklist)window._ebookData.checklist={};
+  window._ebookData.checklist[field]=allItems.map(el=>{
+    const span=el.querySelector('[data-epath]');
+    return span?(span.innerText.replace(/\u200B/g,'').trim()):'';
+  }).filter(v=>v);
 }
 /* ── Delete Assembly Row ── */
 function deleteAssemblyRow(path,btn){

@@ -129,6 +129,49 @@ header{
 .btn-preview:hover{background:rgba(255,255,255,.15)}
 .error-box{background:rgba(238,101,67,.1);border:1px solid rgba(238,101,67,.3);border-radius:10px;padding:14px 16px;margin-top:12px;display:none;font-size:.8125rem;color:var(--tomato)}
 .error-box.show{display:block}
+/* ── History Panel ── */
+.hist-card{margin-top:24px}
+.hist-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.hist-label{font-size:.6875rem;font-weight:400;letter-spacing:.12em;color:rgba(255,255,255,.5);text-transform:uppercase;display:flex;align-items:center;gap:8px}
+.hist-label svg{width:15px;height:15px;stroke:var(--aqua);stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.hist-badge{background:rgba(129,248,185,.15);color:var(--aqua);font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;letter-spacing:0}
+.btn-hist-clear{background:none;border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.3);font-size:10px;padding:4px 10px;border-radius:8px;cursor:pointer;font-family:inherit;transition:all .2s}
+.btn-hist-clear:hover{border-color:rgba(238,101,67,.45);color:var(--tomato)}
+.btn-hist-refresh{background:none;border:1px solid rgba(129,248,185,.2);color:rgba(129,248,185,.5);font-size:13px;width:26px;height:26px;border-radius:8px;cursor:pointer;font-family:inherit;transition:all .2s;line-height:1;padding:0}
+.btn-hist-refresh:hover{border-color:var(--aqua);color:var(--aqua)}
+.btn-hist-refresh.spinning{animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.hist-empty{text-align:center;padding:26px 0;color:rgba(255,255,255,.22);font-size:12px;letter-spacing:.06em}
+.hist-item{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.hist-item:first-child{padding-top:4px}
+.hist-item:last-child{border-bottom:none;padding-bottom:2px}
+.hist-info{flex:1;min-width:0}
+.hist-name{font-size:13px;font-weight:500;color:rgba(255,255,255,.88);margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hist-meta{font-size:11px;color:rgba(255,255,255,.38);display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.hist-dest{color:var(--aqua)}
+.hist-time{margin-left:auto;font-size:10px;color:rgba(255,255,255,.2)}
+.hist-times{display:flex;flex-direction:column;gap:2px;flex-shrink:0;text-align:right}
+.hist-time-row{font-size:10px;color:rgba(255,255,255,.45);white-space:nowrap}
+.hist-time-label{color:rgba(255,255,255,.25)}
+.hist-time-dim{color:rgba(255,255,255,.18)}
+.hist-btns{display:flex;gap:6px;flex-shrink:0}
+@media(max-width:600px){
+  .hist-item{flex-wrap:wrap;gap:6px 10px;align-items:flex-start}
+  .hist-info{flex:1 1 100%;min-width:0}
+  .hist-name{white-space:normal;word-break:break-all}
+  .hist-times{flex:1 1 auto;text-align:left;flex-direction:row;flex-wrap:wrap;gap:4px 14px;align-items:center}
+  .hist-time-row{font-size:10px}
+  .hist-btns{flex:0 0 auto;width:100%;justify-content:flex-end;margin-top:2px}
+}
+.btn-hcopy{background:rgba(129,248,185,.1);border:1px solid rgba(129,248,185,.22);color:var(--aqua);font-size:11px;padding:6px 12px;border-radius:8px;cursor:pointer;font-family:inherit;transition:all .2s;white-space:nowrap}
+.btn-hcopy:hover{background:rgba(129,248,185,.2)}
+.btn-hcopy.done{background:var(--aqua);color:#1a1a1a;border-color:var(--aqua)}
+.btn-hopen{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);color:rgba(255,255,255,.55);font-size:13px;padding:5px 10px;border-radius:8px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;transition:all .2s}
+.btn-hopen:hover{background:rgba(255,255,255,.14);color:#fff}
+.btn-hedit{background:rgba(153,235,247,.08);border:1px solid rgba(153,235,247,.22);color:rgba(153,235,247,.8);font-size:13px;padding:5px 9px;border-radius:8px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;transition:all .2s}
+.btn-hedit:hover{background:rgba(153,235,247,.18);color:#99EBF7}
+.btn-hdel{background:rgba(238,101,67,.08);border:1px solid rgba(238,101,67,.22);color:rgba(238,101,67,.7);font-size:13px;padding:5px 9px;border-radius:8px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;transition:all .2s}
+.btn-hdel:hover{background:rgba(238,101,67,.18);color:#EE6543}
 .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
 .modal-bg.open{display:flex}
 .modal{
@@ -139,10 +182,15 @@ header{
   box-shadow:inset 0 1.5px 0 rgba(255,255,255,0.80),inset 0 -0.5px 0 rgba(0,0,0,0.06),0 20px 60px rgba(0,0,0,0.30),0 1px 3px rgba(0,0,0,0.12);
   border-radius:20px;padding:28px;width:min(480px,100%)
 }
-.modal h3{font-size:1.0625rem;font-weight:500;margin-bottom:6px;color:var(--text)}
-.modal-desc{font-size:.8125rem;color:var(--soft);margin-bottom:22px;line-height:1.85}
+.modal h3{font-size:1.0625rem;font-weight:600;margin-bottom:6px;color:#1a1a1a}
+.modal-desc{font-size:.8125rem;color:#555;margin-bottom:22px;line-height:1.85}
 .modal .field{margin-bottom:14px}
-.modal-hint{font-size:.6875rem;color:var(--soft);margin-top:5px}
+.modal .field label{color:#333;font-size:.6875rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+.modal-hint{font-size:.6875rem;color:#777;margin-top:5px}
+.modal h3 svg{stroke:#333!important}
+.modal .field input{color:#1a1a1a!important;background:rgba(0,0,0,.06)!important;border-color:rgba(0,0,0,.15)!important;-webkit-text-fill-color:#1a1a1a!important}
+.modal .field input::placeholder{color:rgba(0,0,0,.3)!important}
+.modal .field input:focus{background:rgba(0,0,0,.08)!important;border-color:#333!important}
 .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:22px}
 .status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px}
 .dot-ok{background:#52c41a}.dot-no{background:#ff4d4f}
@@ -186,8 +234,7 @@ header{
 <header>
   <img src="logo.png" alt="樂放旅遊" style="height:30px;object-fit:contain;filter:brightness(0) invert(1)">
   <div class="hdr-right">
-    <span class="hdr-title">電子書產生器</span>
-    <button class="btn-settings" onclick="openSettings()"><i data-lucide="settings-2" style="width:13px;height:13px;display:inline-block;vertical-align:middle;margin-right:5px"></i>設定 API Keys</button>
+    <button class="btn-settings" onclick="openSettings()"><i data-lucide="settings-2" style="width:13px;height:13px;display:inline-block;vertical-align:middle;margin-right:5px"></i>API Keys</button>
   </div>
 </header>
 
@@ -233,7 +280,7 @@ header{
     <div class="upload-zone" id="coverZone">
       <input type="file" accept="image/*" multiple id="coverInput" onchange="handleCoverPhotos(this.files)">
       <div class="up-icon"><i data-lucide="images"></i></div>
-      <div class="up-main">上傳封面照片（最多 5 張）</div>
+      <div class="up-main">上傳封面照片（最多 10 張）</div>
       <div class="up-sub">建議 4:3 比例，最小 1200×800px，第一張為主封面大圖</div>
     </div>
     <div class="cover-preview-grid" id="coverGrid"></div>
@@ -243,7 +290,7 @@ header{
     <div class="s-title"><div class="s-num">2</div>填寫基本資訊</div>
     <div class="field-grid">
       <div class="field">
-        <label>電子書 ID（英數字）</label>
+        <label>團體編號</label>
         <input type="text" id="ebookId" placeholder="20260509-jeju" maxlength="40">
       </div>
       <div class="field">
@@ -251,7 +298,7 @@ header{
         <input type="text" id="destination" placeholder="濟州">
       </div>
       <div class="field">
-        <label>團名</label>
+        <label>團體名稱</label>
         <input type="text" id="tourName" placeholder="八婆出巡">
       </div>
       <div class="field">
@@ -269,6 +316,28 @@ header{
       <div class="field">
         <label>領隊手機</label>
         <input type="text" id="leaderPhone">
+      </div>
+      <div class="field">
+        <label>目的地幣別</label>
+        <select id="currency">
+          <option value="NONE">無匯率需求</option>
+          <option value="">自動偵測（依目的地）</option>
+          <option value="JPY">🇯🇵 日本 JPY</option>
+          <option value="KRW">🇰🇷 韓國 KRW</option>
+          <option value="THB">🇹🇭 泰國 THB</option>
+          <option value="VND">🇻🇳 越南 VND</option>
+          <option value="IDR">🇮🇩 印尼 IDR</option>
+          <option value="MYR">🇲🇾 馬來西亞 MYR</option>
+          <option value="SGD">🇸🇬 新加坡 SGD</option>
+          <option value="PHP">🇵🇭 菲律賓 PHP</option>
+          <option value="HKD">🇭🇰 香港 HKD</option>
+          <option value="EUR">🇪🇺 歐元 EUR</option>
+          <option value="GBP">🇬🇧 英國 GBP</option>
+          <option value="USD">🇺🇸 美國 USD</option>
+          <option value="AUD">🇦🇺 澳洲 AUD</option>
+          <option value="TRY">🇹🇷 土耳其 TRY</option>
+          <option value="EGP">🇪🇬 埃及 EGP</option>
+        </select>
       </div>
     </div>
   </div>
@@ -297,11 +366,27 @@ header{
     <button class="btn-generate" id="genBtn" onclick="generate()" disabled>✦  一鍵產生電子書</button>
   </div>
 
+  <!-- 發布紀錄 -->
+  <div class="s-card hist-card" id="histCard">
+    <div class="hist-hdr">
+      <div class="hist-label">
+        <svg viewBox="0 0 24 24"><polyline points="12 8 12 12 14 14"/><path d="M3.05 11a9 9 0 1 1 .5 4"/><polyline points="3 16 3 11 8 11"/></svg>
+        發布紀錄
+        <span class="hist-badge" id="histBadge">0</span>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center">
+        <button class="btn-hist-refresh" onclick="refreshHistory()" id="histRefreshBtn" title="從雲端重新整理">↻</button>
+        <button class="btn-hist-clear" onclick="clearHistory()">清除全部</button>
+      </div>
+    </div>
+    <div id="histList"><div class="hist-empty">尚無發布紀錄</div></div>
+  </div>
+
 </div>
 
 <div class="modal-bg" id="settingsModal">
   <div class="modal">
-    <h3><i data-lucide="settings-2" style="width:17px;height:17px;display:inline-block;vertical-align:middle;margin-right:6px"></i>API Keys 設定</h3>
+    <h3>API Keys 設定</h3>
     <p class="modal-desc">Keys 存於瀏覽器 localStorage，不會上傳至任何伺服器。一次設定，之後免輸入。</p>
     <div class="field">
       <label>Anthropic API Key <span class="status-dot" id="dotAnthropic"></span></label>
@@ -314,7 +399,7 @@ header{
       <div class="modal-hint">需要 repo 讀寫權限：github.com/settings/tokens</div>
     </div>
     <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeSettings()">取消</button>
+      <button class="btn btn-ghost" onclick="closeSettings()" style="color:#333;border-color:rgba(0,0,0,.2);background:rgba(0,0,0,.06)">取消</button>
       <button class="btn btn-dark" onclick="saveSettings()">儲存</button>
     </div>
   </div>
@@ -324,6 +409,15 @@ header{
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 const GITHUB_USER = 'YinoeDigital';
 const GITHUB_REPO = 'lefun-ebook';
+
+// ── 預設 API Keys（員工開啟時自動帶入，無需手動設定）──
+// 填入後上傳即可，員工第一次開啟會自動儲存至 localStorage
+const _DEFAULT_ANTHROPIC_KEY = '';  // 填入 Anthropic API Key
+const _DEFAULT_GITHUB_TOKEN  = '';  // 填入 GitHub Personal Access Token
+if(_DEFAULT_ANTHROPIC_KEY && !localStorage.getItem('lf_anthropic_key'))
+  localStorage.setItem('lf_anthropic_key', _DEFAULT_ANTHROPIC_KEY);
+if(_DEFAULT_GITHUB_TOKEN && !localStorage.getItem('lf_github_token'))
+  localStorage.setItem('lf_github_token', _DEFAULT_GITHUB_TOKEN);
 let pdfFile = null;
 let bgFile = null, bgDataUrl = null;
 let coverFiles = [], coverDataUrls = [];
@@ -342,9 +436,9 @@ coverZone.addEventListener('drop', e => { e.preventDefault(); coverZone.classLis
 
 function handleCoverPhotos(files) {
   if (!files || files.length === 0) return;
-  const imgs = Array.from(files).filter(f => f.type.startsWith('image/')).slice(0, 5);
+  const imgs = Array.from(files).filter(f => f.type.startsWith('image/')).slice(0, 10);
   coverFiles = imgs;
-  const labels = ['主封面', '2', '3', '4', '5'];
+  const labels = ['主封面','2','3','4','5','6','7','8','9','10'];
   const grid = document.getElementById('coverGrid');
   grid.innerHTML = '';
   imgs.forEach((file, i) => {
@@ -354,8 +448,9 @@ function handleCoverPhotos(files) {
     div.innerHTML = '<img src="'+url+'" alt="封面'+labels[i]+'"><div class="cover-thumb-label">'+labels[i]+'</div>';
     grid.appendChild(div);
   });
-  // fill empty slots
-  for (let i = imgs.length; i < 5; i++) {
+  // fill empty slots up to 5 min preview
+  const minSlots = Math.max(5, imgs.length);
+  for (let i = imgs.length; i < minSlots; i++) {
     const div = document.createElement('div');
     div.className = 'cover-thumb cover-thumb-empty';
     div.textContent = '+';
@@ -488,13 +583,16 @@ async function generate() {
 
     setStep(2);
     const systemPrompt = `你是樂放旅遊的旅遊達人助手。請將行前說明文件以輕鬆友善口語化的繁體中文整理成 JSON。只回傳 JSON，不要任何說明文字或 markdown。
+欄位說明：flightOutDepTime/flightOutArrTime 為 HH:MM 格式起飛/落地時間，flightOutDepPort/flightOutArrPort 為機場中文名稱（如「桃園國際機場」），flightOutFromCode/flightOutToCode 為 IATA 3字機場代碼（如「TPE」、「ICN」），flightReturn* 同理填回程資料。taxRefund.threshold 為退稅門檻金額（含幣別，如「30,000 韓圜」），taxRefund.notes 為退稅的補充說明或注意事項（從原始資料中完整擷取，保留原文重點），taxRefund.steps 為退稅操作步驟（每步驟為一個字串，從原始資料中逐步擷取）。
 
 格式：
 {
   "meta": {
     "tourName":"","destination":"","departDate":"","returnDate":"",
     "leaderName":"","leaderPhone":"","hotel":"","hotelPhone":"",
-    "flightOut":"","flightReturn":"","assemblyTime":"","assemblyPlace":""
+    "flightOut":"","flightOutAirline":"","flightOutNo":"","flightOutDepTime":"","flightOutDepPort":"","flightOutFromCode":"","flightOutArrTime":"","flightOutArrPort":"","flightOutToCode":"",
+    "flightReturn":"","flightReturnAirline":"","flightReturnNo":"","flightReturnDepTime":"","flightReturnDepPort":"","flightReturnFromCode":"","flightReturnArrTime":"","flightReturnArrPort":"","flightReturnToCode":"",
+    "assemblyTime":"","assemblyPlace":""
   },
   "days": [
     {"day":1,"date":"","title":"","spots":[{"name":"","desc":""}],
@@ -502,7 +600,7 @@ async function generate() {
   ],
   "tips": {"weather":"","currency":"","voltage":"","timezone":"","drinking":"","toiletries":""},
   "immigration": {"visa":"","qcode":"","steps":[]},
-  "taxRefund": {"threshold":"","steps":[]},
+  "taxRefund": {"threshold":"","notes":"","steps":[]},
   "checklist": {"beforeDepart":[],"carry":[],"forbidden":""},
   "departure": {"assemblyTime":"","rules":[]},
   "emergency": {"international":"","overseas":"","insurance":"","contacts":[{"label":"","value":""}]}
@@ -536,6 +634,8 @@ async function generate() {
     if (returnDate)  ebookData.meta.returnDate  = returnDate;
     if (leaderName)  ebookData.meta.leaderName  = leaderName;
     if (leaderPhone) ebookData.meta.leaderPhone = leaderPhone;
+    const currency = document.getElementById('currency').value;
+    if (currency) ebookData.meta.currency = currency;
     ebookData.id = ebookId;
     ebookData.generatedAt = new Date().toISOString();
 
@@ -568,6 +668,8 @@ async function generate() {
       return;
     }
 
+    // 預設 PDF 連結（推送後實際存在於 GitHub Pages）
+    if (pdfFile) ebookData.pdfUrl = `https://${githubUser}.github.io/${githubRepo}/pdfs/${ebookId}.pdf`;
     const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(ebookData,null,2))));
     const apiUrl = `https://api.github.com/repos/${githubUser}/${githubRepo}/contents/data/${ebookId}.json`;
     let sha = '';
@@ -581,13 +683,89 @@ async function generate() {
     const push = await fetch(apiUrl, {method:'PUT', headers:{'Authorization':'token '+githubToken,'Content-Type':'application/json'}, body:JSON.stringify(body)});
     if (!push.ok) { const pe = await push.json(); throw new Error('GitHub 推送失敗：' + (pe.message || push.status)); }
 
+    // 推送 share HTML（含 OG 標籤，LINE / iMessage 預覽用）
+    const baseUrl = `https://${githubUser}.github.io/${githubRepo}`;
+    const viewerUrl = `${baseUrl}/viewer.html?id=${ebookId}`;
+    const ogTitle = `${tourName || ebookId} ✈ 行前說明`;
+    const ogDesc = `${destination ? destination + '・' : ''}${departDate || ''}｜樂放旅遊 Le Fun Travel`;
+    // 嘗試將第一張封面照片推送為獨立圖檔，做為 OG image
+    let ogImageUrl = `${baseUrl}/logo.png`;
+    if (ebookData.coverPhotos && ebookData.coverPhotos.length > 0) {
+      try {
+        const firstCoverDataUrl = ebookData.coverPhotos[0];
+        const b64 = firstCoverDataUrl.split(',')[1];
+        if (b64) {
+          const coverApiUrl = `https://api.github.com/repos/${githubUser}/${githubRepo}/contents/covers/${ebookId}.jpg`;
+          let coverSha = '';
+          try { const cc = await fetch(coverApiUrl, {headers:{'Authorization':'token '+githubToken}}); if(cc.ok) coverSha=(await cc.json()).sha; } catch(e){}
+          const coverBody = {message:`cover: ${ebookId}`, content:b64, branch:'main'};
+          if (coverSha) coverBody.sha = coverSha;
+          const coverPush = await fetch(coverApiUrl, {method:'PUT', headers:{'Authorization':'token '+githubToken,'Content-Type':'application/json'}, body:JSON.stringify(coverBody)});
+          if (coverPush.ok) ogImageUrl = `${baseUrl}/covers/${ebookId}.jpg`;
+        }
+      } catch(e) {}
+    }
+    // 推送原始 PDF（供電子書中「詳細行前說明」按鈕使用）
+    if (pdfFile) {
+      try {
+        const ab = await pdfFile.arrayBuffer();
+        let bin = '';
+        const bytes = new Uint8Array(ab);
+        for (let i = 0; i < bytes.byteLength; i++) bin += String.fromCharCode(bytes[i]);
+        const pdfB64 = btoa(bin);
+        const pdfApiUrl = `https://api.github.com/repos/${githubUser}/${githubRepo}/contents/pdfs/${ebookId}.pdf`;
+        let pdfSha = '';
+        try { const pc = await fetch(pdfApiUrl, {headers:{'Authorization':'token '+githubToken}}); if(pc.ok) pdfSha=(await pc.json()).sha; } catch(e){}
+        const pdfBody = {message:`pdf: ${ebookId}`, content:pdfB64, branch:'main'};
+        if (pdfSha) pdfBody.sha = pdfSha;
+        await fetch(pdfApiUrl, {method:'PUT', headers:{'Authorization':'token '+githubToken,'Content-Type':'application/json'}, body:JSON.stringify(pdfBody)});
+      } catch(e) {}
+    }
+    const shareHtml = `<!DOCTYPE html><html lang="zh-TW"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${ogTitle}</title><meta property="og:title" content="${ogTitle}"><meta property="og:description" content="${ogDesc}"><meta property="og:image" content="${ogImageUrl}"><meta property="og:url" content="${baseUrl}/share/${ebookId}.html"><meta property="og:type" content="website"><meta property="og:locale" content="zh_TW"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${ogTitle}"><meta name="twitter:description" content="${ogDesc}"><meta name="twitter:image" content="${ogImageUrl}"><meta http-equiv="refresh" content="0;url=${viewerUrl}"><script>location.replace('${viewerUrl}');<\/script></head><body></body></html>`;
+    const shareEncoded = btoa(unescape(encodeURIComponent(shareHtml)));
+    const shareApiUrl = `https://api.github.com/repos/${githubUser}/${githubRepo}/contents/share/${ebookId}.html`;
+    let shareSha = '';
+    try { const sc = await fetch(shareApiUrl, {headers:{'Authorization':'token '+githubToken}}); if(sc.ok) shareSha=(await sc.json()).sha; } catch(e){}
+    const shareBody = {message:`share: add ${ebookId}`, content:shareEncoded, branch:'main'};
+    if (shareSha) shareBody.sha = shareSha;
+    await fetch(shareApiUrl, {method:'PUT', headers:{'Authorization':'token '+githubToken,'Content-Type':'application/json'}, body:JSON.stringify(shareBody)});
+
     setStep(4);
-    await new Promise(r => setTimeout(r, 700));
+    document.getElementById('progFill').style.width = '90%';
+
+    // 輪詢 GitHub Pages，比對 generatedAt 確認是本次新資料已建置完成
+    const generatedAt = ebookData.generatedAt;
+    const ps4el = document.getElementById('ps4');
+    ps4el.querySelector('.pdot') && (ps4el.querySelector('.pdot').style.animation = 'spin 1s linear infinite');
+    let deployed = false;
+    for (let i = 0; i < 30; i++) {
+      const dots = '.'.repeat((i % 3) + 1);
+      ps4el.childNodes[ps4el.childNodes.length - 1].textContent = `等待 GitHub Pages 建置${dots}（約需 1-2 分鐘）`;
+      await new Promise(r => setTimeout(r, 4000));
+      try {
+        const res = await fetch(`${baseUrl}/data/${ebookId}.json?_=${Date.now()}`, {cache:'no-store'});
+        if (res.ok) {
+          const json = await res.json();
+          if (json.generatedAt === generatedAt) { deployed = true; break; }
+        }
+      } catch(e) {}
+    }
+    ps4el.childNodes[ps4el.childNodes.length - 1].textContent = deployed ? '產生分享連結' : '產生分享連結（建置可能仍在進行）';
+
     document.getElementById('progFill').style.width = '100%';
-    const shareUrl = `https://${githubUser}.github.io/${githubRepo}/viewer.html?id=${ebookId}`;
+    const shareUrl = `${baseUrl}/share/${ebookId}.html`;
     document.getElementById('resultUrl').textContent = shareUrl;
     document.getElementById('previewLink').href = shareUrl;
     document.getElementById('resultPanel').classList.add('show');
+    saveHistory({
+      id: ebookId,
+      tourName: document.getElementById('tourName').value.trim(),
+      destination: document.getElementById('destination').value.trim(),
+      departDate: document.getElementById('departDate').value,
+      returnDate: document.getElementById('returnDate').value,
+      shareUrl: shareUrl,
+      createdAt: Date.now()
+    });
 
   } catch(e) {
     showError(e.message);
@@ -600,6 +778,161 @@ async function copyLink() {
   const btn = document.querySelector('.btn-copy');
   btn.textContent = '✓ 已複製！';
   setTimeout(()=>btn.textContent='複製連結', 2000);
+}
+
+/* ── 發布紀錄 ── */
+const HIST_KEY = 'lf_history';
+const HIST_API = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/data/history.json`;
+const HIST_RAW = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/main/data/history.json`;
+
+function getLocalHistory(){ try{return JSON.parse(localStorage.getItem(HIST_KEY)||'[]');}catch(e){return[];} }
+
+async function loadSharedHistory(){
+  try{
+    const r=await fetch(HIST_RAW+'?_='+Date.now(),{cache:'no-store'});
+    if(r.ok){const data=await r.json();localStorage.setItem(HIST_KEY,JSON.stringify(data));return data;}
+  }catch(e){}
+  return getLocalHistory();
+}
+
+async function pushHistory(items){
+  localStorage.setItem(HIST_KEY,JSON.stringify(items));
+  const token=localStorage.getItem('lf_github_token');
+  if(!token)return;
+  const encoded=btoa(unescape(encodeURIComponent(JSON.stringify(items,null,2))));
+  let sha='';
+  try{const r=await fetch(HIST_API,{headers:{'Authorization':'token '+token}});if(r.ok)sha=(await r.json()).sha;}catch(e){}
+  const body={message:'update history',content:encoded,branch:'main'};
+  if(sha)body.sha=sha;
+  try{await fetch(HIST_API,{method:'PUT',headers:{'Authorization':'token '+token,'Content-Type':'application/json'},body:JSON.stringify(body)});}catch(e){}
+}
+
+function saveHistory(item){
+  let h=getLocalHistory().filter(x=>x.id!==item.id);
+  h.unshift(item);
+  if(h.length>100)h=h.slice(0,100);
+  localStorage.setItem(HIST_KEY,JSON.stringify(h));
+  renderHistory(h);
+  pushHistory(h); // 背景執行，不等待、不阻塞主流程
+}
+
+function clearHistory(){
+  // 嚴格確認機制
+  let modal=document.getElementById('clearConfirmModal');
+  if(!modal){
+    modal=document.createElement('div');
+    modal.id='clearConfirmModal';
+    modal.className='modal-bg';
+    modal.innerHTML=`<div class="modal" style="max-width:360px;text-align:center">
+      <h3 style="color:#1a1a1a;margin-bottom:8px">確定清除所有發布紀錄？</h3>
+      <p style="font-size:.8125rem;color:#555;margin-bottom:20px;line-height:1.7">此操作無法復原，所有紀錄將從雲端永久刪除。<br>請輸入「確認清除」以繼續。</p>
+      <input id="clearConfirmInput" type="text" placeholder="確認清除" style="width:100%;border:1px solid rgba(0,0,0,.2);border-radius:8px;padding:9px 12px;font-size:.875rem;font-family:inherit;color:#1a1a1a;margin-bottom:16px">
+      <div style="display:flex;gap:10px;justify-content:flex-end">
+        <button class="btn btn-ghost" onclick="document.getElementById('clearConfirmModal').classList.remove('open')" style="color:#333;border-color:rgba(0,0,0,.2);background:rgba(0,0,0,.06)">取消</button>
+        <button class="btn" onclick="confirmClearHistory()" style="background:#EE6543;color:#fff;border:none">確認清除</button>
+      </div>
+    </div>`;
+    document.body.appendChild(modal);
+  }
+  document.getElementById('clearConfirmInput').value='';
+  modal.classList.add('open');
+}
+function confirmClearHistory(){
+  const val=document.getElementById('clearConfirmInput').value.trim();
+  if(val!=='確認清除'){
+    document.getElementById('clearConfirmInput').style.border='1.5px solid #EE6543';
+    return;
+  }
+  document.getElementById('clearConfirmModal').classList.remove('open');
+  localStorage.removeItem(HIST_KEY);
+  renderHistory([]);
+  pushHistory([]); // 背景執行
+}
+function deleteHistItem(id, name, btn){
+  let modal=document.getElementById('deleteHistModal');
+  if(!modal){
+    modal=document.createElement('div');
+    modal.id='deleteHistModal';
+    modal.className='modal-bg';
+    modal.innerHTML=`<div class="modal" style="max-width:360px;text-align:center">
+      <div style="width:44px;height:44px;border-radius:50%;background:rgba(238,101,67,.12);border:1px solid rgba(238,101,67,.3);display:flex;align-items:center;justify-content:center;margin:0 auto 14px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EE6543" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></div>
+      <h3 style="color:#1a1a1a;margin-bottom:8px">確定刪除此發布紀錄？</h3>
+      <p id="deleteHistName" style="font-size:.8125rem;color:#EE6543;font-weight:600;margin-bottom:6px"></p>
+      <p style="font-size:.8125rem;color:#555;margin-bottom:20px;line-height:1.7">此操作無法復原，該筆紀錄將從雲端永久刪除。</p>
+      <div style="display:flex;gap:10px;justify-content:flex-end">
+        <button class="btn btn-ghost" onclick="document.getElementById('deleteHistModal').classList.remove('open')" style="color:#333;border-color:rgba(0,0,0,.2);background:rgba(0,0,0,.06)">取消</button>
+        <button class="btn" id="deleteHistConfirmBtn" style="background:#EE6543;color:#fff;border:none">確認刪除</button>
+      </div>
+    </div>`;
+    document.body.appendChild(modal);
+  }
+  document.getElementById('deleteHistName').textContent=name;
+  document.getElementById('deleteHistConfirmBtn').onclick=async()=>{
+    const confirmBtn=document.getElementById('deleteHistConfirmBtn');
+    confirmBtn.textContent='刪除中…';
+    confirmBtn.disabled=true;
+    let h=getLocalHistory().filter(x=>x.id!==id);
+    localStorage.setItem(HIST_KEY,JSON.stringify(h));
+    renderHistory(h);
+    await pushHistory(h);  // 等待 GitHub 寫入完成再關閉
+    confirmBtn.textContent='確認刪除';
+    confirmBtn.disabled=false;
+    document.getElementById('deleteHistModal').classList.remove('open');
+  };
+  modal.classList.add('open');
+}
+function copyHistLink(url, btn){
+  navigator.clipboard.writeText(url).then(()=>{
+    btn.textContent='✓ 已複製';
+    btn.classList.add('done');
+    setTimeout(()=>{ btn.textContent='複製連結'; btn.classList.remove('done'); }, 2000);
+  });
+}
+function fmtHistTime(ts){
+  if(!ts)return '';
+  const d=new Date(ts);
+  return String(d.getMonth()+1).padStart(2,'0')+'/'+String(d.getDate()).padStart(2,'0')+' '+String(d.getHours()).padStart(2,'0')+'：'+String(d.getMinutes()).padStart(2,'0');
+}
+function renderHistory(hist){
+  if(!hist) hist=getLocalHistory();
+  const listEl = document.getElementById('histList');
+  const badge = document.getElementById('histBadge');
+  if(!listEl) return;
+  if(badge) badge.textContent = hist.length;
+  if(hist.length===0){ listEl.innerHTML='<div class="hist-empty">尚無發布紀錄</div>'; return; }
+  listEl.innerHTML = hist.map(h=>{
+    const createdStr = fmtHistTime(h.createdAt);
+    const editedStr  = fmtHistTime(h.editedAt);
+    const safeUrl = h.shareUrl.replace(/'/g,"\\'");
+    return `<div class="hist-item">
+      <div class="hist-info">
+        <div class="hist-name">${h.tourName||h.id}</div>
+        <div class="hist-meta">
+          ${h.destination?`<span class="hist-dest">${h.destination}</span>`:''}
+          ${h.departDate?`<span>${h.departDate}</span>`:''}
+        </div>
+      </div>
+      <div class="hist-times">
+        ${createdStr?`<div class="hist-time-row"><span class="hist-time-label">首次發布時間：</span>${createdStr}</div>`:''}
+        ${editedStr?`<div class="hist-time-row"><span class="hist-time-label">上次編輯時間：</span>${editedStr}</div>`:'<div class="hist-time-row hist-time-dim">上次編輯時間：—</div>'}
+      </div>
+      <div class="hist-btns">
+        <button class="btn-hcopy" onclick="copyHistLink('${safeUrl}',this)">複製連結</button>
+        <a class="btn-hopen" href="${h.shareUrl}" target="_blank" title="開啟電子書">↗</a>
+        <a class="btn-hedit" href="viewer.html?id=${h.id}&edit=1" target="_blank" title="編輯電子書內容"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></a>
+        <button class="btn-hdel" onclick="deleteHistItem('${h.id}','${(h.tourName||h.id).replace(/'/g,"\\'")}',this)" title="刪除此紀錄"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>
+      </div>
+    </div>`;
+  }).join('');
+}
+renderHistory(getLocalHistory());
+loadSharedHistory().then(h=>renderHistory(h));
+async function refreshHistory(){
+  const btn=document.getElementById('histRefreshBtn');
+  if(btn)btn.classList.add('spinning');
+  const h=await loadSharedHistory();
+  renderHistory(h);
+  if(btn)btn.classList.remove('spinning');
 }
 
 function openSettings() {
@@ -626,10 +959,7 @@ updateDots();
 document.getElementById('departDate').value = new Date().toISOString().slice(0,10);
 // Render Lucide icons on page load
 if (typeof lucide !== 'undefined') lucide.createIcons();
-// 首次使用：若 API Keys 尚未設定，自動彈出設定視窗
-if (!localStorage.getItem('lf_anthropic_key') || !localStorage.getItem('lf_github_token')) {
-  openSettings();
-}
+// API Keys 已透過預設值自動帶入，無需自動彈出設定視窗
 </script>
 </body>
 </html>

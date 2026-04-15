@@ -1,0 +1,64 @@
+{
+  "id": "test-icon",
+  "meta": {
+    "tourName": "圖示測試團",
+    "destination": "測試目的地",
+    "departDate": "2026-04-01",
+    "returnDate": "2026-04-05",
+    "assemblyTime": "早上 08:00",
+    "assemblyPlace": "桃園國際機場 第二航廈",
+    "flightOut": "CI123 08:00→12:00",
+    "flightReturn": "CI124 15:00→19:00",
+    "hotel": "測試飯店",
+    "leaderName": "王小明",
+    "leaderPhone": "0912-345-678"
+  },
+  "days": [
+    {
+      "day": 1,
+      "date": "2026-04-01",
+      "title": "抵達測試城市",
+      "spots": [
+        {"name": "景點 A", "desc": "美麗的景點介紹文字"},
+        {"name": "景點 B", "desc": "另一個景點的介紹"}
+      ],
+      "breakfast": "機上",
+      "lunch": "當地餐廳",
+      "dinner": "海鮮大餐",
+      "hotel": "測試飯店"
+    }
+  ],
+  "tips": {
+    "weather": "春季氣溫約 15-22°C，建議穿著薄外套",
+    "currency": "當地貨幣，匯率約 1:30",
+    "voltage": "220V，需要轉換插頭",
+    "timezone": "比台灣快 1 小時",
+    "drinking": "建議飲用瓶裝水",
+    "toiletries": "飯店提供基本備品"
+  },
+  "immigration": {
+    "visa": "免簽證，可停留 90 天",
+    "steps": ["填寫入境卡", "通過護照查驗", "提領行李", "通過海關"]
+  },
+  "taxRefund": {
+    "threshold": "30,000元",
+    "steps": ["購物時索取退稅單", "離境前往退稅櫃台辦理", "領取退稅金額"]
+  },
+  "checklist": {
+    "beforeDepart": ["護照（有效期六個月以上）", "機票確認信", "旅遊保險"],
+    "carry": ["隨身換洗衣物", "藥品", "充電線"],
+    "forbidden": "打火機、液體超過100ml"
+  },
+  "departure": {
+    "assemblyTime": "回程當日 13:00 大廳集合",
+    "rules": ["請準時集合", "行李請提前準備", "護照放在隨手可取處"]
+  },
+  "emergency": {
+    "international": "+886-2-1234-5678",
+    "overseas": "0800-085-095",
+    "insurance": "旅遊平安保險，保障金額 300 萬",
+    "contacts": [
+      {"label": "當地導遊", "value": "+82-10-1234-5678"}
+    ]
+  }
+}

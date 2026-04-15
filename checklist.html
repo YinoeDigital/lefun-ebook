@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>行李清單 · 樂放旅遊</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --aqua:#81F8B9;--blue:#99EBF7;--tomato:#EE6543;--rose:#ECD1D5;--lime:#E3FF85;
+  --dk:rgba(20,32,26,0.85);--glass-b:rgba(129,248,185,0.22);
+  --text:rgba(255,255,255,0.90);--soft:rgba(255,255,255,0.5);--r:16px
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Noto Sans TC",sans-serif;background:transparent;color:var(--text);line-height:1.85;font-size:16px;min-height:100vh}
+.parallax-bg{position:fixed;inset:0;z-index:0;background:linear-gradient(160deg,#0f2a1e 0%,#163324 25%,#0e2330 55%,#0a1820 100%);background-size:cover;background-position:center}
+.parallax-bg::after{content:"";position:absolute;inset:0;background:rgba(0,0,0,0.10)}
+
+/* ── Nav ── */
+.nav{position:sticky;top:0;z-index:200;background:rgba(8,18,14,0.45);backdrop-filter:blur(52px) saturate(200%);-webkit-backdrop-filter:blur(52px) saturate(200%);border-bottom:1px solid rgba(255,255,255,0.12);padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:56px}
+.nav-logo{display:flex;align-items:center;gap:10px}
+.nav-logo img{height:28px;object-fit:contain}
+.nav-right{display:flex;align-items:center;gap:8px}
+.nav-back{background:rgba(255,255,255,0.10);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.18);box-shadow:inset 0 1.5px 0 rgba(255,255,255,0.22);border-radius:20px;padding:5px 13px;font-size:11px;font-weight:500;cursor:pointer;color:rgba(255,255,255,0.75);font-family:inherit;display:inline-flex;align-items:center;gap:5px;transition:all .2s;text-decoration:none}
+.nav-back:hover{background:rgba(255,255,255,0.16);color:#fff}
+
+/* ── Main Layout ── */
+.main{max-width:680px;margin:0 auto;padding:0 20px 80px;position:relative;z-index:1;overflow-x:hidden}
+
+/* ── Trip Header ── */
+.trip-header{padding:32px 0 24px}
+.trip-tag{background:rgba(129,248,185,.1);border:1px solid var(--glass-b);color:var(--aqua);font-size:.72rem;font-weight:400;letter-spacing:.14em;padding:4px 14px;border-radius:20px;display:inline-flex;align-items:center;gap:6px;text-transform:uppercase;margin-bottom:16px}
+.trip-title{font-size:clamp(1.6rem,6vw,2.2rem);font-weight:300;color:#fff;line-height:1.2;margin-bottom:8px;letter-spacing:-0.01em}
+.trip-title em{color:var(--aqua);font-style:normal;font-weight:400}
+.trip-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.trip-chip{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);border-radius:20px;padding:5px 12px;font-size:.75rem;color:rgba(255,255,255,.65)}
+.trip-chip .li-icon svg{stroke:var(--aqua)}
+
+/* ── Progress Bar ── */
+.progress-wrap{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:var(--r);padding:18px 20px;margin-bottom:20px}
+.progress-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.progress-label{font-size:.75rem;color:rgba(255,255,255,.55);letter-spacing:.06em}
+.progress-count{font-size:.9375rem;font-weight:700;color:var(--aqua)}
+.progress-bar{height:6px;background:rgba(255,255,255,.1);border-radius:6px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--aqua),var(--blue));border-radius:6px;transition:width .4s cubic-bezier(.4,0,.2,1)}
+.progress-sub{font-size:.7rem;color:rgba(255,255,255,.35);margin-top:8px}
+
+/* ── Section ── */
+.sec{margin-bottom:8px}
+.sec-hdr{display:flex;align-items:center;gap:10px;padding:16px 0 10px;cursor:pointer;user-select:none}
+.sec-hdr-icon{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sec-hdr-icon svg{width:16px;height:16px;stroke:currentColor;stroke-width:1.75;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.sec-hdr-text{flex:1}
+.sec-hdr-text h3{font-size:.9375rem;font-weight:500;color:#fff;line-height:1.2}
+.sec-hdr-text span{font-size:.72rem;color:rgba(255,255,255,.4);letter-spacing:.04em}
+.sec-chevron{color:rgba(255,255,255,.3);transition:transform .3s}
+.sec-chevron svg{width:16px;height:16px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.sec.collapsed .sec-chevron{transform:rotate(-90deg)}
+.sec-body{display:grid;grid-template-columns:1fr;gap:8px;padding-bottom:12px}
+.sec.collapsed .sec-body{display:none}
+
+/* Category color accents */
+.cat-docs   .sec-hdr-icon{background:rgba(129,248,185,.15);color:var(--aqua)}
+.cat-clothes.sec-hdr-icon{background:rgba(236,209,213,.15);color:var(--rose)}
+.cat-clothes .sec-hdr-icon{background:rgba(236,209,213,.15);color:var(--rose)}
+.cat-toilet .sec-hdr-icon{background:rgba(153,235,247,.15);color:var(--blue)}
+.cat-tech   .sec-hdr-icon{background:rgba(227,255,133,.12);color:var(--lime)}
+.cat-med    .sec-hdr-icon{background:rgba(238,101,67,.15);color:var(--tomato)}
+.cat-misc   .sec-hdr-icon{background:rgba(255,255,255,.08);color:rgba(255,255,255,.6)}
+
+/* ── Check Item ── */
+.ck-item{
+  display:flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,0.10);
+  backdrop-filter:blur(30px) saturate(180%);
+  -webkit-backdrop-filter:blur(30px) saturate(180%);
+  border:1px solid rgba(255,255,255,0.16);
+  box-shadow:inset 0 1.5px 0 rgba(255,255,255,0.20),0 4px 16px rgba(0,0,0,0.15);
+  border-radius:12px;padding:11px 12px;
+  transition:all .22s;position:relative;
+}
+.ck-item.checked{background:rgba(129,248,185,0.10);border-color:rgba(129,248,185,.30);box-shadow:inset 0 1.5px 0 rgba(129,248,185,0.20),0 4px 16px rgba(0,0,0,0.12)}
+.ck-item.need-prep{background:rgba(238,101,67,0.08);border-color:rgba(238,101,67,.28);box-shadow:inset 0 1.5px 0 rgba(238,101,67,0.15),0 4px 16px rgba(0,0,0,0.12)}
+/* ── Done checkbox (left, aqua) ── */
+.ck-btn-done{
+  width:22px;height:22px;border-radius:6px;
+  border:1.5px solid rgba(255,255,255,.28);
+  background:rgba(255,255,255,.07);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;cursor:pointer;transition:all .2s;padding:0;
+}
+.ck-btn-done:hover{border-color:rgba(129,248,185,.6);background:rgba(129,248,185,.12)}
+.ck-item.checked .ck-btn-done{background:var(--aqua);border-color:var(--aqua)}
+.ck-btn-done svg{width:11px;height:11px;stroke:#0f2a1e;stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round;opacity:0;transition:opacity .15s}
+.ck-item.checked .ck-btn-done svg{opacity:1}
+/* ── Label ── */
+.ck-label{font-size:.82rem;color:rgba(255,255,255,.88);flex:1;line-height:1.4;transition:all .2s;cursor:default;user-select:none}
+.ck-item.checked .ck-label{color:rgba(255,255,255,.42);text-decoration:line-through;text-decoration-color:rgba(129,248,185,.35)}
+/* ── Prep checkbox (right, tomato) ── */
+.ck-btn-prep{
+  width:22px;height:22px;border-radius:6px;
+  border:1.5px solid rgba(255,255,255,.18);
+  background:rgba(255,255,255,.05);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;cursor:pointer;transition:all .2s;padding:0;
+}
+.ck-btn-prep:hover{border-color:rgba(238,101,67,.6);background:rgba(238,101,67,.12)}
+.ck-item.need-prep .ck-btn-prep{background:rgba(238,101,67,.25);border-color:var(--tomato)}
+.ck-btn-prep svg{width:11px;height:11px;stroke:rgba(255,255,255,.35);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round;transition:stroke .2s}
+.ck-btn-prep:hover svg{stroke:var(--tomato)}
+.ck-item.need-prep .ck-btn-prep svg{stroke:var(--tomato)}
+/* add custom item */
+.ck-add-wrap{grid-column:1/-1;display:flex;gap:8px;margin-top:4px}
+.ck-add-input{flex:1;min-width:0;width:0;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:9px 14px;font-size:.82rem;color:#fff;font-family:inherit;outline:none;transition:border-color .2s}
+.ck-add-input::placeholder{color:rgba(255,255,255,.28)}
+.ck-add-input:focus{border-color:rgba(129,248,185,.4)}
+.ck-add-btn{background:rgba(129,248,185,.15);border:1px solid rgba(129,248,185,.25);border-radius:10px;padding:9px 14px;font-size:.82rem;font-weight:700;color:var(--aqua);cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px;white-space:nowrap;transition:all .2s}
+.ck-add-btn:hover{background:rgba(129,248,185,.25)}
+.ck-add-btn svg{width:14px;height:14px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+/* ── Needs Prep Panel ── */
+.prep-panel{
+  background:rgba(238,101,67,0.08);
+  border:1px solid rgba(238,101,67,.22);
+  backdrop-filter:blur(52px) saturate(200%);
+  -webkit-backdrop-filter:blur(52px) saturate(200%);
+  box-shadow:inset 0 1.5px 0 rgba(255,255,255,.15),0 8px 32px rgba(0,0,0,.2);
+  border-radius:var(--r);padding:20px;margin-bottom:20px
+}
+.prep-panel-hdr{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.prep-panel-hdr h3{font-size:.9375rem;font-weight:500;color:var(--tomato);flex:1}
+.prep-count-badge{background:var(--tomato);color:#fff;font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px;min-width:22px;text-align:center}
+.prep-empty{font-size:.8rem;color:rgba(255,255,255,.3);text-align:center;padding:12px 0;letter-spacing:.04em}
+.prep-list{display:flex;flex-direction:column;gap:8px}
+.prep-row{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 14px}
+.prep-row-label{flex:1;font-size:.82rem;color:rgba(255,255,255,.85)}
+.prep-row-cat{font-size:.68rem;color:rgba(255,255,255,.32);letter-spacing:.04em}
+.prep-done-btn{background:rgba(129,248,185,.12);border:1px solid rgba(129,248,185,.22);border-radius:8px;padding:5px 11px;font-size:.72rem;font-weight:700;color:var(--aqua);cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:4px;transition:all .2s;white-space:nowrap}
+.prep-done-btn:hover{background:rgba(129,248,185,.25)}
+.prep-done-btn svg{width:12px;height:12px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+/* ── Hint bar ── */
+.hint-bar{display:flex;align-items:center;gap:6px;font-size:.7rem;color:rgba(255,255,255,.28);padding:4px 0 20px;letter-spacing:.04em;flex-wrap:wrap}
+.hint-bar svg{width:13px;height:13px;stroke:currentColor;stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.hint-box{display:inline-flex;align-items:center;gap:5px;padding:2px 7px;border-radius:6px;border:1px solid rgba(255,255,255,.12);margin:0 2px}
+.hint-box.hb-done{background:rgba(129,248,185,.1);border-color:rgba(129,248,185,.25);color:var(--aqua)}
+.hint-box.hb-prep{background:rgba(238,101,67,.08);border-color:rgba(238,101,67,.22);color:var(--tomato)}
+.hint-box svg{width:10px;height:10px;stroke:currentColor;stroke-width:2.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+/* ── Weather Section ── */
+.weather-card{background:rgba(153,235,247,0.07);border:1px solid rgba(153,235,247,.20);backdrop-filter:blur(52px) saturate(200%);-webkit-backdrop-filter:blur(52px) saturate(200%);box-shadow:inset 0 1.5px 0 rgba(255,255,255,.18),0 8px 32px rgba(0,0,0,.2);border-radius:var(--r);padding:20px;margin-bottom:20px}
+.weather-hdr{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.weather-hdr-icon{width:32px;height:32px;border-radius:10px;background:rgba(153,235,247,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.weather-hdr-icon svg{width:16px;height:16px;stroke:var(--blue);stroke-width:1.75;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.weather-hdr h3{font-size:.9375rem;font-weight:500;color:#fff;flex:1}
+.weather-hdr-dest{font-size:.72rem;color:rgba(255,255,255,.4);letter-spacing:.04em}
+.weather-scroll{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.weather-scroll::-webkit-scrollbar{display:none}
+.wx-day{flex-shrink:0;width:72px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:10px 8px;text-align:center;transition:background .2s}
+.wx-day.wx-today{background:rgba(153,235,247,.12);border-color:rgba(153,235,247,.28)}
+.wx-date{font-size:.65rem;color:rgba(255,255,255,.4);margin-bottom:5px;letter-spacing:.04em}
+.wx-icon{width:28px;height:28px;margin:0 auto 5px;stroke:var(--blue);stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round;display:block}
+.wx-temp{font-size:.78rem;font-weight:700;color:var(--blue)}
+.wx-temp span{font-size:.65rem;font-weight:400;color:rgba(255,255,255,.35)}
+.wx-rain{font-size:.62rem;color:rgba(153,235,247,.55);margin-top:3px}
+.wx-advice{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:12px 14px;margin-top:12px;font-size:.78rem;color:rgba(255,255,255,.65);display:flex;align-items:flex-start;gap:8px;line-height:1.6}
+.wx-advice svg{width:14px;height:14px;stroke:var(--lime);stroke-width:1.75;fill:none;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;margin-top:2px}
+.wx-loading{text-align:center;padding:20px 0;color:rgba(255,255,255,.35);font-size:.82rem}
+.wx-loading-dot{width:8px;height:8px;border-radius:50%;background:var(--blue);display:inline-block;animation:ldot 1.2s ease-in-out infinite;margin:0 3px}
+@keyframes ldot{0%,100%{transform:scale(.5);opacity:.4}50%{transform:scale(1);opacity:1}}
+.wx-countdown{text-align:center;padding:16px 0;font-size:.82rem;color:rgba(255,255,255,.42);line-height:1.8}
+.wx-countdown strong{color:var(--blue);font-size:1.5rem;display:block;font-weight:300;margin-bottom:4px}
+
+/* ── Setup Form ── */
+.setup-card{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(52px) saturate(200%);-webkit-backdrop-filter:blur(52px) saturate(200%);border-radius:var(--r);padding:18px 20px;margin-bottom:20px}
+.setup-card-hdr{display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none}
+.setup-card.open #setupChevron{transform:rotate(180deg)}
+.form-row{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.form-row label{font-size:.72rem;color:rgba(255,255,255,.45);letter-spacing:.06em}
+.form-row input{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:10px;padding:10px 14px;font-size:.875rem;color:#fff;font-family:inherit;outline:none;transition:border-color .2s;width:100%}
+.form-row input::placeholder{color:rgba(255,255,255,.22)}
+.form-row input:focus{border-color:rgba(129,248,185,.45)}
+.form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.setup-btn{width:100%;background:var(--aqua);border:none;border-radius:12px;padding:13px;font-size:.9rem;font-weight:700;color:#0f2a1e;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .2s;margin-top:4px}
+.setup-btn:hover{opacity:.88}
+.setup-btn svg{width:16px;height:16px;stroke:currentColor;stroke-width:2.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+/* ── Divider ── */
+.divider{height:1px;background:rgba(255,255,255,.08);margin:4px 0 20px}
+
+/* ── Section label ── */
+.section-label{font-size:.68rem;color:rgba(255,255,255,.35);letter-spacing:.14em;text-transform:uppercase;padding:4px 0 12px;display:flex;align-items:center;gap:8px}
+.section-label::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.08)}
+
+/* ── Rain Alert ── */
+.rain-alert{background:rgba(153,235,247,.08);border:1px solid rgba(153,235,247,.2);border-radius:10px;padding:10px 14px;margin-top:10px;font-size:.78rem;color:rgba(153,235,247,.85);display:flex;align-items:center;gap:8px;line-height:1.5}
+.rain-alert svg{width:14px;height:14px;stroke:var(--blue);stroke-width:1.75;fill:none;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+
+/* ── Lucide inline ── */
+.li-icon{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;vertical-align:middle;flex-shrink:0;margin-right:5px}
+.li-icon svg{width:100%;height:100%;stroke:currentColor;stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+/* ── Fade in ── */
+.fade-up{opacity:0;transform:translateY(24px);transition:opacity 550ms ease-out,transform 550ms ease-out}
+.fade-up.visible{opacity:1;transform:translateY(0)}
+
+/* ── Company Footer ── */
+.co-footer{background:rgba(6,14,10,0.82);backdrop-filter:blur(52px) saturate(180%);-webkit-backdrop-filter:blur(52px) saturate(180%);border-top:1px solid rgba(255,255,255,0.10);padding:52px 28px 44px;text-align:center;position:relative;z-index:1;margin-top:32px}
+.co-logo-wrap{margin-bottom:28px}
+.co-logo{height:34px;object-fit:contain;opacity:.92}
+.co-tagline{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--aqua);margin-bottom:18px;font-weight:400}
+.co-desc{font-size:11.5px;line-height:2;color:rgba(255,255,255,.48);max-width:500px;margin:0 auto 30px;text-align:left}
+.co-divider{width:36px;height:1px;background:linear-gradient(90deg,transparent,rgba(129,248,185,.35),transparent);margin:0 auto 28px}
+.co-info-grid{max-width:480px;margin:0 auto 34px;display:flex;flex-direction:column;gap:0}
+.co-info-item{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.co-info-item:last-child{border-bottom:none}
+.co-info-label{font-size:9.5px;color:rgba(255,255,255,.28);letter-spacing:.12em;text-transform:uppercase;white-space:nowrap;flex-shrink:0}
+.co-info-val{font-size:11.5px;color:rgba(255,255,255,.72);text-align:right;line-height:1.6}
+.co-social{display:flex;justify-content:center;gap:14px;margin-bottom:36px}
+.co-social-link{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.07);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.14);box-shadow:inset 0 1.5px 0 rgba(255,255,255,.18),0 4px 16px rgba(0,0,0,.2);text-decoration:none;transition:all .25s}
+.co-social-link:hover{background:rgba(129,248,185,.14);border-color:rgba(129,248,185,.4);box-shadow:inset 0 1.5px 0 rgba(255,255,255,.25),0 4px 20px rgba(129,248,185,.15)}
+.co-social-link svg{width:18px;height:18px;stroke:rgba(255,255,255,.6);stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round;transition:stroke .25s}
+.co-social-link:hover svg{stroke:var(--aqua)}
+.co-bottom{font-size:10.5px;color:rgba(255,255,255,.2);line-height:2;border-top:1px solid rgba(255,255,255,.05);padding-top:20px;margin-top:4px}
+
+/* ── Back to Top ── */
+.back-top{position:fixed;right:20px;bottom:28px;z-index:500;width:44px;height:44px;border-radius:50%;cursor:pointer;background:rgba(10,22,16,0.72);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border:1px solid rgba(129,248,185,.32);box-shadow:inset 0 1.5px 0 rgba(255,255,255,.18),0 6px 24px rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transform:translateY(12px);transition:opacity .3s,transform .3s,box-shadow .25s}
+.back-top.show{opacity:1;pointer-events:auto;transform:translateY(0)}
+.back-top:hover{box-shadow:inset 0 1.5px 0 rgba(255,255,255,.22),0 6px 24px rgba(0,0,0,.4),0 0 0 6px rgba(129,248,185,.10)}
+.back-top svg{width:18px;height:18px;stroke:var(--aqua);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+/* ── Reset btn ── */
+.reset-btn{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:5px 13px;font-size:.7rem;color:rgba(255,255,255,.35);cursor:pointer;font-family:inherit;transition:all .2s;display:flex;align-items:center;gap:5px;white-space:nowrap}
+.reset-btn:hover{background:rgba(255,255,255,.10);color:rgba(255,255,255,.65)}
+.reset-btn svg{width:12px;height:12px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+</style>
+</head>
+<body>
+<div class="parallax-bg"></div>
+
+<nav class="nav">
+  <div class="nav-logo">
+    <img src="logo.png" alt="樂放旅遊">
+  </div>
+  <div class="nav-right" id="navRight">
+    <button class="reset-btn" onclick="confirmReset()" title="重置清單">
+      <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.86"/></svg>
+      重置
+    </button>
+  </div>
+</nav>
+
+<div class="main">
+
+  <!-- Trip Header -->
+  <div class="trip-header fade-up" id="tripHeader">
+    <div class="trip-tag">
+      <svg viewBox="0 0 24 24" style="width:12px;height:12px;stroke:currentColor;stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      行李清單
+    </div>
+    <h1 class="trip-title" id="tripTitleEl">準備好您的<em>行李</em></h1>
+    <div class="trip-meta" id="tripMeta"></div>
+  </div>
+
+  <!-- Setup Card (collapsible, optional) -->
+  <div class="setup-card fade-up" id="setupCard" style="display:none">
+    <div class="setup-card-hdr" onclick="toggleSetup()" id="setupHdr">
+      <div style="display:flex;align-items:center;gap:8px;flex:1">
+        <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--aqua);stroke-width:1.75;fill:none;stroke-linecap:round;stroke-linejoin:round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9z"/></svg>
+        <span style="font-size:.9375rem;font-weight:500;color:#fff">設定旅程，啟用天氣預報</span>
+        <span style="font-size:.7rem;color:rgba(255,255,255,.32);letter-spacing:.06em">選填</span>
+      </div>
+      <svg id="setupChevron" viewBox="0 0 24 24" style="width:16px;height:16px;stroke:rgba(255,255,255,.3);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round;transition:transform .3s"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div id="setupBody" style="display:none;margin-top:16px">
+      <p style="font-size:.78rem;color:rgba(255,255,255,.4);margin-bottom:16px;line-height:1.6">填入目的地與日期後，自動顯示旅遊期間天氣預報與穿搭建議。</p>
+      <div class="form-row">
+        <label>目的地</label>
+        <input type="text" id="inpDest" placeholder="例：首爾、東京、大阪">
+      </div>
+      <div class="form-row-2">
+        <div class="form-row">
+          <label>出發日期</label>
+          <input type="date" id="inpDepart">
+        </div>
+        <div class="form-row">
+          <label>回程日期</label>
+          <input type="date" id="inpReturn">
+        </div>
+      </div>
+      <div class="form-row">
+        <label>旅遊名稱（選填）</label>
+        <input type="text" id="inpTourName" placeholder="例：日本關西五日遊">
+      </div>
+      <button class="setup-btn" onclick="saveSetup()">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        確認並啟用天氣預報
+      </button>
+    </div>
+  </div>
+
+  <!-- Weather Section -->
+  <div class="weather-card fade-up" id="weatherCard" style="display:none">
+    <div class="weather-hdr">
+      <div class="weather-hdr-icon">
+        <svg viewBox="0 0 24 24"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9z"/></svg>
+      </div>
+      <h3>天氣預報</h3>
+      <span class="weather-hdr-dest" id="wxDestLabel"></span>
+    </div>
+    <div id="wxBody"><div class="wx-loading"><div class="wx-loading-dot"></div></div></div>
+    <div id="wxRainAlert"></div>
+    <div id="wxAdvice"></div>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-wrap fade-up" id="progressWrap">
+    <div class="progress-top">
+      <span class="progress-label">整體完成度</span>
+      <span class="progress-count" id="progressCount">0 / 0</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="progress-sub" id="progressSub">開始勾選已準備好的物品</div>
+  </div>
+
+  <!-- Needs Prep Panel -->
+  <div class="prep-panel fade-up" id="prepPanel">
+    <div class="prep-panel-hdr">
+      <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--tomato);stroke-width:1.75;fill:none;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <h3>待準備清單</h3>
+      <span class="prep-count-badge" id="prepBadge">0</span>
+    </div>
+    <div id="prepList"><div class="prep-empty">目前沒有待準備的項目</div></div>
+    <div id="prepRainNote"></div>
+  </div>
+
+  <div class="hint-bar">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    <span class="hint-box hb-done"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>左方勾選</span>已準備完成
+    <span class="hint-box hb-prep"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>右方勾選</span>加入待準備清單
+  </div>
+
+  <!-- Checklist Categories -->
+  <div id="checklistRoot"></div>
+
+</div>
+
+<footer class="co-footer">
+  <div class="co-logo-wrap"><img src="logo.png" alt="樂放旅遊 Le Fun Travel" class="co-logo"></div>
+  <p class="co-desc">台灣旅遊、包車服務、專業司機、訂房服務、機場接駁、商務接駁等，以女性需求為出發點，以「全日客服，隱私保障」、「注重形象，舒適如家」、「隨心旅行，安全第一」、「捕捉美好，分享精彩」來設計服務體驗，讓所有旅客感到放鬆與賓至如歸。</p>
+  <div class="co-divider"></div>
+  <div class="co-info-grid">
+    <div class="co-info-item"><span class="co-info-label">公司</span><span class="co-info-val">眾恆旅行社有限公司</span></div>
+    <div class="co-info-item"><span class="co-info-label">地址</span><span class="co-info-val">814 高雄市仁武區永昌二街 110 巷 6 號 4 樓</span></div>
+    <div class="co-info-item"><span class="co-info-label">代表人</span><span class="co-info-val">李宗軒</span></div>
+    <div class="co-info-item"><span class="co-info-label">統一編號</span><span class="co-info-val">00227376</span></div>
+    <div class="co-info-item"><span class="co-info-label">甲種旅行社</span><span class="co-info-val">交觀甲字 4032 號</span></div>
+    <div class="co-info-item"><span class="co-info-label">品保協會</span><span class="co-info-val">中華民國旅行業品質保障協會　高字第 0673 號</span></div>
+  </div>
+  <div class="co-social">
+    <a href="https://lovefuntravel2024.com/" target="_blank" rel="noopener" class="co-social-link" aria-label="官方網站">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </a>
+    <a href="https://www.facebook.com/profile.php?id=61563888242869" target="_blank" rel="noopener" class="co-social-link" aria-label="Facebook">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+    </a>
+    <a href="https://www.instagram.com/lovefuntravel_2024?igsh=bmhidWFza3E5czNz&utm_source=qr" target="_blank" rel="noopener" class="co-social-link" aria-label="Instagram">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".5" fill="currentColor"/></svg>
+    </a>
+    <a href="https://youtube.com/@lovefuntravel2024" target="_blank" rel="noopener" class="co-social-link" aria-label="YouTube">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.95C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.95C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" stroke="none" fill="#FF0000"/></svg>
+    </a>
+  </div>
+  <div class="co-bottom">
+    <div>行李清單工具 · 樂放旅遊 Le Fun Travel</div>
+    <div>行程內容如有異動，以出發前說明會資料為準</div>
+  </div>
+</footer>
+
+<script>
+/* ── Lucide init ── */
+document.addEventListener('DOMContentLoaded',()=>lucide.createIcons());
+
+/* ── Default checklist data ── */
+const DEFAULT_CATS = [
+  {
+    id:'docs', label:'證件類', icon:'file-text', color:'cat-docs',
+    items:[
+      {id:'passport',  label:'護照（有效期 6 個月以上）'},
+      {id:'visa',      label:'簽證 / 電子簽'},
+      {id:'ticket',    label:'機票電子票（截圖備份）'},
+      {id:'hotel_doc', label:'飯店訂房確認單'},
+      {id:'insurance', label:'旅遊保險保單'},
+      {id:'id_card',   label:'身分證'},
+      {id:'currency',  label:'外幣現金'},
+      {id:'credit_card',label:'信用卡 / 金融卡'},
+    ]
+  },
+  {
+    id:'clothes', label:'衣物類', icon:'shirt', color:'cat-clothes',
+    items:[
+      {id:'tops',      label:'上衣'},
+      {id:'pants',     label:'褲子 / 裙子'},
+      {id:'underwear', label:'內衣褲'},
+      {id:'socks',     label:'襪子'},
+      {id:'jacket',    label:'外套 / 風衣'},
+      {id:'pajamas',   label:'睡衣'},
+      {id:'shoes',     label:'舒適步行鞋'},
+      {id:'flip_flop', label:'拖鞋'},
+    ]
+  },
+  {
+    id:'toilet', label:'盥洗用品', icon:'droplets', color:'cat-toilet',
+    items:[
+      {id:'toothbrush',label:'牙刷 / 牙膏'},
+      {id:'shampoo',   label:'洗髮精 / 潤髮乳'},
+      {id:'body_wash', label:'沐浴乳'},
+      {id:'skincare',  label:'保養品 / 化妝品'},
+      {id:'sunscreen', label:'防曬乳 SPF50+'},
+      {id:'razor',     label:'刮鬍刀 / 除毛刀'},
+      {id:'cotton',    label:'棉棒 / 棉片'},
+      {id:'tissue',    label:'濕紙巾 / 面紙'},
+    ]
+  },
+  {
+    id:'tech', label:'3C 電子', icon:'smartphone', color:'cat-tech',
+    items:[
+      {id:'phone',     label:'手機 + 充電線'},
+      {id:'adapter',   label:'萬用轉接頭'},
+      {id:'powerbank', label:'行動電源'},
+      {id:'wifi',      label:'Wi-Fi 分享器 / SIM 卡'},
+      {id:'camera',    label:'相機 + 充電器'},
+      {id:'earphone',  label:'耳機'},
+      {id:'laptop',    label:'筆電（如需）'},
+      {id:'cable_ext', label:'延長線 / 排插'},
+    ]
+  },
+  {
+    id:'med', label:'藥品', icon:'pill', color:'cat-med',
+    items:[
+      {id:'painkiller',label:'止痛藥 / 退燒藥'},
+      {id:'cold_med',  label:'感冒藥'},
+      {id:'stomachache',label:'腸胃藥 / 正露丸'},
+      {id:'band_aid',  label:'OK 繃 / 藥用貼布'},
+      {id:'allergy',   label:'過敏藥（如需）'},
+      {id:'prescript', label:'個人處方用藥'},
+      {id:'eye_drop',  label:'眼藥水（如需）'},
+      {id:'mask',      label:'口罩'},
+    ]
+  },
+  {
+    id:'misc', label:'其他', icon:'package', color:'cat-misc',
+    items:[
+      {id:'luggage_lock',label:'行李箱鎖'},
+      {id:'bag_tag',   label:'行李牌'},
+      {id:'plastic_bag',label:'夾鏈袋（液體分裝）'},
+      {id:'umbrella',  label:'折疊傘'},
+      {id:'snack',     label:'零食 / 泡麵'},
+      {id:'notebook',  label:'小筆記本 / 筆'},
+      {id:'neck_pillow',label:'頸枕（飛機用）'},
+      {id:'eye_mask',  label:'眼罩 / 耳塞'},
+    ]
+  }
+];
+
+/* ── State ── */
+let tripInfo = null;   // { dest, depart, return, tourName }
+let state = {};        // { [itemId]: 'checked' | 'prep' | '' }
+let customItems = [];  // [{ id, label, catId }]
+const STORAGE_KEY = 'lf_checklist_v1';
+
+/* ── Load / Save state ── */
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw){
+      const d = JSON.parse(raw);
+      tripInfo    = d.tripInfo    || null;
+      state       = d.state       || {};
+      customItems = d.customItems || [];
+    }
+  }catch(e){}
+}
+function saveState(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({ tripInfo, state, customItems }));
+}
+
+/* ── Read URL params ── */
+function readUrlParams(){
+  const p = new URLSearchParams(location.search);
+  const dest   = p.get('dest');
+  const depart = p.get('depart');
+  const ret    = p.get('return');
+  const tour   = p.get('tour');
+  if(dest || depart){
+    tripInfo = { dest: dest||'', depart: depart||'', return: ret||'', tourName: tour||'' };
+    saveState();
+  }
+}
+
+/* ── Setup card toggle ── */
+function toggleSetup(){
+  const body = document.getElementById('setupBody');
+  const card = document.getElementById('setupCard');
+  const isOpen = body.style.display !== 'none';
+  body.style.display = isOpen ? 'none' : 'block';
+  card.classList.toggle('open', !isOpen);
+}
+
+/* ── Render trip header ── */
+function renderHeader(){
+  const el = document.getElementById('tripTitleEl');
+  const meta = document.getElementById('tripMeta');
+  const setupCard = document.getElementById('setupCard');
+
+  // Always show setup card (collapsed by default if no info)
+  setupCard.style.display = 'block';
+
+  if(!tripInfo || !tripInfo.dest){
+    el.innerHTML = '準備好您的<em>行李</em>';
+    meta.innerHTML = `<span class="trip-chip" style="font-size:.72rem;color:rgba(255,255,255,.4)">${iconSvg('info',12)} 無需登入，可直接使用清單</span>`;
+    // Expand setup card if no tripInfo
+    document.getElementById('setupBody').style.display = 'none';
+    setupCard.classList.remove('open');
+    lucide.createIcons();
+    return;
+  }
+
+  // Has trip info — collapse setup card
+  document.getElementById('setupBody').style.display = 'none';
+  setupCard.classList.remove('open');
+
+  el.innerHTML = `前往 <em>${tripInfo.dest}</em>`;
+  const chips = [];
+  if(tripInfo.tourName) chips.push(`<span class="trip-chip">${iconSvg('map',13)} ${tripInfo.tourName}</span>`);
+  if(tripInfo.depart && tripInfo.return){
+    const d1 = fmtDate(tripInfo.depart), d2 = fmtDate(tripInfo.return);
+    const days = daysBetween(tripInfo.depart, tripInfo.return);
+    chips.push(`<span class="trip-chip">${iconSvg('calendar',13)} ${d1} — ${d2}　${days} 天</span>`);
+  }else if(tripInfo.depart){
+    chips.push(`<span class="trip-chip">${iconSvg('calendar',13)} 出發 ${fmtDate(tripInfo.depart)}</span>`);
+  }
+  // Show edit button to re-open setup
+  chips.push(`<button onclick="toggleSetup()" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);border-radius:20px;padding:4px 10px;font-size:.68rem;color:rgba(255,255,255,.4);cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:4px;transition:all .2s" onmouseover="this.style.color='rgba(255,255,255,.75)'" onmouseout="this.style.color='rgba(255,255,255,.4)'">${iconSvg('pencil',10)} 編輯</button>`);
+  meta.innerHTML = chips.join('');
+  lucide.createIcons();
+}
+
+/* ── Helpers ── */
+function fmtDate(s){
+  if(!s) return '';
+  const d = new Date(s+'T00:00:00');
+  return (d.getMonth()+1)+'月'+d.getDate()+'日';
+}
+function daysBetween(a,b){
+  const d1=new Date(a+'T00:00:00'), d2=new Date(b+'T00:00:00');
+  return Math.round((d2-d1)/(1000*60*60*24))+1;
+}
+function iconSvg(name, size=14){
+  return `<i data-lucide="${name}" style="width:${size}px;height:${size}px;display:inline-flex;align-items:center;vertical-align:middle;margin-right:4px"></i>`;
+}
+
+/* ── Render checklist ── */
+function getAllItems(){
+  // merge default + custom
+  const cats = JSON.parse(JSON.stringify(DEFAULT_CATS));
+  customItems.forEach(ci=>{
+    const cat = cats.find(c=>c.id===ci.catId);
+    if(cat) cat.items.push({ id:ci.id, label:ci.label, custom:true });
+  });
+  return cats;
+}
+
+function renderChecklist(){
+  const root = document.getElementById('checklistRoot');
+  const cats = getAllItems();
+  root.innerHTML = cats.map(cat=>renderCat(cat)).join('');
+  lucide.createIcons();
+  updateProgress();
+  updatePrepPanel();
+}
+
+function renderCat(cat){
+  const checkedCount = cat.items.filter(it=>state[it.id]==='checked').length;
+  const total = cat.items.length;
+  const collapsed = checkedCount === total && total > 0 ? ' collapsed' : '';
+  return `<div class="sec ${cat.color}${collapsed}" id="sec_${cat.id}">
+    <div class="sec-hdr" onclick="toggleSec('${cat.id}')">
+      <div class="sec-hdr-icon">
+        <i data-lucide="${cat.icon}"></i>
+      </div>
+      <div class="sec-hdr-text">
+        <h3>${cat.label}</h3>
+        <span>${checkedCount} / ${total} 已完成</span>
+      </div>
+      <div class="sec-chevron">
+        <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <div class="sec-body">
+      ${cat.items.map(it=>renderItem(it)).join('')}
+      <div class="ck-add-wrap">
+        <input class="ck-add-input" type="text" placeholder="新增項目…" id="add_${cat.id}" onkeydown="if(event.key==='Enter')addItem('${cat.id}')">
+        <button class="ck-add-btn" onclick="addItem('${cat.id}')">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          新增
+        </button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderItem(item){
+  const st = state[item.id] || '';
+  const checkedCls = st==='checked' ? ' checked' : '';
+  const prepCls    = st==='prep'    ? ' need-prep' : '';
+  return `<div class="ck-item${checkedCls}${prepCls}" id="ck_${item.id}">
+    <button class="ck-btn-done" onclick="toggleCheck('${item.id}')" title="已準備完成">
+      <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+    </button>
+    <span class="ck-label">${item.label}</span>
+    <button class="ck-btn-prep" onclick="togglePrep('${item.id}')" title="加入待準備清單">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    </button>
+  </div>`;
+}
+
+/* ── Sound (Web Audio API, no file needed) ── */
+let _audioCtx = null;
+function playDing(){
+  try{
+    if(!_audioCtx) _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const ctx = _audioCtx;
+    // Two-tone chime: root + fifth
+    [[880,0,0.18],[1320,0.04,0.14]].forEach(([freq,delay,vol])=>{
+      const osc  = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      const t = ctx.currentTime + delay;
+      gain.gain.setValueAtTime(0, t);
+      gain.gain.linearRampToValueAtTime(vol, t + 0.012);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.55);
+      osc.start(t); osc.stop(t + 0.56);
+    });
+  }catch(e){}
+}
+function playUncheck(){
+  try{
+    if(!_audioCtx) _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const ctx = _audioCtx;
+    const osc = ctx.createOscillator(), gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.type = 'sine'; osc.frequency.value = 440;
+    const t = ctx.currentTime;
+    gain.gain.setValueAtTime(0.08, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t+0.18);
+    osc.start(t); osc.stop(t+0.19);
+  }catch(e){}
+}
+
+/* ── Toggle check (left button) ── */
+function toggleCheck(id){
+  const cur = state[id] || '';
+  if(cur === 'checked'){ state[id] = ''; playUncheck(); }
+  else{ state[id] = 'checked'; playDing(); }
+  saveState();
+  refreshItem(id);
+  updateProgress();
+  updatePrepPanel();
+}
+
+/* ── Toggle prep (right button) ── */
+function togglePrep(id){
+  const cur = state[id] || '';
+  if(cur === 'prep'){ state[id] = ''; }
+  else if(cur === 'checked'){ /* already done, do nothing */ return; }
+  else{ state[id] = 'prep'; navigator.vibrate && navigator.vibrate(30); }
+  saveState();
+  refreshItem(id);
+  updateProgress();
+  updatePrepPanel();
+}
+
+/* ── Mark done from prep panel ── */
+function markDone(id){
+  state[id] = 'checked';
+  playDing();
+  saveState();
+  refreshItem(id);
+  updateProgress();
+  updatePrepPanel();
+}
+
+function refreshItem(id){
+  // re-render just this item by re-rendering its category
+  const cats = getAllItems();
+  cats.forEach(cat=>{
+    if(cat.items.find(it=>it.id===id)){
+      const secEl = document.getElementById('sec_'+cat.id);
+      if(secEl){
+        const wasCollapsed = secEl.classList.contains('collapsed');
+        const newHtml = renderCat(cat);
+        const tmp = document.createElement('div');
+        tmp.innerHTML = newHtml;
+        secEl.outerHTML = tmp.innerHTML;
+        if(!wasCollapsed){
+          const newSec = document.getElementById('sec_'+cat.id);
+          if(newSec) newSec.classList.remove('collapsed');
+        }
+      }
+    }
+  });
+  lucide.createIcons();
+}
+
+/* ── Section toggle ── */
+function toggleSec(id){
+  const el = document.getElementById('sec_'+id);
+  if(el) el.classList.toggle('collapsed');
+}
+
+/* ── Add custom item ── */
+function addItem(catId){
+  const inp = document.getElementById('add_'+catId);
+  const label = inp.value.trim();
+  if(!label) return;
+  const id = 'custom_'+Date.now();
+  customItems.push({ id, label, catId });
+  inp.value = '';
+  saveState();
+  const cat = getAllItems().find(c=>c.id===catId);
+  const secEl = document.getElementById('sec_'+catId);
+  if(secEl && cat){
+    secEl.outerHTML = renderCat(cat);
+    const newSec = document.getElementById('sec_'+catId);
+    if(newSec) newSec.classList.remove('collapsed');
+  }
+  lucide.createIcons();
+  updateProgress();
+  updatePrepPanel();
+}
+
+/* ── Progress ── */
+function updateProgress(){
+  const cats = getAllItems();
+  let total=0, done=0, prep=0;
+  cats.forEach(cat=>cat.items.forEach(it=>{
+    total++;
+    if(state[it.id]==='checked') done++;
+    if(state[it.id]==='prep') prep++;
+  }));
+  const pct = total>0 ? Math.round(done/total*100) : 0;
+  document.getElementById('progressCount').textContent = done+' / '+total;
+  document.getElementById('progressFill').style.width = pct+'%';
+  const subEl = document.getElementById('progressSub');
+  if(pct===100) subEl.textContent = '全部完成！旅行愉快';
+  else if(pct>=80) subEl.textContent = '快完成了，再加把勁！';
+  else if(prep>0) subEl.textContent = `還有 ${prep} 項待準備，${total-done-prep} 項尚未確認`;
+  else subEl.textContent = `剩 ${total-done} 項未確認`;
+}
+
+/* ── Prep Panel ── */
+function updatePrepPanel(){
+  const cats = getAllItems();
+  const prepItems = [];
+  cats.forEach(cat=>cat.items.forEach(it=>{
+    if(state[it.id]==='prep') prepItems.push({ ...it, catLabel:cat.label });
+  }));
+  document.getElementById('prepBadge').textContent = prepItems.length;
+  const listEl = document.getElementById('prepList');
+  if(prepItems.length===0){
+    listEl.innerHTML = '<div class="prep-empty">目前沒有待準備的項目</div>';
+    return;
+  }
+  listEl.innerHTML = '<div class="prep-list">'+prepItems.map(it=>`
+    <div class="prep-row" id="preprow_${it.id}">
+      <div>
+        <div class="prep-row-label">${it.label}</div>
+        <div class="prep-row-cat">${it.catLabel}</div>
+      </div>
+      <button class="prep-done-btn" onclick="markDone('${it.id}')">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        已準備好
+      </button>
+    </div>`).join('')+'</div>';
+}
+
+/* ── Save setup ── */
+function saveSetup(){
+  const dest     = document.getElementById('inpDest').value.trim();
+  const depart   = document.getElementById('inpDepart').value;
+  const ret      = document.getElementById('inpReturn').value;
+  const tourName = document.getElementById('inpTourName').value.trim();
+  if(!dest){ document.getElementById('inpDest').focus(); return; }
+  tripInfo = { dest, depart, return:ret, tourName };
+  saveState();
+  renderHeader();
+  initWeather();
+  // scroll to weather after setting up
+  setTimeout(()=>{
+    const wx = document.getElementById('weatherCard');
+    if(wx) wx.scrollIntoView({ behavior:'smooth', block:'start' });
+  }, 300);
+}
+
+/* ── Weather (Open-Meteo, free, no key) ── */
+async function initWeather(){
+  if(!tripInfo || !tripInfo.dest) return;
+  const card = document.getElementById('weatherCard');
+  card.style.display = 'block';
+  document.getElementById('wxDestLabel').textContent = tripInfo.dest;
+
+  // Check date range
+  if(tripInfo.depart){
+    const today = new Date(); today.setHours(0,0,0,0);
+    const start = new Date(tripInfo.depart+'T00:00:00');
+    const daysUntil = Math.round((start-today)/(1000*60*60*24));
+    if(daysUntil > 16){
+      document.getElementById('wxBody').innerHTML = `<div class="wx-countdown">
+        <strong>${daysUntil}</strong>
+        距出發還有 ${daysUntil} 天<br>
+        天氣預報將於出發前 16 天自動顯示
+      </div>`;
+      return;
+    }
+  }
+
+  document.getElementById('wxBody').innerHTML = '<div class="wx-loading"><div class="wx-loading-dot"></div></div>';
+
+  try{
+    // Geocode
+    const cleanDest = tripInfo.dest.replace(/^(韓國|日本|泰國|越南|美國|台灣|歐洲|中國|香港|澳門|新加坡|馬來西亞|菲律賓|印尼|印度|澳洲|紐西蘭|英國|法國|德國|義大利|西班牙)/,'').trim() || tripInfo.dest;
+    const geoUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(cleanDest)}&count=1&language=zh&format=json`;
+    const geoRes = await fetch(geoUrl);
+    const geoData = await geoRes.json();
+    if(!geoData.results || !geoData.results.length){ throw new Error('找不到地點'); }
+    const { latitude:lat, longitude:lon, name:geoName } = geoData.results[0];
+    document.getElementById('wxDestLabel').textContent = geoName || tripInfo.dest;
+
+    // Forecast range
+    let startDate = '', endDate = '';
+    const today = new Date(); today.setHours(0,0,0,0);
+    if(tripInfo.depart && tripInfo.return){
+      startDate = tripInfo.depart;
+      endDate   = tripInfo.return;
+    } else if(tripInfo.depart){
+      startDate = tripInfo.depart;
+      const ed = new Date(tripInfo.depart+'T00:00:00');
+      ed.setDate(ed.getDate()+6);
+      endDate = ed.toISOString().slice(0,10);
+    } else {
+      startDate = today.toISOString().slice(0,10);
+      const ed = new Date(); ed.setDate(ed.getDate()+6);
+      endDate = ed.toISOString().slice(0,10);
+    }
+    // Cap to 16 days from today
+    const maxEnd = new Date(); maxEnd.setDate(maxEnd.getDate()+15);
+    if(new Date(endDate+'T00:00:00') > maxEnd) endDate = maxEnd.toISOString().slice(0,10);
+
+    const wxUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto&start_date=${startDate}&end_date=${endDate}`;
+    const wxRes = await fetch(wxUrl);
+    const wxData = await wxRes.json();
+    const { time, weathercode, temperature_2m_max, temperature_2m_min, precipitation_probability_max } = wxData.daily;
+
+    const todayStr = today.toISOString().slice(0,10);
+
+    let rainDays = [];
+    const daysHtml = time.map((t,i)=>{
+      const isToday = t===todayStr;
+      const code = weathercode[i];
+      const hi = Math.round(temperature_2m_max[i]);
+      const lo = Math.round(temperature_2m_min[i]);
+      const rain = precipitation_probability_max[i]||0;
+      if(rain>=60) rainDays.push({ date:t, rain });
+      const d = new Date(t+'T00:00:00');
+      const dateStr = (d.getMonth()+1)+'/'+(d.getDate());
+      const WD = ['日','一','二','三','四','五','六'];
+      const wd = WD[d.getDay()];
+      return `<div class="wx-day${isToday?' wx-today':''}">
+        <div class="wx-date">${dateStr}<br><span style="opacity:.6">週${wd}</span></div>
+        ${wxIcon(code)}
+        <div class="wx-temp">${hi}° <span>/ ${lo}°</span></div>
+        <div class="wx-rain">${rain}%</div>
+      </div>`;
+    }).join('');
+
+    document.getElementById('wxBody').innerHTML = `<div class="weather-scroll">${daysHtml}</div>`;
+
+    // Rain alert → suggest umbrella
+    if(rainDays.length > 0){
+      const rainStr = rainDays.map(r=>{const d=new Date(r.date+'T00:00:00');return (d.getMonth()+1)+'/'+(d.getDate());}).join('、');
+      document.getElementById('wxRainAlert').innerHTML = `<div class="rain-alert">
+        <svg viewBox="0 0 24 24"><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><path d="M20 9a8 8 0 1 0-16 0c0 5.25 8 13 8 13s8-7.75 8-13z"/><line x1="12" y1="13" x2="12" y2="16"/></svg>
+        ${rainStr} 降雨機率偏高，建議攜帶折疊傘或雨衣
+      </div>`;
+      // auto mark umbrella as prep if not yet checked
+      if(!state['umbrella'] || state['umbrella']===''){
+        // gently suggest by adding to prep
+        state['umbrella'] = 'prep';
+        saveState();
+      }
+    }
+
+    // Clothing advice
+    const allTemps = temperature_2m_min.filter(Boolean);
+    const minTemp = allTemps.length ? Math.min(...allTemps) : null;
+    const maxTemp = temperature_2m_max.filter(Boolean).length ? Math.max(...temperature_2m_max.filter(Boolean)) : null;
+    let advice = '';
+    if(minTemp !== null){
+      if(minTemp < 5) advice = '氣溫偏低，建議攜帶厚外套、圍巾及手套';
+      else if(minTemp < 12) advice = '早晚溫差大，建議攜帶保暖外套';
+      else if(minTemp < 18) advice = '氣溫涼爽，薄外套或風衣即可';
+      else if(maxTemp > 30) advice = '氣溫炎熱，輕薄透氣衣物為主，記得防曬';
+      else advice = '氣候宜人，輕薄衣物即可，備一件薄外套因應空調';
+    }
+    if(advice){
+      document.getElementById('wxAdvice').innerHTML = `<div class="wx-advice">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        穿搭建議：${advice}
+      </div>`;
+    }
+
+    // Auto-suggest sunscreen for hot weather
+    if(maxTemp > 28 && (!state['sunscreen'] || state['sunscreen']==='') ){
+      state['sunscreen'] = 'prep';
+      saveState();
+    }
+    renderChecklist();
+
+  }catch(e){
+    document.getElementById('wxBody').innerHTML = `<div class="wx-loading" style="color:rgba(255,255,255,.3)">天氣資料暫時無法載入</div>`;
+  }
+}
+
+/* ── WMO weather code to Lucide icon ── */
+function wxIcon(code){
+  let iconName='sun', color='var(--lime)';
+  if(code===0){iconName='sun';color='var(--lime)'}
+  else if(code<=2){iconName='cloud-sun';color='var(--blue)'}
+  else if(code<=3){iconName='cloud';color='var(--blue)'}
+  else if(code<=49){iconName='cloud-fog';color='var(--blue)'}
+  else if(code<=59){iconName='cloud-drizzle';color='var(--blue)'}
+  else if(code<=69){iconName='cloud-rain';color='var(--blue)'}
+  else if(code<=79){iconName='cloud-snow';color='#c8eeff'}
+  else if(code<=84){iconName='cloud-rain';color='var(--blue)'}
+  else if(code<=94){iconName='cloud-lightning';color='var(--lime)'}
+  else{iconName='zap';color='var(--lime)'}
+  return `<i data-lucide="${iconName}" style="width:26px;height:26px;display:block;margin:0 auto 5px;stroke:${color};stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round"></i>`;
+}
+
+/* ── Reset ── */
+function confirmReset(){
+  if(confirm('確定要重置所有勾選狀態嗎？清單項目將保留，勾選記錄會清除。')){
+    state = {};
+    saveState();
+    renderChecklist();
+  }
+}
+
+/* ── Scroll reveal ── */
+function initReveal(){
+  const els = document.querySelectorAll('.fade-up');
+  const obs = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target); } });
+  },{threshold:0.08});
+  els.forEach(el=>obs.observe(el));
+}
+
+/* ── Back link ── */
+function initBackLink(){
+  const p = new URLSearchParams(location.search);
+  const back = p.get('back');
+  if(back){
+    const nav = document.getElementById('navRight');
+    const a = document.createElement('a');
+    a.href = back;
+    a.className = 'nav-back';
+    a.innerHTML = `<svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round"><polyline points="15 18 9 12 15 6"/></svg> 返回電子書`;
+    nav.prepend(a);
+  }
+}
+
+/* ── Init ── */
+window.addEventListener('DOMContentLoaded',()=>{
+  loadState();
+  readUrlParams();
+  renderHeader();
+  renderChecklist();
+  initReveal();
+  initBackLink();
+  if(tripInfo && tripInfo.dest) initWeather();
+  lucide.createIcons();
+
+  /* ── Back to top ── */
+  const btBtn=document.createElement('button');
+  btBtn.className='back-top';btBtn.title='回到頂端';
+  btBtn.innerHTML='<svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>';
+  btBtn.onclick=()=>window.scrollTo({top:0,behavior:'smooth'});
+  document.body.appendChild(btBtn);
+  window.addEventListener('scroll',()=>{
+    btBtn.classList.toggle('show',window.scrollY>320);
+  },{passive:true});
+});
+</script>
+</body>
+</html>

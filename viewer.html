@@ -37,14 +37,21 @@ body{font-family:"Noto Sans TC",sans-serif;background:transparent;color:var(--te
   box-shadow:inset 0 -0.5px 0 rgba(0,0,0,0.2),0 1px 0 rgba(255,255,255,0.05);
   padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:56px
 }
+.nav-left{display:flex;align-items:center;gap:10px}
 .nav-logo{display:flex;align-items:center;gap:10px}
 .nav-logo img{height:28px;object-fit:contain}
 .nav-brand{font-size:11px;font-weight:400;color:rgba(255,255,255,.5);letter-spacing:.06em}
 .nav-toc{
-  background:var(--aqua);border:none;border-radius:20px;
-  padding:6px 16px;font-size:11px;font-weight:700;cursor:pointer;
-  color:#1a1a1a;font-family:inherit;letter-spacing:.06em;text-transform:uppercase
+  background:rgba(255,255,255,0.10);backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,0.18);
+  box-shadow:inset 0 1.5px 0 rgba(255,255,255,0.22);
+  border-radius:20px;padding:7px 10px;
+  cursor:pointer;color:rgba(255,255,255,0.75);
+  display:inline-flex;align-items:center;justify-content:center;
+  transition:all .2s;line-height:0
 }
+.nav-toc:hover{background:rgba(255,255,255,0.16);color:#fff}
+.nav-toc svg{width:16px;height:16px;flex-shrink:0}
 .nav-font{
   background:rgba(255,255,255,0.10);backdrop-filter:blur(20px);
   border:1px solid rgba(255,255,255,0.18);
@@ -911,7 +918,7 @@ function render(d){
   const isTwDomestic=!!(m.destination&&TW_KW.some(k=>m.destination.includes(k)));
   document.title=s(m.tourName,'行前說明')+'｜樂放旅遊';
   const _clUrl=`checklist.html?dest=${encodeURIComponent(s(m.destination))}&depart=${encodeURIComponent(s(m.departDate))}&return=${encodeURIComponent(s(m.returnDate))}&tour=${encodeURIComponent(s(m.tourName))}&back=${encodeURIComponent(location.href)}`;
-  const nav=`<nav class="nav"><div class="nav-logo"><img src="logo.png" alt="樂放旅遊" style="height:28px;object-fit:contain;"></div><div class="nav-right"><a href="${_clUrl}" class="nav-checklist" title="行李清單" target="_blank">${li('luggage')}${L.checklistLink}</a>${!_em?'<button class="nav-lang" id="langBtn" data-lang="'+_lang+'" onclick="switchLang()" title="語言切換"><span class="nav-lang-zh">中</span><span class="nav-lang-sep">/</span><span class="nav-lang-en">EN</span></button>':''}<button class="nav-font" onclick="cycleFont()" id="fontBtn" title="字級"></button><button class="nav-toc" onclick="od()">${L.toc}</button></div></nav>
+  const nav=`<nav class="nav"><div class="nav-left"><div class="nav-logo"><img src="logo.png" alt="樂放旅遊" style="height:28px;object-fit:contain;"></div><button class="nav-toc" onclick="od()" title="${L.toc}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="16" y2="12"/><line x1="3" y1="18" x2="19" y2="18"/></svg></button></div><div class="nav-right"><a href="${_clUrl}" class="nav-checklist" title="行李清單" target="_blank">${li('luggage')}${L.checklistLink}</a>${!_em?'<button class="nav-lang" id="langBtn" data-lang="'+_lang+'" onclick="switchLang()" title="語言切換"><span class="nav-lang-zh">中</span><span class="nav-lang-sep">/</span><span class="nav-lang-en">EN</span></button>':''}<button class="nav-font" onclick="cycleFont()" id="fontBtn" title="字級"></button></div></nav>
 <div class="drawer-bg" id="db" onclick="cd()"><div class="drawer" onclick="event.stopPropagation()"><button class="drawer-close" onclick="cd()">✕</button><h3>行前說明目錄</h3><a href="#as" onclick="cd()">${li('plane')}集合與航班</a><a href="#it" onclick="cd()">${li('map')}行程總覽</a><a href="#dy" onclick="cd()">${li('calendar-days')}每日行程</a><a href="#tp" onclick="cd()">${li('lightbulb')}旅遊注意事項</a>${isTwDomestic?'':'<a href="#im" onclick="cd()">'+li('shield-check')+'入境手續</a><a href="#tx" onclick="cd()">'+li('receipt')+'退稅說明</a>'}<a href="#ck" onclick="cd()">${li('backpack')}行李清單</a><a href="#em" onclick="cd()">${li('phone')}緊急聯絡</a></div></div>`;
 
   const hero=`<section class="hero"><div class="hero-logo"><img src="${LOGO}" alt="Le Fun"></div><div class="hero-tag">樂放旅遊 × 行前說明</div><h1>${eps('meta.tourName',m.tourName,'行前說明')}<br><em>${eps('meta.destination',m.destination)}</em></h1><p class="hero-sub">${eps('meta.departDate',m.departDate)} — ${eps('meta.returnDate',m.returnDate)}</p><div class="hero-pills">${m.flightOut?'<div class="pill">'+li('plane')+m.flightOut+'</div>':''}${m.hotel?'<div class="pill">'+li('building-2')+eps('meta.hotel',m.hotel)+'</div>':''}${m.leaderName?'<a href="#em" class="pill" style="text-decoration:none"><strong>領隊：</strong>'+m.leaderName+'</a>':''}</div><p class="scroll-hint">${li('chevron-down')}向下滑動閱覽</p></section>`;
@@ -922,10 +929,6 @@ function render(d){
   <div class="cover-bg-next" id="coverBgNext"></div>
   <div class="cover-bg" id="coverBgMain" style="background-image:url('${cPhotos[0]}')"></div>
   <div class="cover-progress"><div class="cover-progress-fill" id="coverFill"></div></div>
-  <div class="cover-top">
-    <div class="cover-top-logo"><img src="logo.png" alt="樂放旅遊"></div>
-    <div class="cover-top-tag">Le Fun Travel × 行前說明</div>
-  </div>
   ${cPhotos.length > 1 ? '<button class="cover-arrow cover-arrow-l" onclick="coverNav(-1)" aria-label="上一張"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button><button class="cover-arrow cover-arrow-r" onclick="coverNav(1)" aria-label="下一張"><svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg></button>' : ''}
   ${cPhotos.length > 1 ? '<div class="cover-counter" id="coverCounter">1 / '+cPhotos.length+'</div>' : ''}
   <div class="cover-info">

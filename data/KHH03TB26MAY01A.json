@@ -168,15 +168,15 @@
     "meta": {
       "tourName": "Family Holiday Ocean Park Family Trip",
       "destination": "Hualien",
-      "hotel": "Ruisui Tianhe International Resort Hotel, Hualien Farglory Hotel"
+      "hotel": "Ruisui Tianhe Resort Hotel, Hualien Farglory Hotel"
     },
     "days": [
       {
         "title": "Departure Duoliang Station Taitung Seaside Park",
         "breakfast": "Home",
         "lunch": "Ai Jiao Yi Tea Restaurant",
-        "dinner": "Ruisui Tianhe International Resort Hotel",
-        "hotel": "Ruisui Tianhe International Resort Hotel",
+        "dinner": "Ruisui Tianhe Resort Hotel",
+        "hotel": "Ruisui Tianhe Resort Hotel",
         "spots": [
           {
             "name": "Duoliang Station",
@@ -184,41 +184,41 @@
           },
           {
             "name": "Taitung Seaside Park",
-            "desc": "Local snacks, bicycles (tandem bikes), outdoor open area with strong sunlight"
+            "desc": "Local snacks, bicycles (tandem bikes), strong sunlight in outdoor open areas"
           },
           {
-            "name": "Taitung Chishang No.9 Coffee House",
-            "desc": "Self-paid, minimum consumption 220 in the park, can visit scenic spots for photo check-in"
+            "name": "Taitung Chishang No.9 Coffee Shop",
+            "desc": "Self-paid, minimum spend 220 in the park, can go to scenic spots for photo check-in"
           }
         ]
       },
       {
-        "title": "Farglory Ocean Park One-Day Tour",
+        "title": "Farglory Ocean Park Day Trip",
         "breakfast": "Provided by hotel",
-        "lunch": "At your own expense | Self-service within Ocean Park",
-        "dinner": "Hualien Farglory Hotel (Chinese set meal)",
+        "lunch": "At your own expense | Self-service in Ocean Park",
+        "dinner": "Hualien Farglory Hotel (Chinese set menu)",
         "hotel": "Hualien Farglory Hotel",
         "spots": [
           {
             "name": "Farglory Ocean Park",
-            "desc": "One-day tour, recommend wearing light clothing and sun protection gear"
+            "desc": "Day trip, recommend wearing light clothing and sun protection equipment"
           },
           {
-            "name": "Mermaid Theatre",
-            "desc": "12:45 session, free seating, recommend arriving 20 minutes early to secure seats, front row viewing suggests bringing raincoat"
+            "name": "Mermaid Theater",
+            "desc": "12:45 session, free seating, suggest arriving 20 minutes early to secure seats, front row viewing recommend bringing raincoat"
           }
         ]
       },
       {
-        "title": "Sky Mirror Beach Buggy Return Journey",
+        "title": "Mirror of Sky Beach Buggy Return Journey",
         "breakfast": "Provided by hotel",
-        "lunch": "Seven Seas Bay Restaurant",
-        "dinner": "Exquisite meal box",
+        "lunch": "Qihai Bay Restaurant",
+        "dinner": "Deluxe lunch box",
         "hotel": "Home",
         "spots": [
           {
-            "name": "Sky Mirror Beach Buggy",
-            "desc": "Two people per vehicle, must follow on-site instructor's directions, wear enclosed shoes, recommend bringing change of clothes"
+            "name": "Mirror of Sky Beach Buggy",
+            "desc": "Two people per vehicle, must follow on-site instructor's guidance, wear enclosed shoes, recommend bringing change of clothes"
           },
           {
             "name": "Tropic of Cancer (Coastal Route)",
@@ -229,19 +229,19 @@
             "desc": "Strong winds by the sea, please pay attention to safety"
           },
           {
-            "name": "Dawu Heart South Link Station",
-            "desc": "Stopover point"
+            "name": "Heart of Dawu Nanhui Station",
+            "desc": "Rest stop"
           }
         ]
       }
     ],
     "checklist": {
       "beforeDepart": [
-        "If you have long-term medication or special medical needs, please bring necessary medicines and equipment yourself",
-        "This itinerary passes through mountain roads, those prone to motion sickness please prepare motion sickness medication and take it in advance",
-        "Ruisui Tianhe International Resort Hotel recommends bringing swimwear and light clothing",
-        "Farglory Ocean Park recommends wearing light clothing and sun protection gear, front row show viewers recommend bringing raincoat",
-        "Sky Mirror Beach Buggy recommends bringing change of clothes, wear enclosed shoes"
+        "If you have long-term medication or special medical needs, please bring necessary medicines and equipment",
+        "This itinerary passes through mountain roads, those prone to motion sickness please prepare motion sickness medication and take in advance",
+        "Ruisui Tianhe Resort Hotel recommend bringing swimwear and light clothing",
+        "Farglory Ocean Park recommend wearing light clothing and sun protection equipment, front row show viewers recommend bringing raincoat",
+        "Mirror of Sky Beach Buggy recommend bringing change of clothes, wear enclosed shoes"
       ],
       "carry": [
         "Personal toiletries",
@@ -255,20 +255,21 @@
     "departure": {
       "rules": [
         "07:30 Departure from Kaohsiung Hanjia Precision Industry Co., Ltd.",
-        "07:45 Kaohsiung Zhongzheng Interchange stop: Kaohsiung Lingya Sports Center (Jijiguan MRT Station Exit 4)",
-        "Please follow professional instructions and arrangements from driver/tour guide/tour leader",
-        "Day three involves longer travel distance, all stopover points are for brief rest only, please cooperate with tour guide's time arrangements"
+        "07:45 Kaohsiung Zhongzheng Interchange stop: Kaohsiung Lingya Sports Center (Exit 4 of Jijiguan MRT Station)",
+        "Please follow professional instructions and arrangements from driver/tour guide/group leader",
+        "Day three due to long distance, all stops are for brief rest only, please cooperate with tour guide's time arrangement"
       ],
       "assemblyTime": "07:30"
     },
     "tips": {
-      "weather": "Please check weather forecast before departure and prepare appropriate protective items such as umbrella or raincoat to respond to weather changes",
-      "toiletries": "In accordance with government environmental policy, starting from 2025 accommodation businesses will not actively provide disposable amenities (such as toothbrush, toothpaste, razor, shower cap, etc.), please bring your own personal toiletries"
+      "weather": "Please check weather forecast before departure and prepare appropriate protective items such as umbrellas or raincoats to cope with weather changes",
+      "toiletries": "In response to government environmental policy, starting from 2025, accommodation businesses will not actively provide disposable amenities (such as toothbrush, toothpaste, razor, shower cap, etc.), please bring your own personal toiletries"
     },
     "immigration": {},
     "taxRefund": {},
     "emergency": {
-      "contacts": []
+      "contacts": [],
+      "insurance": "2.5 million travel liability insurance and 200,000 medical insurance"
     }
   }
 }

@@ -76,6 +76,24 @@ html.fs-4 .main,html.fs-5 .main{padding-left:12px;padding-right:12px}
 .fn-dot{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,0.2);transition:background .2s}
 .fn-dot.on{background:var(--aqua)}
 .nav-right{display:flex;align-items:center;gap:8px}
+/* Language toggle */
+.nav-lang{
+  background:rgba(255,255,255,0.10);backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,0.18);
+  box-shadow:inset 0 1.5px 0 rgba(255,255,255,0.22);
+  border-radius:20px;padding:4px 9px;
+  font-size:11px;cursor:pointer;
+  color:rgba(255,255,255,0.75);font-family:inherit;
+  display:inline-flex;align-items:center;gap:2px;
+  transition:all .2s
+}
+.nav-lang:hover{background:rgba(255,255,255,0.16);color:#fff}
+.nav-lang-zh,.nav-lang-en{padding:2px 5px;border-radius:10px;transition:all .15s;font-weight:500}
+.nav-lang[data-lang="zh"] .nav-lang-zh{background:var(--aqua);color:#1a1a1a;font-weight:700}
+.nav-lang[data-lang="en"] .nav-lang-en{background:var(--aqua);color:#1a1a1a;font-weight:700}
+.nav-lang-sep{opacity:0.3;margin:0 1px}
+/* Toast notification */
+.lang-toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:rgba(20,32,26,0.94);color:rgba(255,255,255,.85);padding:10px 22px;border-radius:20px;font-size:13px;z-index:9999;backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.15);pointer-events:none;transition:opacity .4s;white-space:nowrap}
 /* ── Checklist tool button (in ck section) ── */
 .ck-tool-btn{margin-left:auto;flex-shrink:0;display:inline-flex;align-items:center;gap:5px;background:rgba(129,248,185,.12);border:1px solid rgba(129,248,185,.28);border-radius:20px;padding:6px 13px;font-size:.72rem;font-weight:600;color:var(--aqua);text-decoration:none;letter-spacing:.04em;transition:all .2s;white-space:nowrap}
 .ck-tool-btn:hover{background:rgba(129,248,185,.22)}
@@ -566,6 +584,22 @@ function tw(v){return(v||'').replace(/:/g,'：').replace(/\(/g,'（').replace(/\
 // 數字加千分位
 function numFmt(v){return(v||'').replace(/\d[\d,]*/g,n=>{const clean=n.replace(/,/g,'');return clean.length>3?Number(clean).toLocaleString():n;})}
 function gp(k){return new URLSearchParams(location.search).get(k)}
+function setupAfterRender(d, isLangSwitch){
+  setupIcons();
+  if(d.coverPhotos&&d.coverPhotos.length>1)initCoverCarousel(d.coverPhotos);
+  const fontBtn=document.getElementById('fontBtn');
+  if(fontBtn)fontBtn.innerHTML=makeFontBtn(fsIdx);
+  const langBtn=document.getElementById('langBtn');
+  if(langBtn)langBtn.setAttribute('data-lang',_lang);
+  if(!isLangSwitch){
+    const m2=d.meta||{};
+    if(m2.destination&&m2.departDate&&m2.returnDate)loadWeather(m2.destination,m2.departDate,m2.returnDate);
+    if(d.backgroundImage){
+      const bg=document.querySelector('.parallax-bg');
+      if(bg){bg.style.backgroundImage=`url('${d.backgroundImage}')`;bg.style.backgroundSize='cover';bg.style.backgroundPosition='center';}
+    }
+  }
+}
 async function load(){
   const id=gp('id');
   if(!id){err('找不到電子書 ID，請確認連結。');return;}
@@ -574,23 +608,9 @@ async function load(){
     const r=await fetch(base+'/data/'+id+'.json');
     if(!r.ok)throw new Error('HTTP '+r.status);
     const d=await r.json();
+    window._ebookDataFull=d;
     render(d);
-    setupIcons();
-    if(d.coverPhotos&&d.coverPhotos.length>1)initCoverCarousel(d.coverPhotos);
-    const m2=d.meta||{};
-    if(m2.destination&&m2.departDate&&m2.returnDate){
-      loadWeather(m2.destination,m2.departDate,m2.returnDate);
-    }
-    const fontBtn=document.getElementById('fontBtn');
-    if(fontBtn) fontBtn.innerHTML=makeFontBtn(fsIdx);
-    if(d.backgroundImage){
-      const bg=document.querySelector('.parallax-bg');
-      if(bg){
-        bg.style.backgroundImage=`url('${d.backgroundImage}')`;
-        bg.style.backgroundSize='cover';
-        bg.style.backgroundPosition='center';
-      }
-    }
+    setupAfterRender(d,false);
   }catch(e){err('無法載入行前說明（'+e.message+'）');}
 }
 const FS_LEVELS=['','fs-1','fs-2','fs-3','fs-4','fs-5'];
@@ -611,6 +631,7 @@ function makeFontBtn(idx){
   </div>`;
 }
 let fsIdx=0;
+let _lang='zh';
 function cycleFont(){
   const root=document.documentElement;
   FS_LEVELS.forEach(c=>{if(c)root.classList.remove(c);});
@@ -629,6 +650,63 @@ function cycleFont(){
     }
   }catch(e){}
 })();
+/* ── Language Switch ── */
+function showLangToast(msg){
+  let t=document.querySelector('.lang-toast');
+  if(!t){t=document.createElement('div');t.className='lang-toast';document.body.appendChild(t);}
+  t.textContent=msg;t.style.opacity='1';
+  clearTimeout(t._tid);
+  t._tid=setTimeout(()=>{t.style.opacity='0';},2500);
+}
+function switchLang(){
+  if(!window._ebookDataFull)return;
+  const target=_lang==='zh'?'en':'zh';
+  if(target==='en'&&!window._ebookDataFull.en){
+    showLangToast('英文版尚未產生，請在編輯模式儲存後自動翻譯');
+    return;
+  }
+  _lang=target;
+  if(target==='zh'){
+    render(window._ebookDataFull);
+  }else{
+    const full=window._ebookDataFull;
+    const en=full.en;
+    const merged=JSON.parse(JSON.stringify(full));
+    // meta text fields
+    if(en.meta)Object.assign(merged.meta,en.meta);
+    // days
+    if(en.days&&merged.days){
+      merged.days=merged.days.map((day,i)=>{
+        const ed=en.days[i]||{};
+        return Object.assign({},day,{
+          title:ed.title||day.title,
+          breakfast:ed.breakfast||day.breakfast,
+          lunch:ed.lunch||day.lunch,
+          dinner:ed.dinner||day.dinner,
+          hotel:ed.hotel||day.hotel,
+          spots:(day.spots||[]).map((sp,j)=>{
+            const es=(ed.spots||[])[j]||{};
+            return Object.assign({},sp,{name:es.name||sp.name,desc:es.desc||sp.desc});
+          })
+        });
+      });
+    }
+    // checklist, departure, tips, immigration, taxRefund
+    if(en.checklist)merged.checklist=Object.assign({},merged.checklist,en.checklist);
+    if(en.departure)merged.departure=Object.assign({},merged.departure,en.departure);
+    if(en.tips){merged.tips=Object.assign({},merged.tips,en.tips);if(en.tips.custom)merged.tips.custom=en.tips.custom;}
+    if(en.immigration)merged.immigration=Object.assign({},merged.immigration,en.immigration);
+    if(en.taxRefund)merged.taxRefund=Object.assign({},merged.taxRefund,en.taxRefund);
+    if(en.emergency&&en.emergency.contacts&&merged.emergency&&merged.emergency.contacts){
+      merged.emergency.contacts=merged.emergency.contacts.map((c,i)=>{
+        const ec=(en.emergency.contacts||[])[i]||{};
+        return Object.assign({},c,{label:ec.label||c.label});
+      });
+    }
+    render(merged);
+  }
+  setupAfterRender(window._ebookDataFull,true);
+}
 function setupIcons(){
   const EM={
     '✈️':'plane','🗺️':'map','📅':'calendar-days','💡':'lightbulb',
@@ -781,7 +859,7 @@ function render(d){
   const isTwDomestic=!!(m.destination&&TW_KW.some(k=>m.destination.includes(k)));
   document.title=s(m.tourName,'行前說明')+'｜樂放旅遊';
   const _clUrl=`checklist.html?dest=${encodeURIComponent(s(m.destination))}&depart=${encodeURIComponent(s(m.departDate))}&return=${encodeURIComponent(s(m.returnDate))}&tour=${encodeURIComponent(s(m.tourName))}&back=${encodeURIComponent(location.href)}`;
-  const nav=`<nav class="nav"><div class="nav-logo"><img src="logo.png" alt="樂放旅遊" style="height:28px;object-fit:contain;"></div><div class="nav-right"><a href="${_clUrl}" class="nav-checklist" title="行李清單" target="_blank">${li('luggage')}清單</a><button class="nav-font" onclick="cycleFont()" id="fontBtn" title="字級"></button><button class="nav-toc" onclick="od()">目錄</button></div></nav>
+  const nav=`<nav class="nav"><div class="nav-logo"><img src="logo.png" alt="樂放旅遊" style="height:28px;object-fit:contain;"></div><div class="nav-right"><a href="${_clUrl}" class="nav-checklist" title="行李清單" target="_blank">${li('luggage')}清單</a>${!_em?'<button class="nav-lang" id="langBtn" data-lang="'+_lang+'" onclick="switchLang()" title="語言切換"><span class="nav-lang-zh">中</span><span class="nav-lang-sep">/</span><span class="nav-lang-en">EN</span></button>':''}<button class="nav-font" onclick="cycleFont()" id="fontBtn" title="字級"></button><button class="nav-toc" onclick="od()">目錄</button></div></nav>
 <div class="drawer-bg" id="db" onclick="cd()"><div class="drawer" onclick="event.stopPropagation()"><button class="drawer-close" onclick="cd()">✕</button><h3>行前說明目錄</h3><a href="#as" onclick="cd()">${li('plane')}集合與航班</a><a href="#it" onclick="cd()">${li('map')}行程總覽</a><a href="#dy" onclick="cd()">${li('calendar-days')}每日行程</a><a href="#tp" onclick="cd()">${li('lightbulb')}旅遊注意事項</a>${isTwDomestic?'':'<a href="#im" onclick="cd()">'+li('shield-check')+'入境手續</a><a href="#tx" onclick="cd()">'+li('receipt')+'退稅說明</a>'}<a href="#ck" onclick="cd()">${li('backpack')}行李清單</a><a href="#em" onclick="cd()">${li('phone')}緊急聯絡</a></div></div>`;
 
   const hero=`<section class="hero"><div class="hero-logo"><img src="${LOGO}" alt="Le Fun"></div><div class="hero-tag">樂放旅遊 × 行前說明</div><h1>${eps('meta.tourName',m.tourName,'行前說明')}<br><em>${eps('meta.destination',m.destination)}</em></h1><p class="hero-sub">${eps('meta.departDate',m.departDate)} — ${eps('meta.returnDate',m.returnDate)}</p><div class="hero-pills">${m.flightOut?'<div class="pill">'+li('plane')+m.flightOut+'</div>':''}${m.hotel?'<div class="pill">'+li('building-2')+eps('meta.hotel',m.hotel)+'</div>':''}${m.leaderName?'<a href="#em" class="pill" style="text-decoration:none"><strong>領隊：</strong>'+m.leaderName+'</a>':''}</div><p class="scroll-hint">${li('chevron-down')}向下滑動閱覽</p></section>`;
@@ -1491,6 +1569,57 @@ function cancelEdits(){
   }
   modal.style.display='flex';
 }
+/* ── Translate ebook to English via Claude API ── */
+async function translateEbookToEn(data){
+  const apiKey=localStorage.getItem('lf_anthropic_key');
+  if(!apiKey)return null;
+  // Extract only translatable text fields
+  const payload={};
+  const m=data.meta||{};
+  payload.meta={};
+  ['tourName','destination','subtitle','hotel'].forEach(k=>{if(m[k])payload.meta[k]=m[k];});
+  if(data.days)payload.days=data.days.map(d=>({
+    title:d.title||'',
+    ...(d.breakfast?{breakfast:d.breakfast}:{}),
+    ...(d.lunch?{lunch:d.lunch}:{}),
+    ...(d.dinner?{dinner:d.dinner}:{}),
+    ...(d.hotel?{hotel:d.hotel}:{}),
+    spots:(d.spots||[]).map(sp=>({name:sp.name||'',desc:sp.desc||''}))
+  }));
+  const chk=data.checklist||{};
+  if(chk.beforeDepart||chk.carry)payload.checklist={beforeDepart:chk.beforeDepart||[],carry:chk.carry||[]};
+  const dep=data.departure||{};
+  payload.departure={};
+  if(dep.rules)payload.departure.rules=dep.rules;
+  if(dep.assemblyTime)payload.departure.assemblyTime=dep.assemblyTime;
+  if(dep.assemblyLocation)payload.departure.assemblyLocation=dep.assemblyLocation;
+  if(dep.assemblyNotes)payload.departure.assemblyNotes=dep.assemblyNotes;
+  const tips=data.tips||{};
+  payload.tips={};
+  ['weather','currency','voltage','timezone','drinking','toiletries'].forEach(k=>{if(tips[k])payload.tips[k]=tips[k];});
+  if(tips.custom)payload.tips.custom=tips.custom.map(c=>({title:c.title||'',content:c.content||''}));
+  const imm=data.immigration||{};
+  if(imm.visa||imm.steps)payload.immigration={...(imm.visa?{visa:imm.visa}:{}),..((imm.steps||[]).length?{steps:imm.steps}:{})};
+  const tax=data.taxRefund||{};
+  if(tax.notes||tax.steps||tax.threshold)payload.taxRefund={...(tax.threshold?{threshold:tax.threshold}:{}),..( tax.notes?{notes:tax.notes}:{}),..((tax.steps||[]).length?{steps:tax.steps}:{})};
+  const em=data.emergency||{};
+  if(em.contacts)payload.emergency={contacts:em.contacts.filter(c=>!/領隊|leader/i.test(c.label||'')).map(c=>({label:c.label||''}))};
+  const dest=m.destination||m.tourName||'';
+  const prompt=`You are a professional travel guide translator. The following is a JSON structure of a pre-trip travel briefing in Traditional Chinese, for a tour to "${dest}". Translate ALL text string values to natural, fluent English suitable for international tourists. Keep the exact same JSON structure and keys. Do NOT translate: dates, times, phone numbers, flight numbers, airport codes, personal names. Do NOT add comments or explanations. Return ONLY valid JSON.\n\n${JSON.stringify(payload)}`;
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'x-api-key':apiKey,'anthropic-version':'2023-06-01','content-type':'application/json','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:4096,messages:[{role:'user',content:prompt}]})
+    });
+    if(!r.ok)return null;
+    const j=await r.json();
+    const raw=(j.content&&j.content[0]&&j.content[0].text)||'';
+    const m2=raw.match(/\{[\s\S]*\}/);
+    if(!m2)return null;
+    return JSON.parse(m2[0]);
+  }catch(e){return null;}
+}
 async function saveEbookEdits(){
   const token=localStorage.getItem('lf_github_token');
   if(!token){alert('請先在製作工具頁面設定 GitHub Token（設定 API Keys）');return;}
@@ -1569,6 +1698,21 @@ async function saveEbookEdits(){
       }
       slSet(100);
       window._editDirty=false;
+      // Translate to English in background (fire-and-forget)
+      (async()=>{
+        try{
+          const enResult=await translateEbookToEn(newData);
+          if(!enResult)return;
+          const withEn=Object.assign({},newData,{en:enResult});
+          const encEn=btoa(unescape(encodeURIComponent(JSON.stringify(withEn,null,2))));
+          // Get current sha
+          let shaNow='';
+          try{const rc=await fetch(apiUrl,{headers:{'Authorization':'token '+token}});if(rc.ok)shaNow=(await rc.json()).sha;}catch(e){}
+          const bodyEn={message:'i18n: auto-translate en for '+ebookId,content:encEn,branch:'main'};
+          if(shaNow)bodyEn.sha=shaNow;
+          await fetch(apiUrl,{method:'PUT',headers:{'Authorization':'token '+token,'Content-Type':'application/json'},body:JSON.stringify(bodyEn)});
+        }catch(e){}
+      })();
       // Update editedAt in shared history (background, fire-and-forget)
       (async()=>{
         try{

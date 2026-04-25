@@ -1095,7 +1095,7 @@ ${(()=>{
     return '<div class="ov-row"><div class="ov-badge">'+DOT_SVG+'<span class="ov-zh">'+dayLabel+'</span></div>'+(dl2?'<span class="ov-date">'+dl2+'</span>':'')+'<div class="ov-spots">'+spotsHtml+flightChip+'</div></div>';
   }).join('');
 })()}
-<p class="ov-disclaimer">※ 行程內容、次序、班次時間及住宿飯店，本公司保留變更的權利 ※</p>
+<p class="ov-disclaimer">${L.ovDisclaimer}</p>
 </div>
 </section><div class="divider"></div>
 <section class="sec fade-up" id="dy"><div class="sec-label"><div class="sec-icon">${li('calendar-days')}</div><div><h2>${L.dailyItinerary}</h2></div></div>${days}</section><div class="divider"></div>

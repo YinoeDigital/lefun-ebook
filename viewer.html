@@ -1605,20 +1605,34 @@ async function translateEbookToEn(data){
   const em=data.emergency||{};
   if(em.contacts)payload.emergency={contacts:em.contacts.filter(c=>!/領隊|leader/i.test(c.label||'')).map(c=>({label:c.label||''}))};
   const dest=m.destination||m.tourName||'';
-  const prompt=`You are a professional travel guide translator. The following is a JSON structure of a pre-trip travel briefing in Traditional Chinese, for a tour to "${dest}". Translate ALL text string values to natural, fluent English suitable for international tourists. Keep the exact same JSON structure and keys. Do NOT translate: dates, times, phone numbers, flight numbers, airport codes, personal names. Do NOT add comments or explanations. Return ONLY valid JSON.\n\n${JSON.stringify(payload)}`;
+  const prompt=`You are a professional travel guide translator. The following is a JSON structure of a pre-trip travel briefing in Traditional Chinese, for a tour to "${dest}". Translate ALL text string values to natural, fluent English suitable for international tourists. Keep the exact same JSON structure and keys. Do NOT translate: dates, times, phone numbers, flight numbers, airport codes, personal names. Do NOT add comments or explanations. Return ONLY valid JSON, no markdown fences.\n\n${JSON.stringify(payload)}`;
   try{
+    console.log('[translate] calling Anthropic API, payload size:', JSON.stringify(payload).length);
     const r=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
       headers:{'x-api-key':apiKey,'anthropic-version':'2023-06-01','content-type':'application/json','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:4096,messages:[{role:'user',content:prompt}]})
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:8096,messages:[{role:'user',content:prompt}]})
     });
-    if(!r.ok)return null;
+    if(!r.ok){
+      const errText=await r.text();
+      console.error('[translate] API error',r.status,errText);
+      return null;
+    }
     const j=await r.json();
     const raw=(j.content&&j.content[0]&&j.content[0].text)||'';
-    const m2=raw.match(/\{[\s\S]*\}/);
-    if(!m2)return null;
-    return JSON.parse(m2[0]);
-  }catch(e){return null;}
+    console.log('[translate] raw response length:',raw.length,'first 200:',raw.slice(0,200));
+    // Extract JSON robustly: find outermost { ... }
+    let parsed=null;
+    try{parsed=JSON.parse(raw.trim());}catch(e1){
+      const m2=raw.match(/\{[\s\S]*\}/);
+      if(m2){try{parsed=JSON.parse(m2[0]);}catch(e2){console.error('[translate] JSON.parse failed',e2);}}
+    }
+    if(!parsed)console.error('[translate] could not parse JSON from response');
+    return parsed;
+  }catch(e){
+    console.error('[translate] exception',e);
+    return null;
+  }
 }
 async function saveEbookEdits(){
   const token=localStorage.getItem('lf_github_token');
@@ -1718,26 +1732,37 @@ async function saveEbookEdits(){
       })();
       // Translate then redirect (wait for translation before leaving page)
       (async()=>{
-        const hasKey=!!localStorage.getItem('lf_anthropic_key');
-        if(hasKey){
-          const pctEl=document.getElementById('slPct');
+        const apiKey=localStorage.getItem('lf_anthropic_key');
+        const pctEl=document.getElementById('slPct');
+        if(!apiKey){
+          console.warn('[translate] no lf_anthropic_key in localStorage, skipping');
+          if(pctEl)pctEl.textContent='⚠ 無 API Key';
+        }else{
           if(pctEl)pctEl.textContent='翻譯中…';
           try{
             const enResult=await Promise.race([
               translateEbookToEn(newData),
-              new Promise(r=>setTimeout(()=>r(null),40000))
+              new Promise(r=>setTimeout(()=>r(null),50000))
             ]);
             if(enResult){
+              if(pctEl)pctEl.textContent='儲存英文版…';
               const withEn=Object.assign({},newData,{en:enResult});
               const encEn=btoa(unescape(encodeURIComponent(JSON.stringify(withEn,null,2))));
               let shaNow='';
-              try{const rc=await fetch(apiUrl,{headers:{'Authorization':'token '+token}});if(rc.ok)shaNow=(await rc.json()).sha;}catch(e){}
+              try{const rc=await fetch(apiUrl,{headers:{'Authorization':'token '+token}});if(rc.ok)shaNow=(await rc.json()).sha;}catch(e){console.error('[translate] sha fetch error',e);}
               const bodyEn={message:'i18n: auto-translate en for '+ebookId,content:encEn,branch:'main'};
               if(shaNow)bodyEn.sha=shaNow;
-              await fetch(apiUrl,{method:'PUT',headers:{'Authorization':'token '+token,'Content-Type':'application/json'},body:JSON.stringify(bodyEn)});
-              if(pctEl)pctEl.textContent='完成！';
+              const enRes=await fetch(apiUrl,{method:'PUT',headers:{'Authorization':'token '+token,'Content-Type':'application/json'},body:JSON.stringify(bodyEn)});
+              if(enRes.ok){if(pctEl)pctEl.textContent='✓ 完成！';}
+              else{const em=await enRes.json();console.error('[translate] github PUT failed',enRes.status,em);if(pctEl)pctEl.textContent='⚠ 儲存失敗';}
+            }else{
+              if(pctEl)pctEl.textContent='⚠ 翻譯失敗';
+              console.warn('[translate] enResult was null');
             }
-          }catch(e){}
+          }catch(e){
+            console.error('[translate] outer error',e);
+            if(pctEl)pctEl.textContent='⚠ 翻譯錯誤';
+          }
         }
         setTimeout(()=>{
           slHide();
@@ -1746,7 +1771,7 @@ async function saveEbookEdits(){
             url.searchParams.delete('edit');
             location.href=url.toString();
           },400);
-        },600);
+        },1200);
       })();
     }else{
       slHide();

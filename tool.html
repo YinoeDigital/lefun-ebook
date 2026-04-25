@@ -234,7 +234,7 @@ header{
 <header>
   <img src="logo.png" alt="樂放旅遊" style="height:30px;object-fit:contain">
   <div class="hdr-right">
-    <span style="font-size:11px;color:rgba(255,255,255,.3);letter-spacing:.04em;font-weight:400">Ver. 1.8.0</span>
+    <span style="font-size:11px;color:rgba(255,255,255,.3);letter-spacing:.04em;font-weight:400">Ver. 1.9.0</span>
     <button class="btn-settings" onclick="openSettings()"><i data-lucide="settings-2" style="width:13px;height:13px;display:inline-block;vertical-align:middle;margin-right:5px"></i>API Keys</button>
   </div>
 </header>
@@ -352,6 +352,7 @@ header{
         <div class="pstep" id="ps2"><div class="pdot"></div>Claude AI 重組 13 個章節</div>
         <div class="pstep" id="ps3"><div class="pdot"></div>推送資料到 GitHub Pages</div>
         <div class="pstep" id="ps4"><div class="pdot"></div>產生分享連結</div>
+        <div class="pstep" id="ps5"><div class="pdot"></div>翻譯英文版</div>
       </div>
     </div>
     <div class="error-box" id="errorBox"></div>
@@ -684,6 +685,11 @@ async function generate() {
     const push = await fetch(apiUrl, {method:'PUT', headers:{'Authorization':'token '+githubToken,'Content-Type':'application/json'}, body:JSON.stringify(body)});
     if (!push.ok) { const pe = await push.json(); throw new Error('GitHub 推送失敗：' + (pe.message || push.status)); }
 
+    // 翻譯英文版（與封面/PDF/share 上傳並行，不阻塞主流程）
+    const translateProm = localStorage.getItem('lf_anthropic_key')
+      ? translateEbookToEnTool(ebookData)
+      : Promise.resolve(null);
+
     // 推送 share HTML（含 OG 標籤，LINE / iMessage 預覽用）
     const baseUrl = `https://${githubUser}.github.io/${githubRepo}`;
     const viewerUrl = `${baseUrl}/viewer.html?id=${ebookId}`;
@@ -752,6 +758,33 @@ async function generate() {
       } catch(e) {}
     }
     ps4el.childNodes[ps4el.childNodes.length - 1].textContent = deployed ? '產生分享連結' : '產生分享連結（建置可能仍在進行）';
+    ps4el.classList.remove('active'); ps4el.classList.add('done');
+
+    // 等待翻譯（已與 polling 並行執行，通常此時已完成）
+    const ps5el = document.getElementById('ps5');
+    if(ps5el){ ps5el.classList.add('active'); const pd=ps5el.querySelector('.pdot'); if(pd) pd.style.animation='pdot .9s ease-in-out infinite'; }
+    document.getElementById('progFill').style.width = '95%';
+    let enResult = null;
+    if(localStorage.getItem('lf_anthropic_key')){
+      enResult = await Promise.race([translateProm, new Promise(r=>setTimeout(()=>r(null),20000))]);
+    }
+    if(enResult){
+      const withEn = Object.assign({}, ebookData, {en: enResult});
+      const enEncoded = btoa(unescape(encodeURIComponent(JSON.stringify(withEn,null,2))));
+      let enSha = '';
+      try{ const ec=await fetch(apiUrl,{headers:{'Authorization':'token '+githubToken}}); if(ec.ok) enSha=(await ec.json()).sha; }catch(e){}
+      const enBody = {message:`translate: en for ${ebookId}`, content:enEncoded, branch:'main'};
+      if(enSha) enBody.sha = enSha;
+      const enPush = await fetch(apiUrl, {method:'PUT', headers:{'Authorization':'token '+githubToken,'Content-Type':'application/json'}, body:JSON.stringify(enBody)});
+      if(ps5el){
+        ps5el.classList.remove('active');
+        ps5el.classList.add('done');
+        ps5el.childNodes[ps5el.childNodes.length-1].textContent = enPush.ok ? '翻譯英文版 ✓' : '翻譯英文版（儲存失敗）';
+      }
+    } else if(ps5el){
+      ps5el.classList.remove('active');
+      ps5el.childNodes[ps5el.childNodes.length-1].textContent = localStorage.getItem('lf_anthropic_key') ? '翻譯英文版（逾時略過）' : '翻譯英文版（需設定 API Key）';
+    }
 
     document.getElementById('progFill').style.width = '100%';
     const shareUrl = `${baseUrl}/share/${ebookId}.html`;
@@ -779,6 +812,63 @@ async function copyLink() {
   const btn = document.querySelector('.btn-copy');
   btn.textContent = '✓ 已複製！';
   setTimeout(()=>btn.textContent='複製連結', 2000);
+}
+
+/* ── 翻譯電子書為英文 ── */
+async function translateEbookToEnTool(data){
+  const apiKey=localStorage.getItem('lf_anthropic_key');
+  if(!apiKey)return null;
+  const payload={};
+  const m=data.meta||{};
+  payload.meta={};
+  ['tourName','destination','subtitle','hotel'].forEach(k=>{if(m[k])payload.meta[k]=m[k];});
+  if(data.days)payload.days=data.days.map(d=>({
+    title:d.title||'',
+    ...(d.breakfast?{breakfast:d.breakfast}:{}),
+    ...(d.lunch?{lunch:d.lunch}:{}),
+    ...(d.dinner?{dinner:d.dinner}:{}),
+    ...(d.hotel?{hotel:d.hotel}:{}),
+    spots:(d.spots||[]).map(sp=>({name:sp.name||'',desc:sp.desc||''}))
+  }));
+  const chk=data.checklist||{};
+  if(chk.beforeDepart||chk.carry)payload.checklist={beforeDepart:chk.beforeDepart||[],carry:chk.carry||[]};
+  const dep=data.departure||{};
+  payload.departure={};
+  if(dep.rules)payload.departure.rules=dep.rules;
+  if(dep.assemblyTime)payload.departure.assemblyTime=dep.assemblyTime;
+  if(dep.assemblyLocation)payload.departure.assemblyLocation=dep.assemblyLocation;
+  if(dep.assemblyNotes)payload.departure.assemblyNotes=dep.assemblyNotes;
+  const tips=data.tips||{};
+  payload.tips={};
+  ['weather','currency','voltage','timezone','drinking','toiletries'].forEach(k=>{if(tips[k])payload.tips[k]=tips[k];});
+  if(tips.custom)payload.tips.custom=tips.custom.map(c=>({title:c.title||'',content:c.content||''}));
+  const imm=data.immigration||{};
+  if(imm.visa||imm.steps)payload.immigration={...(imm.visa?{visa:imm.visa}:{}),...((imm.steps||[]).length?{steps:imm.steps}:{})};
+  const tax=data.taxRefund||{};
+  if(tax.notes||tax.steps||tax.threshold)payload.taxRefund={...(tax.threshold?{threshold:tax.threshold}:{}),...(tax.notes?{notes:tax.notes}:{}),...((tax.steps||[]).length?{steps:tax.steps}:{})};
+  const em=data.emergency||{};
+  payload.emergency={};
+  if(em.contacts)payload.emergency.contacts=em.contacts.filter(c=>!/領隊|leader/i.test(c.label||'')).map(c=>({label:c.label||''}));
+  if(em.insurance)payload.emergency.insurance=em.insurance;
+  if(!Object.keys(payload.emergency).length)delete payload.emergency;
+  const dest=m.destination||m.tourName||'';
+  const prompt=`You are a professional travel guide translator. The following is a JSON structure of a pre-trip travel briefing in Traditional Chinese, for a tour to "${dest}". Translate ALL text string values to natural, fluent English suitable for international tourists. Keep the exact same JSON structure and keys. Do NOT translate: dates, times, phone numbers, flight numbers, airport codes, personal names. Do NOT add comments or explanations. Return ONLY valid JSON, no markdown fences.\n\n${JSON.stringify(payload)}`;
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'x-api-key':apiKey,'anthropic-version':'2023-06-01','content-type':'application/json','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:8096,messages:[{role:'user',content:prompt}]})
+    });
+    if(!r.ok)return null;
+    const j=await r.json();
+    const raw=(j.content&&j.content[0]&&j.content[0].text)||'';
+    let parsed=null;
+    try{parsed=JSON.parse(raw.trim());}catch(e1){
+      const m2=raw.match(/\{[\s\S]*\}/);
+      if(m2){try{parsed=JSON.parse(m2[0]);}catch(e2){}}
+    }
+    return parsed;
+  }catch(e){return null;}
 }
 
 /* ── 發布紀錄 ── */

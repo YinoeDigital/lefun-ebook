@@ -1599,9 +1599,9 @@ async function translateEbookToEn(data){
   ['weather','currency','voltage','timezone','drinking','toiletries'].forEach(k=>{if(tips[k])payload.tips[k]=tips[k];});
   if(tips.custom)payload.tips.custom=tips.custom.map(c=>({title:c.title||'',content:c.content||''}));
   const imm=data.immigration||{};
-  if(imm.visa||imm.steps)payload.immigration={...(imm.visa?{visa:imm.visa}:{}),..((imm.steps||[]).length?{steps:imm.steps}:{})};
+  if(imm.visa||imm.steps)payload.immigration={...(imm.visa?{visa:imm.visa}:{}),...((imm.steps||[]).length?{steps:imm.steps}:{})};
   const tax=data.taxRefund||{};
-  if(tax.notes||tax.steps||tax.threshold)payload.taxRefund={...(tax.threshold?{threshold:tax.threshold}:{}),..( tax.notes?{notes:tax.notes}:{}),..((tax.steps||[]).length?{steps:tax.steps}:{})};
+  if(tax.notes||tax.steps||tax.threshold)payload.taxRefund={...(tax.threshold?{threshold:tax.threshold}:{}),...(tax.notes?{notes:tax.notes}:{}),...((tax.steps||[]).length?{steps:tax.steps}:{})};
   const em=data.emergency||{};
   if(em.contacts)payload.emergency={contacts:em.contacts.filter(c=>!/領隊|leader/i.test(c.label||'')).map(c=>({label:c.label||''}))};
   const dest=m.destination||m.tourName||'';

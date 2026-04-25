@@ -697,11 +697,14 @@ function switchLang(){
     if(en.tips){merged.tips=Object.assign({},merged.tips,en.tips);if(en.tips.custom)merged.tips.custom=en.tips.custom;}
     if(en.immigration)merged.immigration=Object.assign({},merged.immigration,en.immigration);
     if(en.taxRefund)merged.taxRefund=Object.assign({},merged.taxRefund,en.taxRefund);
-    if(en.emergency&&en.emergency.contacts&&merged.emergency&&merged.emergency.contacts){
-      merged.emergency.contacts=merged.emergency.contacts.map((c,i)=>{
-        const ec=(en.emergency.contacts||[])[i]||{};
-        return Object.assign({},c,{label:ec.label||c.label});
-      });
+    if(en.emergency&&merged.emergency){
+      if(en.emergency.contacts&&merged.emergency.contacts){
+        merged.emergency.contacts=merged.emergency.contacts.map((c,i)=>{
+          const ec=(en.emergency.contacts||[])[i]||{};
+          return Object.assign({},c,{label:ec.label||c.label});
+        });
+      }
+      if(en.emergency.insurance)merged.emergency.insurance=en.emergency.insurance;
     }
     render(merged);
   }
@@ -847,9 +850,58 @@ async function loadWeather(dest,startDate,endDate){
 }
 
 function err(msg){document.getElementById('app').innerHTML='<div class="loading"><div style="font-size:32px;color:#EE6543"><i data-lucide="triangle-alert" style="width:32px;height:32px;display:inline-block"></i></div><div style="color:#ff7a5c">'+msg+'</div></div>';if(typeof lucide!=='undefined')lucide.createIcons();}
+const UI_STRINGS={
+  zh:{
+    checklistLink:'清單',toc:'目錄',scrollHint:'向下滑動閱覽',
+    coverTag:'樂放旅遊 × 行前說明',preTripGuide:'行前說明',
+    assembly:'集合與航班資訊',assemblyTime:'集合時間',assemblyPlace:'集合地點',
+    outbound:'去程',return_:'回程',
+    flightNote:'※ 航班時間以出發前說明會資料為準',
+    itinerary:'行程總覽',hotelAll:'全程住宿',
+    ovDisclaimer:'※ 行程內容、次序、班次時間及住宿飯店，本公司保留變更的權利 ※',
+    dailyItinerary:'每日詳細行程',dayFallback:'今日行程',
+    breakfast:'早餐',lunch:'午餐',dinner:'晚餐',hotel:'住宿',
+    tips:'旅遊注意事項',
+    tipWeather:'天氣穿著',tipCurrency:'匯率貨幣',tipVoltage:'電壓插頭',
+    tipTimezone:'時差',tipDrinking:'飲食注意',tipToiletries:'盥洗用品',
+    immigration:'入境手續',taxRefund:'退稅說明',taxPrefix:'滿',taxSuffix:'即可退稅',
+    checklist:'行李攜帶清單',checklistBtn:'點我 開始準備行李 .ᐟ',
+    beforeDepart:'出發前必備',carry:'隨身行李',forbidden:'禁止攜帶',
+    emergency:'緊急聯絡資訊',keyContacts:'重要電話',
+    leader:'領隊',intlRescue:'國際救援',overseas:'旅外急難',insurance:'保險說明',
+    pdfBtn:'點擊閱覽詳細行前說明資料',
+    footerDisclaimer:'行程內容如有異動，以出發前說明會資料為準',
+    weekdays:['日','一','二','三','四','五','六'],
+    fmtDate:(mo,da,wd)=>`${mo}月${da}日（週${wd}）`,
+  },
+  en:{
+    checklistLink:'Checklist',toc:'Contents',scrollHint:'Scroll to explore',
+    coverTag:'Le Fun Travel × Pre-Trip Guide',preTripGuide:'Pre-Trip Guide',
+    assembly:'Assembly & Flight Info',assemblyTime:'Assembly Time',assemblyPlace:'Assembly Location',
+    outbound:'Outbound',return_:'Return',
+    flightNote:'※ Flight times are subject to change. Please confirm at pre-departure briefing.',
+    itinerary:'Itinerary Overview',hotelAll:'Accommodation',
+    ovDisclaimer:'※ Itinerary order, flight schedules, and hotels are subject to change. ※',
+    dailyItinerary:'Daily Itinerary',dayFallback:"Today's Schedule",
+    breakfast:'Breakfast',lunch:'Lunch',dinner:'Dinner',hotel:'Hotel',
+    tips:'Travel Tips',
+    tipWeather:'Weather & Clothing',tipCurrency:'Currency & Exchange',tipVoltage:'Electricity & Adapters',
+    tipTimezone:'Time Zone',tipDrinking:'Food & Water',tipToiletries:'Toiletries',
+    immigration:'Immigration',taxRefund:'Tax Refund',taxPrefix:'Spend',taxSuffix:'to qualify for tax refund',
+    checklist:'Packing Checklist',checklistBtn:'Start Packing ↗',
+    beforeDepart:'Before Departure',carry:'Carry-on Items',forbidden:'Prohibited Items',
+    emergency:'Emergency Contacts',keyContacts:'Key Contacts',
+    leader:'Tour Leader',intlRescue:'International SOS',overseas:'Overseas Emergency',insurance:'Insurance',
+    pdfBtn:'View Full Pre-Trip Guide',
+    footerDisclaimer:'Itinerary is subject to change. Final details confirmed at pre-departure briefing.',
+    weekdays:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
+    fmtDate:(mo,da,wd)=>{const mn=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];return `${mn[mo-1]} ${da} (${wd})`;},
+  }
+};
 function render(d){
   window._ebookData=d;
   const _em=new URLSearchParams(location.search).get('edit')==='1';
+  const L=UI_STRINGS[_lang]||UI_STRINGS.zh;
   function ep(path,val){const t=tw(s(val));return _em?`<span data-epath="${path}" contenteditable="true" spellcheck="false">${t||'&#8203;'}</span>`:t;}
   function eps(path,val,fb=''){const t=tw(s(val,fb));return _em?`<span data-epath="${path}" contenteditable="true" spellcheck="false">${t||'&#8203;'}</span>`:t;}
   function fmtPhone(v){if(!v)return v;const t=(v+'').trim();const clean=t.replace(/[\s\-\(\)]/g,'');if(!/^\+?\d{8,15}$/.test(clean))return tw(t);const hasPlus=clean.startsWith('+');const nums=clean.replace(/^\+/,'');const p1=nums.slice(0,4),p2=nums.slice(4,7),p3=nums.slice(7);return (hasPlus?'+':'')+p1+(p2?'-'+p2:'')+(p3?'-'+p3:'');}
@@ -859,7 +911,7 @@ function render(d){
   const isTwDomestic=!!(m.destination&&TW_KW.some(k=>m.destination.includes(k)));
   document.title=s(m.tourName,'行前說明')+'｜樂放旅遊';
   const _clUrl=`checklist.html?dest=${encodeURIComponent(s(m.destination))}&depart=${encodeURIComponent(s(m.departDate))}&return=${encodeURIComponent(s(m.returnDate))}&tour=${encodeURIComponent(s(m.tourName))}&back=${encodeURIComponent(location.href)}`;
-  const nav=`<nav class="nav"><div class="nav-logo"><img src="logo.png" alt="樂放旅遊" style="height:28px;object-fit:contain;"></div><div class="nav-right"><a href="${_clUrl}" class="nav-checklist" title="行李清單" target="_blank">${li('luggage')}清單</a>${!_em?'<button class="nav-lang" id="langBtn" data-lang="'+_lang+'" onclick="switchLang()" title="語言切換"><span class="nav-lang-zh">中</span><span class="nav-lang-sep">/</span><span class="nav-lang-en">EN</span></button>':''}<button class="nav-font" onclick="cycleFont()" id="fontBtn" title="字級"></button><button class="nav-toc" onclick="od()">目錄</button></div></nav>
+  const nav=`<nav class="nav"><div class="nav-logo"><img src="logo.png" alt="樂放旅遊" style="height:28px;object-fit:contain;"></div><div class="nav-right"><a href="${_clUrl}" class="nav-checklist" title="行李清單" target="_blank">${li('luggage')}${L.checklistLink}</a>${!_em?'<button class="nav-lang" id="langBtn" data-lang="'+_lang+'" onclick="switchLang()" title="語言切換"><span class="nav-lang-zh">中</span><span class="nav-lang-sep">/</span><span class="nav-lang-en">EN</span></button>':''}<button class="nav-font" onclick="cycleFont()" id="fontBtn" title="字級"></button><button class="nav-toc" onclick="od()">${L.toc}</button></div></nav>
 <div class="drawer-bg" id="db" onclick="cd()"><div class="drawer" onclick="event.stopPropagation()"><button class="drawer-close" onclick="cd()">✕</button><h3>行前說明目錄</h3><a href="#as" onclick="cd()">${li('plane')}集合與航班</a><a href="#it" onclick="cd()">${li('map')}行程總覽</a><a href="#dy" onclick="cd()">${li('calendar-days')}每日行程</a><a href="#tp" onclick="cd()">${li('lightbulb')}旅遊注意事項</a>${isTwDomestic?'':'<a href="#im" onclick="cd()">'+li('shield-check')+'入境手續</a><a href="#tx" onclick="cd()">'+li('receipt')+'退稅說明</a>'}<a href="#ck" onclick="cd()">${li('backpack')}行李清單</a><a href="#em" onclick="cd()">${li('phone')}緊急聯絡</a></div></div>`;
 
   const hero=`<section class="hero"><div class="hero-logo"><img src="${LOGO}" alt="Le Fun"></div><div class="hero-tag">樂放旅遊 × 行前說明</div><h1>${eps('meta.tourName',m.tourName,'行前說明')}<br><em>${eps('meta.destination',m.destination)}</em></h1><p class="hero-sub">${eps('meta.departDate',m.departDate)} — ${eps('meta.returnDate',m.returnDate)}</p><div class="hero-pills">${m.flightOut?'<div class="pill">'+li('plane')+m.flightOut+'</div>':''}${m.hotel?'<div class="pill">'+li('building-2')+eps('meta.hotel',m.hotel)+'</div>':''}${m.leaderName?'<a href="#em" class="pill" style="text-decoration:none"><strong>領隊：</strong>'+m.leaderName+'</a>':''}</div><p class="scroll-hint">${li('chevron-down')}向下滑動閱覽</p></section>`;
@@ -906,20 +958,19 @@ function render(d){
     const _sdb=(di2,si2)=>'<button class="spot-del-btn" onclick="deleteSpot('+di2+','+si2+',this)" title="刪除景點"><svg viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>';
     const spots=(day.spots||[]).map((sp,si)=>(_em?'<div class="spot spot-draggable" draggable="true">':'<div class="spot">')+'<i data-lucide="map-pin" class="spot-pin'+(_em?' spot-drag-handle':'')+'"></i><div><h4>'+ep('days.'+di+'.spots.'+si+'.name',sp.name)+'</h4><p>'+ep('days.'+di+'.spots.'+si+'.desc',sp.desc)+'</p></div>'+(_em?_sdb(di,si):'')+'</div>').join('')+(_em?'<button class="spot-add-btn" data-di="'+di+'" onclick="addDaySpot('+di+')"><i data-lucide="map-pin" class="spot-pin" style="stroke:var(--aqua);flex-shrink:0"></i>新增景點</button>':'');
     const meals=[
-      day.breakfast?'<div class="meal-row-item">'+li('coffee')+'<span class="mr-label">早餐</span><span class="mr-sep">⟡</span><span class="mr-val">'+ep('days.'+di+'.breakfast',day.breakfast)+'</span></div>':'',
-      day.lunch?'<div class="meal-row-item">'+li('utensils')+'<span class="mr-label">午餐</span><span class="mr-sep">⟡</span><span class="mr-val">'+ep('days.'+di+'.lunch',day.lunch)+'</span></div>':'',
-      day.dinner?'<div class="meal-row-item">'+li('wine')+'<span class="mr-label">晚餐</span><span class="mr-sep">⟡</span><span class="mr-val">'+ep('days.'+di+'.dinner',day.dinner)+'</span></div>':'',
-      day.hotel?'<div class="meal-row-item">'+li('building-2')+'<span class="mr-label">住宿</span><span class="mr-sep">⟡</span><span class="mr-val">'+ep('days.'+di+'.hotel',day.hotel)+'</span></div>':''
+      day.breakfast?'<div class="meal-row-item">'+li('coffee')+'<span class="mr-label">'+L.breakfast+'</span><span class="mr-sep">⟡</span><span class="mr-val">'+ep('days.'+di+'.breakfast',day.breakfast)+'</span></div>':'',
+      day.lunch?'<div class="meal-row-item">'+li('utensils')+'<span class="mr-label">'+L.lunch+'</span><span class="mr-sep">⟡</span><span class="mr-val">'+ep('days.'+di+'.lunch',day.lunch)+'</span></div>':'',
+      day.dinner?'<div class="meal-row-item">'+li('wine')+'<span class="mr-label">'+L.dinner+'</span><span class="mr-sep">⟡</span><span class="mr-val">'+ep('days.'+di+'.dinner',day.dinner)+'</span></div>':'',
+      day.hotel?'<div class="meal-row-item">'+li('building-2')+'<span class="mr-label">'+L.hotel+'</span><span class="mr-sep">⟡</span><span class="mr-val">'+ep('days.'+di+'.hotel',day.hotel)+'</span></div>':''
     ].filter(Boolean).join('');
-    const _WD=['日','一','二','三','四','五','六'];
     let dateLbl='';
     if(m.departDate){
       const _base=new Date(m.departDate+'T00:00:00');
       _base.setDate(_base.getDate()+(n-1));
-      dateLbl=(_base.getMonth()+1)+'月'+_base.getDate()+'日（週'+_WD[_base.getDay()]+'）';
+      dateLbl=L.fmtDate(_base.getMonth()+1,_base.getDate(),L.weekdays[_base.getDay()]);
     }else if(day.date){
       const _dp=new Date(day.date+'T00:00:00');
-      if(!isNaN(_dp)) dateLbl=(_dp.getMonth()+1)+'月'+_dp.getDate()+'日（週'+_WD[_dp.getDay()]+'）';
+      if(!isNaN(_dp)) dateLbl=L.fmtDate(_dp.getMonth()+1,_dp.getDate(),L.weekdays[_dp.getDay()]);
     }
     return `<div class="day-card">
   <div class="day-badge-row">
@@ -936,7 +987,7 @@ function render(d){
   const _CUST_ICONS=['star','heart','flag','bookmark','award','zap','sun','leaf','coffee','camera'];
   const _customTipCards=(tips.custom||[]).map((ct,ci)=>{const color=_CUST_COLORS[ci%_CUST_COLORS.length];const icon=ct.icon||_CUST_ICONS[ci%_CUST_ICONS.length];return '<div class="tip-card tip-card-custom" style="position:relative"><div class="ti" style="color:'+color+'">'+li(icon)+'</div><h4>'+(_em?'<span data-epath="tips.custom.'+ci+'.title" contenteditable="true" spellcheck="false">'+(ct.title||'&#8203;')+'</span>':s(ct.title))+'</h4><p>'+(_em?'<span data-epath="tips.custom.'+ci+'.content" contenteditable="true" spellcheck="false">'+(ct.content||'&#8203;')+'</span>':s(ct.content))+'</p>'+(_em?'<button class="tip-del-btn" onclick="deleteCustomTip('+ci+',this)" title="刪除">'+li('x')+'</button>':'')+'</div>';}).join('');
   const _addTipBtn=_em?'<button class="tips-add-btn" onclick="addCustomTip()">'+li('plus')+'新增注意事項</button>':'';
-  const tipsG=[{i:'🌡️',t:'天氣穿著',v:tips.weather,k:'weather'},{i:'💴',t:'匯率貨幣',v:tips.currency,k:'currency'},{i:'🔌',t:'電壓插頭',v:tips.voltage,k:'voltage'},{i:'🕐',t:'時差',v:tips.timezone,k:'timezone'},{i:'🚰',t:'飲食注意',v:tips.drinking,k:'drinking'},{i:'🛁',t:'盥洗用品',v:tips.toiletries,k:'toiletries'}].filter(x=>x.v).map(x=>'<div class="tip-card"><div class="ti">'+x.i+'</div><h4>'+x.t+'</h4><p>'+ep('tips.'+x.k,x.v)+'</p></div>').join('')+_customTipCards+_addTipBtn;
+  const tipsG=[{i:'🌡️',t:L.tipWeather,v:tips.weather,k:'weather'},{i:'💴',t:L.tipCurrency,v:tips.currency,k:'currency'},{i:'🔌',t:L.tipVoltage,v:tips.voltage,k:'voltage'},{i:'🕐',t:L.tipTimezone,v:tips.timezone,k:'timezone'},{i:'🚰',t:L.tipDrinking,v:tips.drinking,k:'drinking'},{i:'🛁',t:L.tipToiletries,v:tips.toiletries,k:'toiletries'}].filter(x=>x.v).map(x=>'<div class="tip-card"><div class="ti">'+x.i+'</div><h4>'+x.t+'</h4><p>'+ep('tips.'+x.k,x.v)+'</p></div>').join('')+_customTipCards+_addTipBtn;
 
   const imm=d.immigration||{};
   const immS=(imm.steps||[]).map((st,si)=>'<div class="step-item"><p>'+ep('immigration.steps.'+si,st)+'</p></div>').join('');
@@ -952,14 +1003,14 @@ function render(d){
   // 過濾掉來自 PDF 的領隊項目，避免與表單填入的領隊資訊重複
   const emC=(em.contacts||[]).map((c,ci)=>({c,ci})).filter(({c})=>!/領隊|leader/i.test(c.label||'')).map(({c,ci})=>'<div class="em-row"><span class="em-label">'+ep('emergency.contacts.'+ci+'.label',c.label)+'</span><span class="em-val">'+epPhone('emergency.contacts.'+ci+'.value',c.value)+'</span></div>').join('');
 
-  const immTaxHtml=isTwDomestic?'':`<section class="sec fade-up" id="im"><div class="sec-label"><div class="sec-icon">${li('shield-check')}</div><div><h2>入境手續</h2><p>${eps('immigration.visa',imm.visa)}</p></div></div><div class="card card-b">${imm.qcode?'<p style="font-size:13px;color:rgba(255,255,255,.65);margin-bottom:14px">'+ep('immigration.qcode',imm.qcode)+'</p>':''}<div class="steps">${immS}</div></div></section><div class="divider"></div>
-<section class="sec fade-up" id="tx"><div class="sec-label"><div class="sec-icon">${li('receipt')}</div><div><h2>退稅說明</h2><p>滿 ${eps('taxRefund.threshold',tax.threshold,'—')} 即可退稅</p></div></div><div class="card card-y">${tax.notes?'<p style="font-size:.8125rem;color:rgba(255,255,255,.78);line-height:1.85;margin-bottom:'+(taxS?'16px':'4px')+'">'+ep('taxRefund.notes',tax.notes)+'</p>':''}${taxS?'<div class="steps">'+taxS+'</div>':''}</div></section><div class="divider"></div>`;
+  const immTaxHtml=isTwDomestic?'':`<section class="sec fade-up" id="im"><div class="sec-label"><div class="sec-icon">${li('shield-check')}</div><div><h2>${L.immigration}</h2><p>${eps('immigration.visa',imm.visa)}</p></div></div><div class="card card-b">${imm.qcode?'<p style="font-size:13px;color:rgba(255,255,255,.65);margin-bottom:14px">'+ep('immigration.qcode',imm.qcode)+'</p>':''}<div class="steps">${immS}</div></div></section><div class="divider"></div>
+<section class="sec fade-up" id="tx"><div class="sec-label"><div class="sec-icon">${li('receipt')}</div><div><h2>${L.taxRefund}</h2><p>${L.taxPrefix} ${eps('taxRefund.threshold',tax.threshold,'—')} ${L.taxSuffix}</p></div></div><div class="card card-y">${tax.notes?'<p style="font-size:.8125rem;color:rgba(255,255,255,.78);line-height:1.85;margin-bottom:'+(taxS?'16px':'4px')+'">'+ep('taxRefund.notes',tax.notes)+'</p>':''}${taxS?'<div class="steps">'+taxS+'</div>':''}</div></section><div class="divider"></div>`;
   const body=`
 ${nav}${cover}
-<section class="sec fade-up" id="as"><div class="sec-label"><div class="sec-icon">${li('plane')}</div><div><h2>集合與航班資訊</h2></div></div>
+<section class="sec fade-up" id="as"><div class="sec-label"><div class="sec-icon">${li('plane')}</div><div><h2>${L.assembly}</h2></div></div>
 <div class="card card-g">
-<div class="info-row"><span class="ir-label">集合時間</span><span class="ir-val"><strong>${eps('meta.assemblyTime',m.assemblyTime||dep.assemblyTime)}</strong></span></div>
-<div class="info-row"><span class="ir-label">集合地點</span><span class="ir-val">${eps('meta.assemblyPlace',m.assemblyPlace)}</span></div>
+<div class="info-row"><span class="ir-label">${L.assemblyTime}</span><span class="ir-val"><strong>${eps('meta.assemblyTime',m.assemblyTime||dep.assemblyTime)}</strong></span></div>
+<div class="info-row"><span class="ir-label">${L.assemblyPlace}</span><span class="ir-val">${eps('meta.assemblyPlace',m.assemblyPlace)}</span></div>
 ${((dep.rules&&dep.rules.length)||_em)?'<div id="depRulesWrap" style="border-top:1px solid rgba(255,255,255,.10);margin-top:10px;padding-top:14px">'+(dep.rules||[]).map((r,ri)=>'<div class="spot dep-rule" style="margin-bottom:10px">'+(_em?'<button class="as-del-btn" style="position:absolute;right:0;top:4px;transform:none" onclick="deleteDepRule('+ri+',this)" title="刪除"><svg viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>':'')+' <i data-lucide="check-circle" style="width:14px;height:14px;stroke:var(--aqua);stroke-width:1.75;fill:none;flex-shrink:0;margin-top:2px"></i><p style="font-size:.8125rem;color:rgba(255,255,255,.80);line-height:1.75">'+ep('departure.rules.'+ri,r)+'</p></div>').join('')+(_em?'<button class="em-add-btn" style="margin-top:4px" onclick="addDepartureRule()">'+li('plus')+'新增資料</button>':'')+'</div>':''}
 </div>
 ${(()=>{
@@ -986,9 +1037,9 @@ ${(()=>{
   const hasRet=!!(m.flightReturn||m.flightReturnNo||m.flightReturnDepTime||m.flightReturnDepPort);
   if(!hasOut&&!hasRet) return '';
   let cards='';
-  if(hasOut) cards+=mkCard('去程','',m.flightOutAirline,m.flightOutNo||m.flightOut,m.flightOutDepTime,m.flightOutDepPort,m.flightOutFromCode,m.flightOutArrTime,m.flightOutArrPort,m.flightOutToCode);
-  if(hasRet) cards+=mkCard('回程','fbadge-p',m.flightReturnAirline,m.flightReturnNo||m.flightReturn,m.flightReturnDepTime,m.flightReturnDepPort,m.flightReturnFromCode,m.flightReturnArrTime,m.flightReturnArrPort,m.flightReturnToCode);
-  return `<div style="margin-top:10px">${cards}<p style="font-size:11px;color:rgba(255,255,255,.35);margin-top:6px;padding:0 2px">※ 航班時間以出發前說明會資料為準</p></div>`;
+  if(hasOut) cards+=mkCard(L.outbound,'',m.flightOutAirline,m.flightOutNo||m.flightOut,m.flightOutDepTime,m.flightOutDepPort,m.flightOutFromCode,m.flightOutArrTime,m.flightOutArrPort,m.flightOutToCode);
+  if(hasRet) cards+=mkCard(L.return_,'fbadge-p',m.flightReturnAirline,m.flightReturnNo||m.flightReturn,m.flightReturnDepTime,m.flightReturnDepPort,m.flightReturnFromCode,m.flightReturnArrTime,m.flightReturnArrPort,m.flightReturnToCode);
+  return `<div style="margin-top:10px">${cards}<p style="font-size:11px;color:rgba(255,255,255,.35);margin-top:6px;padding:0 2px">${L.flightNote}</p></div>`;
 })()}
 </section>
 <div class="divider"></div>
@@ -1015,18 +1066,18 @@ ${(()=>{
 <div class="divider"></div>
 <div id="wxSection"></div>
 <div class="divider"></div>
-<section class="sec fade-up" id="it"><div class="sec-label"><div class="sec-icon">${li('map')}</div><div><h2>行程總覽</h2></div></div>
+<section class="sec fade-up" id="it"><div class="sec-label"><div class="sec-icon">${li('map')}</div><div><h2>${L.itinerary}</h2></div></div>
 <div class="card" style="padding:8px 16px">
-${m.hotel?'<div style="display:flex;gap:10px;align-items:center;padding:10px 0 14px;border-bottom:1px solid rgba(255,255,255,.08)">'+li('building-2')+'<div><div style="font-size:.68rem;color:rgba(255,255,255,.5);margin-bottom:2px;letter-spacing:.06em">全程住宿</div><div style="font-weight:700;color:var(--aqua);font-size:.9375rem">'+eps('meta.hotel',m.hotel)+'</div></div></div>':''}
+${m.hotel?'<div style="display:flex;gap:10px;align-items:center;padding:10px 0 14px;border-bottom:1px solid rgba(255,255,255,.08)">'+li('building-2')+'<div><div style="font-size:.68rem;color:rgba(255,255,255,.5);margin-bottom:2px;letter-spacing:.06em">'+L.hotelAll+'</div><div style="font-weight:700;color:var(--aqua);font-size:.9375rem">'+eps('meta.hotel',m.hotel)+'</div></div></div>':''}
 ${(()=>{
   const allDays=d.days||[];
   const total=allDays.length;
   return allDays.map((day,di2)=>{
     const n2=day.day||1;
     const zh2=ZH_NUM[n2-1]||n2;
-    const _WD2=['日','一','二','三','四','五','六'];
+    const enOv=(EN_ORD[n2-1]||n2+'th')+' Day';
     let dl2='';
-    if(m.departDate){const _b2=new Date(m.departDate+'T00:00:00');_b2.setDate(_b2.getDate()+(n2-1));dl2=(_b2.getMonth()+1)+'月'+_b2.getDate()+'日（週'+_WD2[_b2.getDay()]+'）';}
+    if(m.departDate){const _b2=new Date(m.departDate+'T00:00:00');_b2.setDate(_b2.getDate()+(n2-1));dl2=L.fmtDate(_b2.getMonth()+1,_b2.getDate(),L.weekdays[_b2.getDay()]);}
     // 首天去程、末天回程 chip
     let flightChip='';
     if(n2===1&&(m.flightOut||m.flightOutNo)){
@@ -1040,22 +1091,23 @@ ${(()=>{
       const route=(m.flightReturnDepPort&&m.flightReturnArrPort)?'　'+m.flightReturnDepPort+'→'+m.flightReturnArrPort:'';
       flightChip='<span class="ov-flight">'+li('plane-takeoff')+fn+ft+route+'</span>';
     }
-    const spotsText=(day.spots||[]).map(sp=>sp.name).join('・');
+    const spotsText=(day.spots||[]).map(sp=>sp.name).join(' · ');
     const spotsHtml=_em?'<span data-epath="days.'+di2+'._spotsText" contenteditable="true" spellcheck="false">'+(spotsText||'&#8203;')+'</span>':spotsText;
-    return '<div class="ov-row"><div class="ov-badge">'+DOT_SVG+'<span class="ov-zh">第'+zh2+'天</span></div>'+(dl2?'<span class="ov-date">'+dl2+'</span>':'')+'<div class="ov-spots">'+spotsHtml+flightChip+'</div></div>';
+    const dayLabel=_lang==='en'?enOv:'第'+zh2+'天';
+    return '<div class="ov-row"><div class="ov-badge">'+DOT_SVG+'<span class="ov-zh">'+dayLabel+'</span></div>'+(dl2?'<span class="ov-date">'+dl2+'</span>':'')+'<div class="ov-spots">'+spotsHtml+flightChip+'</div></div>';
   }).join('');
 })()}
 <p class="ov-disclaimer">※ 行程內容、次序、班次時間及住宿飯店，本公司保留變更的權利 ※</p>
 </div>
 </section><div class="divider"></div>
-<section class="sec fade-up" id="dy"><div class="sec-label"><div class="sec-icon">${li('calendar-days')}</div><div><h2>每日詳細行程</h2></div></div>${days}</section><div class="divider"></div>
-<div class="sec-tinted"><section class="sec fade-up" id="tp" style="max-width:100%;padding-left:20px;padding-right:20px"><div style="max-width:640px;margin:0 auto"><div class="sec-label"><div class="sec-icon">${li('lightbulb')}</div><div><h2>旅遊注意事項</h2></div></div><div class="tips-grid">${tipsG}</div></div></section></div><div class="divider"></div>
+<section class="sec fade-up" id="dy"><div class="sec-label"><div class="sec-icon">${li('calendar-days')}</div><div><h2>${L.dailyItinerary}</h2></div></div>${days}</section><div class="divider"></div>
+<div class="sec-tinted"><section class="sec fade-up" id="tp" style="max-width:100%;padding-left:20px;padding-right:20px"><div style="max-width:640px;margin:0 auto"><div class="sec-label"><div class="sec-icon">${li('lightbulb')}</div><div><h2>${L.tips}</h2></div></div><div class="tips-grid">${tipsG}</div></div></section></div><div class="divider"></div>
 ${immTaxHtml}
-<div class="sec-tinted"><section class="sec fade-up" id="ck" style="max-width:100%;padding-left:20px;padding-right:20px"><div style="max-width:640px;margin:0 auto"><div class="sec-label"><div class="sec-icon">${li('backpack')}</div><div><h2>行李攜帶清單</h2></div><a href="${_clUrl}" target="_blank" class="ck-tool-btn">${li('external-link','ck-li')}點我 開始準備行李 .ᐟ</a></div><p style="font-size:12px;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:9px">出發前必備</p><div class="checklist" style="margin-bottom:18px">${chkB}</div><p style="font-size:12px;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:9px">隨身行李</p><div class="checklist" style="margin-bottom:16px">${chkC}</div>${chk.forbidden?'<div class="card" style="background:var(--tomato);border:none;color:#fff"><p style="font-size:13px;font-weight:700;margin-bottom:5px;display:flex;align-items:center;gap:5px">'+li('triangle-alert')+'禁止攜帶</p><p style="font-size:13px;opacity:.9">'+ep('checklist.forbidden',chk.forbidden)+'</p></div>':''}</div></section></div><div class="divider"></div>
-<section class="sec fade-up" id="em"><div class="sec-label"><div class="sec-icon">${li('phone')}</div><div><h2>緊急聯絡資訊</h2></div></div>
-<div class="emergency" id="emContacts"><h3>${li('siren')}重要電話</h3>${(m.leaderName||_em)?'<div class="em-row"><span class="em-label">領隊　'+ep('meta.leaderName',m.leaderName)+'</span><span class="em-val">'+epPhone('meta.leaderPhone',m.leaderPhone)+'</span></div>':''}${em.international?'<div class="em-row"><span class="em-label">國際救援</span><span class="em-val">'+epPhone('emergency.international',em.international)+'</span></div>':''}${em.overseas?'<div class="em-row"><span class="em-label">旅外急難</span><span class="em-val">'+epPhone('emergency.overseas',em.overseas)+'</span></div>':''}${emC}${_em?'<button class="em-add-btn" onclick="addEmContact()">'+li('plus')+'新增資料</button>':''}</div>
-${em.insurance?'<div class="emergency" style="margin-top:10px"><h3>'+li('clipboard-list')+'保險說明</h3><p style="font-size:.875rem;color:rgba(255,255,255,.80);line-height:1.8">'+ep('emergency.insurance',em.insurance)+'</p></div>':''}
-${d.pdfUrl?'<a href="'+d.pdfUrl+'" target="_blank" rel="noopener" class="pdf-btn">'+li('file-text')+'點擊閱覽詳細行前說明資料</a>':''}
+<div class="sec-tinted"><section class="sec fade-up" id="ck" style="max-width:100%;padding-left:20px;padding-right:20px"><div style="max-width:640px;margin:0 auto"><div class="sec-label"><div class="sec-icon">${li('backpack')}</div><div><h2>${L.checklist}</h2></div><a href="${_clUrl}" target="_blank" class="ck-tool-btn">${li('external-link','ck-li')}${L.checklistBtn}</a></div><p style="font-size:12px;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:9px">${L.beforeDepart}</p><div class="checklist" style="margin-bottom:18px">${chkB}</div><p style="font-size:12px;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:9px">${L.carry}</p><div class="checklist" style="margin-bottom:16px">${chkC}</div>${chk.forbidden?'<div class="card" style="background:var(--tomato);border:none;color:#fff"><p style="font-size:13px;font-weight:700;margin-bottom:5px;display:flex;align-items:center;gap:5px">'+li('triangle-alert')+L.forbidden+'</p><p style="font-size:13px;opacity:.9">'+ep('checklist.forbidden',chk.forbidden)+'</p></div>':''}</div></section></div><div class="divider"></div>
+<section class="sec fade-up" id="em"><div class="sec-label"><div class="sec-icon">${li('phone')}</div><div><h2>${L.emergency}</h2></div></div>
+<div class="emergency" id="emContacts"><h3>${li('siren')}${L.keyContacts}</h3>${(m.leaderName||_em)?'<div class="em-row"><span class="em-label">'+L.leader+'　'+ep('meta.leaderName',m.leaderName)+'</span><span class="em-val">'+epPhone('meta.leaderPhone',m.leaderPhone)+'</span></div>':''}${em.international?'<div class="em-row"><span class="em-label">'+L.intlRescue+'</span><span class="em-val">'+epPhone('emergency.international',em.international)+'</span></div>':''}${em.overseas?'<div class="em-row"><span class="em-label">'+L.overseas+'</span><span class="em-val">'+epPhone('emergency.overseas',em.overseas)+'</span></div>':''}${emC}${_em?'<button class="em-add-btn" onclick="addEmContact()">'+li('plus')+'新增資料</button>':''}</div>
+${em.insurance?'<div class="emergency" style="margin-top:10px"><h3>'+li('clipboard-list')+L.insurance+'</h3><p style="font-size:.875rem;color:rgba(255,255,255,.80);line-height:1.8">'+ep('emergency.insurance',em.insurance)+'</p></div>':''}
+${d.pdfUrl?'<a href="'+d.pdfUrl+'" target="_blank" rel="noopener" class="pdf-btn">'+li('file-text')+L.pdfBtn+'</a>':''}
 </section>
 <footer class="co-footer">
   <div class="co-logo-wrap"><img src="logo.png" alt="樂放旅遊 Le Fun Travel" class="co-logo"></div>
@@ -1085,7 +1137,7 @@ ${d.pdfUrl?'<a href="'+d.pdfUrl+'" target="_blank" rel="noopener" class="pdf-btn
   </div>
   <div class="co-bottom">
     <div>${s(m.tourName)} · ${s(m.destination)} · ${s(m.departDate)} – ${s(m.returnDate)}</div>
-    <div>行程內容如有異動，以出發前說明會資料為準</div>
+    <div>${L.footerDisclaimer}</div>
   </div>
 </footer>`;
 
@@ -1603,7 +1655,10 @@ async function translateEbookToEn(data){
   const tax=data.taxRefund||{};
   if(tax.notes||tax.steps||tax.threshold)payload.taxRefund={...(tax.threshold?{threshold:tax.threshold}:{}),...(tax.notes?{notes:tax.notes}:{}),...((tax.steps||[]).length?{steps:tax.steps}:{})};
   const em=data.emergency||{};
-  if(em.contacts)payload.emergency={contacts:em.contacts.filter(c=>!/領隊|leader/i.test(c.label||'')).map(c=>({label:c.label||''}))};
+  payload.emergency={};
+  if(em.contacts)payload.emergency.contacts=em.contacts.filter(c=>!/領隊|leader/i.test(c.label||'')).map(c=>({label:c.label||''}));
+  if(em.insurance)payload.emergency.insurance=em.insurance;
+  if(!Object.keys(payload.emergency).length)delete payload.emergency;
   const dest=m.destination||m.tourName||'';
   const prompt=`You are a professional travel guide translator. The following is a JSON structure of a pre-trip travel briefing in Traditional Chinese, for a tour to "${dest}". Translate ALL text string values to natural, fluent English suitable for international tourists. Keep the exact same JSON structure and keys. Do NOT translate: dates, times, phone numbers, flight numbers, airport codes, personal names. Do NOT add comments or explanations. Return ONLY valid JSON, no markdown fences.\n\n${JSON.stringify(payload)}`;
   try{

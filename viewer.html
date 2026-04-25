@@ -1698,21 +1698,6 @@ async function saveEbookEdits(){
       }
       slSet(100);
       window._editDirty=false;
-      // Translate to English in background (fire-and-forget)
-      (async()=>{
-        try{
-          const enResult=await translateEbookToEn(newData);
-          if(!enResult)return;
-          const withEn=Object.assign({},newData,{en:enResult});
-          const encEn=btoa(unescape(encodeURIComponent(JSON.stringify(withEn,null,2))));
-          // Get current sha
-          let shaNow='';
-          try{const rc=await fetch(apiUrl,{headers:{'Authorization':'token '+token}});if(rc.ok)shaNow=(await rc.json()).sha;}catch(e){}
-          const bodyEn={message:'i18n: auto-translate en for '+ebookId,content:encEn,branch:'main'};
-          if(shaNow)bodyEn.sha=shaNow;
-          await fetch(apiUrl,{method:'PUT',headers:{'Authorization':'token '+token,'Content-Type':'application/json'},body:JSON.stringify(bodyEn)});
-        }catch(e){}
-      })();
       // Update editedAt in shared history (background, fire-and-forget)
       (async()=>{
         try{
@@ -1731,14 +1716,38 @@ async function saveEbookEdits(){
           await fetch(HIST_API,{method:'PUT',headers:{'Authorization':'token '+token,'Content-Type':'application/json'},body:JSON.stringify({message:'edit: update history editedAt for '+ebookId,content:enc,sha:meta.sha,branch:'main'})});
         }catch(e){}
       })();
-      setTimeout(()=>{
-        slHide(); // fade out starts
+      // Translate then redirect (wait for translation before leaving page)
+      (async()=>{
+        const hasKey=!!localStorage.getItem('lf_anthropic_key');
+        if(hasKey){
+          const pctEl=document.getElementById('slPct');
+          if(pctEl)pctEl.textContent='翻譯中…';
+          try{
+            const enResult=await Promise.race([
+              translateEbookToEn(newData),
+              new Promise(r=>setTimeout(()=>r(null),40000))
+            ]);
+            if(enResult){
+              const withEn=Object.assign({},newData,{en:enResult});
+              const encEn=btoa(unescape(encodeURIComponent(JSON.stringify(withEn,null,2))));
+              let shaNow='';
+              try{const rc=await fetch(apiUrl,{headers:{'Authorization':'token '+token}});if(rc.ok)shaNow=(await rc.json()).sha;}catch(e){}
+              const bodyEn={message:'i18n: auto-translate en for '+ebookId,content:encEn,branch:'main'};
+              if(shaNow)bodyEn.sha=shaNow;
+              await fetch(apiUrl,{method:'PUT',headers:{'Authorization':'token '+token,'Content-Type':'application/json'},body:JSON.stringify(bodyEn)});
+              if(pctEl)pctEl.textContent='完成！';
+            }
+          }catch(e){}
+        }
         setTimeout(()=>{
-          const url=new URL(location.href);
-          url.searchParams.delete('edit');
-          location.href=url.toString();
-        },400); // wait for fade out to finish
-      },1200);
+          slHide();
+          setTimeout(()=>{
+            const url=new URL(location.href);
+            url.searchParams.delete('edit');
+            location.href=url.toString();
+          },400);
+        },600);
+      })();
     }else{
       slHide();
       const e=await res.json();

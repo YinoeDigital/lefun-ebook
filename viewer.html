@@ -88,17 +88,12 @@ html.fs-4 .main,html.fs-5 .main{padding-left:12px;padding-right:12px}
   background:rgba(255,255,255,0.10);backdrop-filter:blur(20px);
   border:1px solid rgba(255,255,255,0.18);
   box-shadow:inset 0 1.5px 0 rgba(255,255,255,0.22);
-  border-radius:20px;padding:4px 9px;
-  font-size:11px;cursor:pointer;
-  color:rgba(255,255,255,0.75);font-family:inherit;
-  display:inline-flex;align-items:center;gap:2px;
-  transition:all .2s
+  border-radius:20px;padding:5px 12px;
+  font-size:11px;font-weight:600;cursor:pointer;
+  color:rgba(255,255,255,0.85);font-family:inherit;
+  letter-spacing:.06em;transition:all .2s
 }
 .nav-lang:hover{background:rgba(255,255,255,0.16);color:#fff}
-.nav-lang-zh,.nav-lang-en{padding:2px 5px;border-radius:10px;transition:all .15s;font-weight:500}
-.nav-lang[data-lang="zh"] .nav-lang-zh{background:var(--aqua);color:#1a1a1a;font-weight:700}
-.nav-lang[data-lang="en"] .nav-lang-en{background:var(--aqua);color:#1a1a1a;font-weight:700}
-.nav-lang-sep{opacity:0.3;margin:0 1px}
 /* Toast notification */
 .lang-toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:rgba(20,32,26,0.94);color:rgba(255,255,255,.85);padding:10px 22px;border-radius:20px;font-size:13px;z-index:9999;backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.15);pointer-events:none;transition:opacity .4s;white-space:nowrap}
 /* ── Checklist tool button (in ck section) ── */
@@ -597,7 +592,7 @@ function setupAfterRender(d, isLangSwitch){
   const fontBtn=document.getElementById('fontBtn');
   if(fontBtn)fontBtn.innerHTML=makeFontBtn(fsIdx);
   const langBtn=document.getElementById('langBtn');
-  if(langBtn)langBtn.setAttribute('data-lang',_lang);
+  if(langBtn)langBtn.textContent=_lang==='zh'?'EN':'中';
   if(!isLangSwitch){
     const m2=d.meta||{};
     if(m2.destination&&m2.departDate&&m2.returnDate)loadWeather(m2.destination,m2.departDate,m2.returnDate);
@@ -918,7 +913,7 @@ function render(d){
   const isTwDomestic=!!(m.destination&&TW_KW.some(k=>m.destination.includes(k)));
   document.title=s(m.tourName,'行前說明')+'｜樂放旅遊';
   const _clUrl=`checklist.html?dest=${encodeURIComponent(s(m.destination))}&depart=${encodeURIComponent(s(m.departDate))}&return=${encodeURIComponent(s(m.returnDate))}&tour=${encodeURIComponent(s(m.tourName))}&back=${encodeURIComponent(location.href)}`;
-  const nav=`<nav class="nav"><div class="nav-left"><div class="nav-logo"><img src="logo.png" alt="樂放旅遊" style="height:28px;object-fit:contain;"></div><button class="nav-toc" onclick="od()" title="${L.toc}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="16" y2="12"/><line x1="3" y1="18" x2="19" y2="18"/></svg></button></div><div class="nav-right"><a href="${_clUrl}" class="nav-checklist" title="行李清單" target="_blank">${li('luggage')}${L.checklistLink}</a>${!_em?'<button class="nav-lang" id="langBtn" data-lang="'+_lang+'" onclick="switchLang()" title="語言切換"><span class="nav-lang-zh">中</span><span class="nav-lang-sep">/</span><span class="nav-lang-en">EN</span></button>':''}<button class="nav-font" onclick="cycleFont()" id="fontBtn" title="字級"></button></div></nav>
+  const nav=`<nav class="nav"><div class="nav-left"><div class="nav-logo"><img src="logo.png" alt="樂放旅遊" style="height:28px;object-fit:contain;"></div><button class="nav-toc" onclick="od()" title="${L.toc}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="16" y2="12"/><line x1="3" y1="18" x2="19" y2="18"/></svg></button></div><div class="nav-right"><a href="${_clUrl}" class="nav-checklist" title="${L.checklistLink}" target="_blank">${li('luggage')}</a>${!_em?`<button class="nav-lang" id="langBtn" onclick="switchLang()" title="Switch language">${_lang==='zh'?'EN':'中'}</button>`:''}<button class="nav-font" onclick="cycleFont()" id="fontBtn" title="字級"></button></div></nav>
 <div class="drawer-bg" id="db" onclick="cd()"><div class="drawer" onclick="event.stopPropagation()"><button class="drawer-close" onclick="cd()">✕</button><h3>行前說明目錄</h3><a href="#as" onclick="cd()">${li('plane')}集合與航班</a><a href="#it" onclick="cd()">${li('map')}行程總覽</a><a href="#dy" onclick="cd()">${li('calendar-days')}每日行程</a><a href="#tp" onclick="cd()">${li('lightbulb')}旅遊注意事項</a>${isTwDomestic?'':'<a href="#im" onclick="cd()">'+li('shield-check')+'入境手續</a><a href="#tx" onclick="cd()">'+li('receipt')+'退稅說明</a>'}<a href="#ck" onclick="cd()">${li('backpack')}行李清單</a><a href="#em" onclick="cd()">${li('phone')}緊急聯絡</a></div></div>`;
 
   const hero=`<section class="hero"><div class="hero-logo"><img src="${LOGO}" alt="Le Fun"></div><div class="hero-tag">樂放旅遊 × 行前說明</div><h1>${eps('meta.tourName',m.tourName,'行前說明')}<br><em>${eps('meta.destination',m.destination)}</em></h1><p class="hero-sub">${eps('meta.departDate',m.departDate)} — ${eps('meta.returnDate',m.returnDate)}</p><div class="hero-pills">${m.flightOut?'<div class="pill">'+li('plane')+m.flightOut+'</div>':''}${m.hotel?'<div class="pill">'+li('building-2')+eps('meta.hotel',m.hotel)+'</div>':''}${m.leaderName?'<a href="#em" class="pill" style="text-decoration:none"><strong>領隊：</strong>'+m.leaderName+'</a>':''}</div><p class="scroll-hint">${li('chevron-down')}向下滑動閱覽</p></section>`;
